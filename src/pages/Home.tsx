@@ -1,6 +1,6 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Flame, ChevronRight, Bell, User } from 'lucide-react';
+import { Flame, ChevronRight, Bell, Loader2 } from 'lucide-react';
 import { BottomNav } from '@/components/BottomNav';
 import { SearchBar } from '@/components/SearchBar';
 import { SegmentedControl } from '@/components/SegmentedControl';
@@ -10,6 +10,7 @@ import { MapPreview } from '@/components/MapPreview';
 import { NotificationsPanel } from '@/components/NotificationsPanel';
 import { Button } from '@/components/ui/button';
 import { useAuth } from '@/hooks/useAuth';
+import { useInfiniteScroll } from '@/hooks/useInfiniteScroll';
 import { mockListings, categories, mockNotifications } from '@/data/mockData';
 import logo from '@/assets/logo.png';
 
@@ -34,9 +35,19 @@ export default function Home() {
     return l.type === 'service';
   }).slice(0, 3);
 
-  const justArrivedListings = mockListings.filter(l => 
+  const allListings = mockListings.filter(l => 
     segment === 'vehicles' ? ['vehicle', 'part'].includes(l.type) : l.type === 'service'
   );
+
+  const { displayedItems, hasMore, isLoading, reset } = useInfiniteScroll(allListings, {
+    initialLimit: 6,
+    increment: 6,
+  });
+
+  // Reset scroll when segment changes
+  useEffect(() => {
+    reset();
+  }, [segment, reset]);
 
   return (
     <div className="min-h-screen bg-background pb-24">
@@ -116,20 +127,25 @@ export default function Home() {
         <section>
           <h2 className="text-lg font-bold text-foreground mb-4">Just Arrived</h2>
           <div className="grid grid-cols-2 gap-2">
-            {justArrivedListings.slice(0, 6).map((listing, index) => (
+            {displayedItems.map((listing, index) => (
               <ListingCard
                 key={listing.id}
                 listing={listing}
                 variant="grid"
                 className="animate-fade-in"
-                style={{ animationDelay: `${index * 50}ms` } as React.CSSProperties}
+                style={{ animationDelay: `${Math.min(index, 5) * 50}ms` } as React.CSSProperties}
               />
             ))}
           </div>
-          {justArrivedListings.length > 6 && (
-            <button className="w-full mt-4 py-3 text-sm font-medium text-primary hover:text-primary/80 transition-colors">
-              See more listings
-            </button>
+          {isLoading && (
+            <div className="flex justify-center py-6">
+              <Loader2 className="w-6 h-6 text-primary animate-spin" />
+            </div>
+          )}
+          {!hasMore && displayedItems.length > 0 && (
+            <p className="text-center text-muted-foreground text-sm py-6">
+              You've seen all listings
+            </p>
           )}
         </section>
       </main>
