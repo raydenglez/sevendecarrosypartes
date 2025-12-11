@@ -9,16 +9,19 @@ import {
   MapPin,
   Scan,
   Upload,
-  ChevronDown
+  ChevronDown,
+  Plus
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
+import { useAuth } from '@/hooks/useAuth';
 import { cn } from '@/lib/utils';
 
 type ListingType = 'vehicle' | 'part' | 'service';
 
 export default function PublishListing() {
   const navigate = useNavigate();
+  const { user, loading } = useAuth();
   const [listingType, setListingType] = useState<ListingType>('vehicle');
   const [images, setImages] = useState<string[]>([
     'https://images.unsplash.com/photo-1552519507-da3b142c6e3d?w=400&h=300&fit=crop'
@@ -30,6 +33,43 @@ export default function PublishListing() {
     { id: 'part' as const, label: 'Part', icon: Settings },
     { id: 'service' as const, label: 'Service', icon: Wrench },
   ];
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-background flex items-center justify-center">
+        <div className="animate-pulse text-muted-foreground">Loading...</div>
+      </div>
+    );
+  }
+
+  // Show sign-in prompt for guests
+  if (!user) {
+    return (
+      <div className="min-h-screen bg-background">
+        <header className="sticky top-0 z-40 bg-background/95 backdrop-blur-xl border-b border-border safe-top">
+          <div className="flex items-center justify-between px-4 h-14">
+            <Button variant="ghost" size="icon" onClick={() => navigate(-1)}>
+              <X className="w-5 h-5" />
+            </Button>
+            <h1 className="text-lg font-bold text-foreground">Publish Listing</h1>
+            <div className="w-10" />
+          </div>
+        </header>
+        <div className="flex flex-col items-center justify-center px-6 py-20 text-center">
+          <div className="w-20 h-20 rounded-full bg-muted flex items-center justify-center mb-4">
+            <Plus className="w-10 h-10 text-muted-foreground" />
+          </div>
+          <h2 className="text-xl font-bold text-foreground mb-2">Sign in to publish</h2>
+          <p className="text-muted-foreground mb-6 max-w-[280px]">
+            Create an account to list vehicles, parts, or services for sale
+          </p>
+          <Button variant="carnexo" size="lg" onClick={() => navigate('/auth')}>
+            Sign In or Create Account
+          </Button>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-background pb-8">
