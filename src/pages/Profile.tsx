@@ -1,4 +1,3 @@
-import { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { 
   Settings,
@@ -30,14 +29,14 @@ export default function Profile() {
   const { user, loading, signOut } = useAuth();
   const { toast } = useToast();
 
-  // Redirect to auth if not logged in
-  useEffect(() => {
-    if (!loading && !user) {
-      navigate('/auth');
-    }
-  }, [user, loading, navigate]);
-
   const handleSignOut = async () => {
+    await signOut();
+    toast({
+      title: "Signed out",
+      description: "You have been signed out successfully.",
+    });
+    navigate('/');
+  };
     await signOut();
     toast({
       title: "Signed out",
@@ -62,6 +61,30 @@ export default function Profile() {
     return (
       <div className="min-h-screen bg-background flex items-center justify-center">
         <div className="animate-pulse text-muted-foreground">Loading...</div>
+      </div>
+    );
+  }
+
+  // Show sign-in prompt for guests
+  if (!user) {
+    return (
+      <div className="min-h-screen bg-background pb-24">
+        <header className="px-4 pt-4 safe-top">
+          <h1 className="text-xl font-bold text-foreground">My Profile</h1>
+        </header>
+        <div className="flex flex-col items-center justify-center px-6 py-20 text-center">
+          <div className="w-20 h-20 rounded-full bg-muted flex items-center justify-center mb-4">
+            <User className="w-10 h-10 text-muted-foreground" />
+          </div>
+          <h2 className="text-xl font-bold text-foreground mb-2">Sign in to view your profile</h2>
+          <p className="text-muted-foreground mb-6 max-w-[280px]">
+            Create an account to save favorites, publish listings, and message sellers
+          </p>
+          <Button variant="carnexo" size="lg" onClick={() => navigate('/auth')}>
+            Sign In or Create Account
+          </Button>
+        </div>
+        <BottomNav />
       </div>
     );
   }
