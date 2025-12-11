@@ -1,6 +1,7 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef, useState, useCallback } from 'react';
 import mapboxgl from 'mapbox-gl';
 import 'mapbox-gl/dist/mapbox-gl.css';
+import { Listing } from '@/types';
 
 const MAPBOX_TOKEN = 'pk.eyJ1IjoicmF5ZGVuZ2xleiIsImEiOiJjbWoyMmNmazMwN3dxM2ZxMWx6YWh6NWNpIn0.1ktomA51sIeX7o7QGB2y9w';
 
@@ -8,26 +9,89 @@ interface MapProps {
   center?: [number, number];
   zoom?: number;
   className?: string;
-  markers?: Array<{
-    lng: number;
-    lat: number;
-    title?: string;
-    price?: string;
-  }>;
+  listings?: Listing[];
+  onMarkerClick?: (listing: Listing) => void;
+  showRoute?: boolean;
+  destination?: [number, number];
+  userLocation?: [number, number];
 }
 
 export function Map({ 
   center = [-122.4194, 37.7749], 
   zoom = 12, 
   className = '',
-  markers = []
+  listings = [],
+  onMarkerClick,
+  showRoute = false,
+  destination,
+  userLocation,
 }: MapProps) {
   const mapContainer = useRef<HTMLDivElement>(null);
   const map = useRef<mapboxgl.Map | null>(null);
   const markersRef = useRef<mapboxgl.Marker[]>([]);
+  const [mapLoaded, setMapLoaded] = useState(false);
 
+  // Create custom marker element
+  const createMarkerElement = useCallback((listing: Listing, isSelected: boolean = false) => {
+    const el = document.createElement('div');
+    el.className = 'carnexo-map-marker';
+    
+    const priceText = listing.type === 'service' 
+      ? `$${listing.price}` 
+      : `$${(listing.price / 1000).toFixed(0)}k`;
+    
+    const bgColor = isSelected 
+      ? 'hsl(24, 100%, 50%)' 
+      : listing.isPremium 
+        ? 'hsl(24, 100%, 50%)' 
+        : 'hsl(220, 25%, 15%)';
+    
+    const borderColor = isSelected ? 'hsl(24, 100%, 60%)' : 'hsl(220, 20%, 25%)';
+    
+    el.innerHTML = `
+      <div style="
+        background: ${bgColor};
+        border: 2px solid ${borderColor};
+        border-radius: 20px;
+        padding: 6px 12px;
+        font-size: 12px;
+        font-weight: 600;
+        color: white;
+        white-space: nowrap;
+        cursor: pointer;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+        transform: ${isSelected ? 'scale(1.1)' : 'scale(1)'};
+        transition: transform 0.2s ease;
+      ">
+        ${priceText}
+      </div>
+      <div style="
+        width: 0;
+        height: 0;
+        border-left: 8px solid transparent;
+        border-right: 8px solid transparent;
+        border-top: 8px solid ${bgColor};
+        margin: 0 auto;
+        margin-top: -1px;
+      "></div>
+    `;
+    
+    el.addEventListener('mouseenter', () => {
+      const inner = el.querySelector('div') as HTMLElement;
+      if (inner && !isSelected) inner.style.transform = 'scale(1.05)';
+    });
+    
+    el.addEventListener('mouseleave', () => {
+      const inner = el.querySelector('div') as HTMLElement;
+      if (inner && !isSelected) inner.style.transform = 'scale(1)';
+    });
+    
+    return el;
+  }, []);
+
+  // Initialize map
   useEffect(() => {
-    if (!mapContainer.current) return;
+    if (!mapContainer.current || map.current) return;
 
     mapboxgl.accessToken = MAPBOX_TOKEN;
     
@@ -40,34 +104,26 @@ export function Map({
       bearing: -17.6,
     });
 
-    // Add navigation controls
     map.current.addControl(
-      new mapboxgl.NavigationControl({
-        visualizePitch: true,
-      }),
+      new mapboxgl.NavigationControl({ visualizePitch: true }),
       'top-right'
     );
 
-    // Add geolocate control
     map.current.addControl(
       new mapboxgl.GeolocateControl({
-        positionOptions: {
-          enableHighAccuracy: true
-        },
+        positionOptions: { enableHighAccuracy: true },
         trackUserLocation: true,
         showUserHeading: true
       }),
       'top-right'
     );
 
-    // Custom style adjustments for CarNexo palette
     map.current.on('style.load', () => {
       if (!map.current) return;
 
-      // Adjust fog for atmosphere
       map.current.setFog({
-        color: 'hsl(220, 20%, 7%)', // --background
-        'high-color': 'hsl(220, 25%, 12%)', // --card
+        color: 'hsl(220, 20%, 7%)',
+        'high-color': 'hsl(220, 25%, 12%)',
         'horizon-blend': 0.1,
       });
 
@@ -86,65 +142,117 @@ export function Map({
           type: 'fill-extrusion',
           minzoom: 15,
           paint: {
-            'fill-extrusion-color': 'hsl(220, 25%, 15%)',
-            'fill-extrusion-height': [
-              'interpolate',
-              ['linear'],
-              ['zoom'],
-              15,
-              0,
-              15.05,
-              ['get', 'height']
-            ],
-            'fill-extrusion-base': [
-              'interpolate',
-              ['linear'],
-              ['zoom'],
-              15,
-              0,
-              15.05,
-              ['get', 'min_height']
-            ],
+            'fill-extrusion-color': 'hsl(220, 25%, 18%)',
+            'fill-extrusion-height': ['interpolate', ['linear'], ['zoom'], 15, 0, 15.05, ['get', 'height']],
+            'fill-extrusion-base': ['interpolate', ['linear'], ['zoom'], 15, 0, 15.05, ['get', 'min_height']],
             'fill-extrusion-opacity': 0.6
           }
         },
         labelLayerId
       );
-    });
 
-    // Add markers
-    markers.forEach((marker) => {
-      const el = document.createElement('div');
-      el.className = 'carnexo-marker';
-      el.innerHTML = `
-        <div class="w-10 h-10 rounded-full bg-primary flex items-center justify-center shadow-orange cursor-pointer transform hover:scale-110 transition-transform">
-          <svg class="w-5 h-5 text-primary-foreground" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/>
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/>
-          </svg>
-        </div>
-        ${marker.price ? `<div class="absolute -bottom-6 left-1/2 -translate-x-1/2 bg-card px-2 py-0.5 rounded text-xs font-semibold text-foreground whitespace-nowrap shadow-card">${marker.price}</div>` : ''}
-      `;
-
-      const mapboxMarker = new mapboxgl.Marker(el)
-        .setLngLat([marker.lng, marker.lat])
-        .addTo(map.current!);
-
-      if (marker.title) {
-        const popup = new mapboxgl.Popup({ offset: 25 })
-          .setHTML(`<div class="text-sm font-medium">${marker.title}</div>`);
-        mapboxMarker.setPopup(popup);
-      }
-
-      markersRef.current.push(mapboxMarker);
+      setMapLoaded(true);
     });
 
     return () => {
-      markersRef.current.forEach(marker => marker.remove());
-      markersRef.current = [];
       map.current?.remove();
+      map.current = null;
     };
-  }, [center, zoom, markers]);
+  }, []);
+
+  // Update markers when listings change
+  useEffect(() => {
+    if (!map.current || !mapLoaded) return;
+
+    // Clear existing markers
+    markersRef.current.forEach(marker => marker.remove());
+    markersRef.current = [];
+
+    // Add new markers
+    listings.forEach((listing) => {
+      if (!listing.location?.lat || !listing.location?.lng) return;
+
+      const el = createMarkerElement(listing);
+      
+      el.addEventListener('click', () => {
+        onMarkerClick?.(listing);
+      });
+
+      const marker = new mapboxgl.Marker({ element: el, anchor: 'bottom' })
+        .setLngLat([listing.location.lng, listing.location.lat])
+        .addTo(map.current!);
+
+      markersRef.current.push(marker);
+    });
+  }, [listings, mapLoaded, createMarkerElement, onMarkerClick]);
+
+  // Draw route when destination is set
+  useEffect(() => {
+    if (!map.current || !mapLoaded || !showRoute || !destination || !userLocation) return;
+
+    const drawRoute = async () => {
+      try {
+        const response = await fetch(
+          `https://api.mapbox.com/directions/v5/mapbox/driving/${userLocation[0]},${userLocation[1]};${destination[0]},${destination[1]}?geometries=geojson&overview=full&access_token=${MAPBOX_TOKEN}`
+        );
+        
+        const data = await response.json();
+        
+        if (data.routes && data.routes[0]) {
+          const route = data.routes[0].geometry;
+
+          // Remove existing route layer if present
+          if (map.current!.getSource('route')) {
+            map.current!.removeLayer('route');
+            map.current!.removeSource('route');
+          }
+
+          map.current!.addSource('route', {
+            type: 'geojson',
+            data: {
+              type: 'Feature',
+              properties: {},
+              geometry: route
+            }
+          });
+
+          map.current!.addLayer({
+            id: 'route',
+            type: 'line',
+            source: 'route',
+            layout: {
+              'line-join': 'round',
+              'line-cap': 'round'
+            },
+            paint: {
+              'line-color': 'hsl(24, 100%, 50%)',
+              'line-width': 6,
+              'line-opacity': 0.8
+            }
+          });
+
+          // Fit bounds to show the entire route
+          const coordinates = route.coordinates;
+          const bounds = coordinates.reduce((bounds: mapboxgl.LngLatBounds, coord: [number, number]) => {
+            return bounds.extend(coord);
+          }, new mapboxgl.LngLatBounds(coordinates[0], coordinates[0]));
+
+          map.current!.fitBounds(bounds, { padding: 80 });
+        }
+      } catch (error) {
+        console.error('Error fetching route:', error);
+      }
+    };
+
+    drawRoute();
+  }, [showRoute, destination, userLocation, mapLoaded]);
+
+  // Update center when it changes
+  useEffect(() => {
+    if (map.current && mapLoaded) {
+      map.current.flyTo({ center, zoom, duration: 1500 });
+    }
+  }, [center, zoom, mapLoaded]);
 
   return (
     <div className={`relative ${className}`}>
@@ -152,6 +260,42 @@ export function Map({
       <div className="absolute inset-0 pointer-events-none rounded-2xl ring-1 ring-inset ring-border/20" />
     </div>
   );
+}
+
+// Utility function to get travel time
+export async function getTravelTime(
+  origin: [number, number],
+  destination: [number, number]
+): Promise<{ driving: string; walking: string; distance: string } | null> {
+  try {
+    const response = await fetch(
+      `https://api.mapbox.com/directions/v5/mapbox/driving/${origin[0]},${origin[1]};${destination[0]},${destination[1]}?access_token=${MAPBOX_TOKEN}`
+    );
+    
+    const data = await response.json();
+    
+    if (data.routes && data.routes[0]) {
+      const durationSec = data.routes[0].duration;
+      const distanceM = data.routes[0].distance;
+      
+      const drivingMins = Math.round(durationSec / 60);
+      const walkingMins = Math.round((distanceM / 80)); // ~80m per minute walking
+      
+      const distanceKm = distanceM / 1000;
+      const distanceMiles = distanceKm * 0.621371;
+      
+      return {
+        driving: drivingMins < 60 ? `${drivingMins} min` : `${Math.round(drivingMins / 60)}h ${drivingMins % 60}m`,
+        walking: walkingMins < 60 ? `${walkingMins} min` : `${Math.round(walkingMins / 60)}h ${walkingMins % 60}m`,
+        distance: distanceMiles < 10 ? `${distanceMiles.toFixed(1)} mi` : `${Math.round(distanceMiles)} mi`
+      };
+    }
+    
+    return null;
+  } catch (error) {
+    console.error('Error getting travel time:', error);
+    return null;
+  }
 }
 
 export default Map;
