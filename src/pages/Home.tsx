@@ -123,7 +123,7 @@ export default function Home() {
         </section>
 
         {/* Map Preview */}
-        <MapPreview listingCount={450} />
+        <MapPreview listingCount={mockListings.length} onClick={() => navigate('/map')} />
 
         {/* Just Arrived */}
         <section>
