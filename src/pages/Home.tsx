@@ -22,9 +22,12 @@ export default function Home() {
 
   const unreadCount = mockNotifications.filter(n => !n.isRead).length;
 
-  const featuredListings = mockListings.filter(
-    l => l.isPremium || l.type === 'vehicle'
-  ).slice(0, 3);
+  const featuredListings = mockListings.filter(l => {
+    if (segment === 'vehicles') {
+      return (l.isPremium || l.type === 'vehicle' || l.type === 'part');
+    }
+    return l.type === 'service';
+  }).slice(0, 3);
 
   const justArrivedListings = mockListings.filter(l => 
     segment === 'vehicles' ? ['vehicle', 'part'].includes(l.type) : l.type === 'service'
