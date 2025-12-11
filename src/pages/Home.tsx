@@ -1,5 +1,6 @@
 import { useState } from 'react';
-import { Flame, ChevronRight, Bell } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
+import { Flame, ChevronRight, Bell, User } from 'lucide-react';
 import { BottomNav } from '@/components/BottomNav';
 import { SearchBar } from '@/components/SearchBar';
 import { SegmentedControl } from '@/components/SegmentedControl';
@@ -7,6 +8,8 @@ import { CategoryFilter } from '@/components/CategoryFilter';
 import { ListingCard } from '@/components/ListingCard';
 import { MapPreview } from '@/components/MapPreview';
 import { NotificationsPanel } from '@/components/NotificationsPanel';
+import { Button } from '@/components/ui/button';
+import { useAuth } from '@/hooks/useAuth';
 import { mockListings, categories, mockNotifications } from '@/data/mockData';
 import logo from '@/assets/logo.png';
 
@@ -16,6 +19,8 @@ const segments = [
 ];
 
 export default function Home() {
+  const navigate = useNavigate();
+  const { user } = useAuth();
   const [segment, setSegment] = useState('vehicles');
   const [category, setCategory] = useState('all');
   const [isNotificationsOpen, setIsNotificationsOpen] = useState(false);
@@ -41,17 +46,27 @@ export default function Home() {
           <div className="flex items-center justify-between">
             <div className="w-10" />
             <img src={logo} alt="CarNexo" className="h-10 w-10 rounded-xl" />
-            <button 
-              onClick={() => setIsNotificationsOpen(true)}
-              className="w-10 h-10 flex items-center justify-center text-foreground relative"
-            >
-              <Bell className="w-6 h-6" />
-              {unreadCount > 0 && (
-                <span className="absolute top-1 right-1 w-4 h-4 bg-primary text-primary-foreground text-[10px] font-bold rounded-full flex items-center justify-center">
-                  {unreadCount}
-                </span>
-              )}
-            </button>
+            {user ? (
+              <button 
+                onClick={() => setIsNotificationsOpen(true)}
+                className="w-10 h-10 flex items-center justify-center text-foreground relative"
+              >
+                <Bell className="w-6 h-6" />
+                {unreadCount > 0 && (
+                  <span className="absolute top-1 right-1 w-4 h-4 bg-primary text-primary-foreground text-[10px] font-bold rounded-full flex items-center justify-center">
+                    {unreadCount}
+                  </span>
+                )}
+              </button>
+            ) : (
+              <Button 
+                variant="carnexo" 
+                size="sm"
+                onClick={() => navigate('/auth')}
+              >
+                Sign In
+              </Button>
+            )}
           </div>
           <SegmentedControl
             options={segments}
