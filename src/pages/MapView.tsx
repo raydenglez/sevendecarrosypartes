@@ -1,88 +1,15 @@
-import { useState, useEffect, useCallback, useMemo } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { ArrowLeft, Filter, List, Layers, Search, X, Navigation, Loader2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Map, getTravelTime } from '@/components/Map';
 import { MapBusinessCard } from '@/components/MapBusinessCard';
+import { mockListings } from '@/data/mockData';
 import { ListingCard } from '@/components/ListingCard';
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from '@/components/ui/sheet';
 import { Listing } from '@/types';
 import { Badge } from '@/components/ui/badge';
-import { supabase } from '@/integrations/supabase/client';
-import { useQuery } from '@tanstack/react-query';
-import { Tables } from '@/integrations/supabase/types';
-
-// Transform Supabase data to Listing type
-function transformListing(
-  dbListing: Tables<'listings'>,
-  profile?: Tables<'profiles'> | null,
-  vehicleAttrs?: Tables<'vehicle_attributes'> | null,
-  partAttrs?: Tables<'part_attributes'> | null,
-  serviceAttrs?: Tables<'service_attributes'> | null
-): Listing | null {
-  if (!dbListing.location_lat || !dbListing.location_lng) return null;
-
-  return {
-    id: dbListing.id,
-    ownerId: dbListing.owner_id,
-    owner: profile ? {
-      id: profile.id,
-      name: profile.full_name || 'Unknown',
-      email: profile.email || '',
-      phone: profile.phone || undefined,
-      location: {
-        lat: profile.location_lat || 0,
-        lng: profile.location_lng || 0,
-        city: profile.location_city || '',
-        state: profile.location_state || undefined,
-      },
-      avatarUrl: profile.avatar_url || undefined,
-      type: profile.user_type === 'dealer' ? 'pro_seller' : profile.user_type === 'service_provider' ? 'service_provider' : 'user',
-      ratingAvg: profile.rating_avg || 0,
-      totalReviews: profile.rating_count || 0,
-      memberSince: profile.created_at ? new Date(profile.created_at).getFullYear().toString() : '',
-      isVerified: profile.is_verified || false,
-      badges: [],
-    } : undefined,
-    type: dbListing.type,
-    status: dbListing.status === 'active' ? 'active' : dbListing.status === 'sold' ? 'sold' : 'inactive',
-    title: dbListing.title,
-    description: dbListing.description || '',
-    price: dbListing.price || 0,
-    location: {
-      lat: dbListing.location_lat,
-      lng: dbListing.location_lng,
-      city: dbListing.location_city || '',
-      state: dbListing.location_state || undefined,
-    },
-    images: dbListing.images || [],
-    isPremium: dbListing.is_premium || false,
-    isNegotiable: dbListing.is_negotiable || false,
-    createdAt: dbListing.created_at || new Date().toISOString(),
-    updatedAt: dbListing.updated_at || new Date().toISOString(),
-    vehicleAttributes: vehicleAttrs ? {
-      make: vehicleAttrs.make || '',
-      model: vehicleAttrs.model || '',
-      year: vehicleAttrs.year || 0,
-      mileage: vehicleAttrs.mileage || 0,
-      vin: vehicleAttrs.vin || undefined,
-      fuelType: (vehicleAttrs.fuel_type as any) || 'gasoline',
-      transmission: (vehicleAttrs.transmission as any) || 'automatic',
-      color: vehicleAttrs.color || undefined,
-    } : undefined,
-    partAttributes: partAttrs ? {
-      category: partAttrs.part_category || '',
-      compatibilityTags: [...(partAttrs.compatible_makes || []), ...(partAttrs.compatible_models || [])],
-      condition: (partAttrs.condition as any) || 'good',
-    } : undefined,
-    serviceAttributes: serviceAttrs ? {
-      serviceCategory: serviceAttrs.service_category || '',
-      priceStructure: serviceAttrs.price_structure || undefined,
-      availability: serviceAttrs.availability || undefined,
-    } : undefined,
-  };
-}
 
 export default function MapView() {
   const navigate = useNavigate();
@@ -95,66 +22,6 @@ export default function MapView() {
   const [filterType, setFilterType] = useState<'all' | 'vehicle' | 'part' | 'service'>('all');
   const [showRoute, setShowRoute] = useState(false);
   const [mapCenter, setMapCenter] = useState<[number, number]>([-122.4194, 37.7749]);
-
-  // Fetch listings from Supabase
-  const { data: listings = [], isLoading: isLoadingListings } = useQuery({
-    queryKey: ['map-listings'],
-    queryFn: async () => {
-      // Fetch all active listings with location data
-      const { data: dbListings, error: listingsError } = await supabase
-        .from('listings')
-        .select('*')
-        .eq('status', 'active')
-        .not('location_lat', 'is', null)
-        .not('location_lng', 'is', null);
-
-      if (listingsError) throw listingsError;
-      if (!dbListings?.length) return [];
-
-      // Get unique owner IDs
-      const ownerIds = [...new Set(dbListings.map(l => l.owner_id))];
-      
-      // Fetch profiles for all owners
-      const { data: profiles } = await supabase
-        .from('profiles')
-        .select('*')
-        .in('id', ownerIds);
-
-      // Fetch vehicle attributes
-      const vehicleListingIds = dbListings.filter(l => l.type === 'vehicle').map(l => l.id);
-      const { data: vehicleAttrs } = vehicleListingIds.length 
-        ? await supabase.from('vehicle_attributes').select('*').in('listing_id', vehicleListingIds)
-        : { data: [] };
-
-      // Fetch part attributes
-      const partListingIds = dbListings.filter(l => l.type === 'part').map(l => l.id);
-      const { data: partAttrs } = partListingIds.length
-        ? await supabase.from('part_attributes').select('*').in('listing_id', partListingIds)
-        : { data: [] };
-
-      // Fetch service attributes
-      const serviceListingIds = dbListings.filter(l => l.type === 'service').map(l => l.id);
-      const { data: serviceAttrs } = serviceListingIds.length
-        ? await supabase.from('service_attributes').select('*').in('listing_id', serviceListingIds)
-        : { data: [] };
-
-      // Transform listings
-      const transformed: Listing[] = [];
-      for (const listing of dbListings) {
-        const profile = profiles?.find(p => p.id === listing.owner_id);
-        const vehicleAttr = vehicleAttrs?.find(v => v.listing_id === listing.id);
-        const partAttr = partAttrs?.find(p => p.listing_id === listing.id);
-        const serviceAttr = serviceAttrs?.find(s => s.listing_id === listing.id);
-
-        const transformedListing = transformListing(listing, profile, vehicleAttr, partAttr, serviceAttr);
-        if (transformedListing) {
-          transformed.push(transformedListing);
-        }
-      }
-
-      return transformed;
-    },
-  });
 
   // Get user location on mount
   useEffect(() => {
@@ -178,14 +45,12 @@ export default function MapView() {
   }, []);
 
   // Filter listings
-  const filteredListings = useMemo(() => {
-    return listings.filter(listing => {
-      const matchesSearch = listing.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-                           listing.location.city.toLowerCase().includes(searchQuery.toLowerCase());
-      const matchesType = filterType === 'all' || listing.type === filterType;
-      return matchesSearch && matchesType && listing.location?.lat && listing.location?.lng;
-    });
-  }, [listings, searchQuery, filterType]);
+  const filteredListings = mockListings.filter(listing => {
+    const matchesSearch = listing.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+                         listing.location.city.toLowerCase().includes(searchQuery.toLowerCase());
+    const matchesType = filterType === 'all' || listing.type === filterType;
+    return matchesSearch && matchesType && listing.location?.lat && listing.location?.lng;
+  });
 
   // Handle marker click
   const handleMarkerClick = useCallback(async (listing: Listing) => {
@@ -297,12 +162,12 @@ export default function MapView() {
         className="flex-1"
       />
 
-      {/* Loading Indicator */}
-      {(isLoadingLocation || isLoadingListings) && (
+      {/* Loading Location Indicator */}
+      {isLoadingLocation && (
         <div className="absolute top-32 left-1/2 -translate-x-1/2 z-10">
           <div className="flex items-center gap-2 bg-card/90 backdrop-blur-sm px-4 py-2 rounded-full shadow-card">
             <Loader2 className="w-4 h-4 animate-spin text-primary" />
-            <span className="text-sm">{isLoadingLocation ? 'Getting location...' : 'Loading listings...'}</span>
+            <span className="text-sm">Getting location...</span>
           </div>
         </div>
       )}
