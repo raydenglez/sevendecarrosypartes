@@ -6,7 +6,8 @@ import { SegmentedControl } from '@/components/SegmentedControl';
 import { CategoryFilter } from '@/components/CategoryFilter';
 import { ListingCard } from '@/components/ListingCard';
 import { MapPreview } from '@/components/MapPreview';
-import { mockListings, categories } from '@/data/mockData';
+import { NotificationsPanel } from '@/components/NotificationsPanel';
+import { mockListings, categories, mockNotifications } from '@/data/mockData';
 import logo from '@/assets/logo.png';
 
 const segments = [
@@ -17,6 +18,9 @@ const segments = [
 export default function Home() {
   const [segment, setSegment] = useState('vehicles');
   const [category, setCategory] = useState('all');
+  const [isNotificationsOpen, setIsNotificationsOpen] = useState(false);
+
+  const unreadCount = mockNotifications.filter(n => !n.isRead).length;
 
   const featuredListings = mockListings.filter(
     l => l.isPremium || l.type === 'vehicle'
@@ -34,8 +38,16 @@ export default function Home() {
           <div className="flex items-center justify-between">
             <div className="w-10" />
             <img src={logo} alt="CarNexo" className="h-10 w-10 rounded-xl" />
-            <button className="w-10 h-10 flex items-center justify-center text-foreground">
+            <button 
+              onClick={() => setIsNotificationsOpen(true)}
+              className="w-10 h-10 flex items-center justify-center text-foreground relative"
+            >
               <Bell className="w-6 h-6" />
+              {unreadCount > 0 && (
+                <span className="absolute top-1 right-1 w-4 h-4 bg-primary text-primary-foreground text-[10px] font-bold rounded-full flex items-center justify-center">
+                  {unreadCount}
+                </span>
+              )}
             </button>
           </div>
           <SegmentedControl
@@ -100,6 +112,12 @@ export default function Home() {
       </main>
 
       <BottomNav />
+      
+      <NotificationsPanel 
+        isOpen={isNotificationsOpen}
+        onClose={() => setIsNotificationsOpen(false)}
+        notifications={mockNotifications}
+      />
     </div>
   );
 }
