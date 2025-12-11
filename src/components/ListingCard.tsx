@@ -6,13 +6,60 @@ import { CSSProperties } from 'react';
 
 interface ListingCardProps {
   listing: Listing;
-  variant?: 'featured' | 'list';
+  variant?: 'featured' | 'list' | 'grid';
   className?: string;
   style?: CSSProperties;
 }
 
 export function ListingCard({ listing, variant = 'featured', className, style }: ListingCardProps) {
-  const isFeatured = variant === 'featured';
+  // Grid variant - Facebook Marketplace style
+  if (variant === 'grid') {
+    return (
+      <Link
+        to={`/listing/${listing.id}`}
+        className={cn(
+          "block bg-card rounded-xl overflow-hidden transition-all duration-200 hover:bg-card-elevated",
+          className
+        )}
+        style={style}
+      >
+        <div className="relative aspect-square overflow-hidden">
+          <img
+            src={listing.images[0]}
+            alt={listing.title}
+            className="w-full h-full object-cover"
+          />
+          {listing.isPremium && (
+            <span className="absolute top-2 left-2 carnexo-badge-premium text-[10px] px-1.5 py-0.5">
+              PREMIUM
+            </span>
+          )}
+          {listing.type === 'service' && (
+            <span className="absolute top-2 left-2 carnexo-badge-service text-[10px] px-1.5 py-0.5">
+              SERVICE
+            </span>
+          )}
+          <button 
+            className="absolute top-2 right-2 p-1.5 rounded-full bg-background/30 backdrop-blur-sm text-foreground hover:bg-background/50 transition-all"
+            onClick={(e) => e.preventDefault()}
+          >
+            <Heart className="w-4 h-4" />
+          </button>
+        </div>
+        <div className="p-2.5">
+          <p className="text-primary font-bold text-base">
+            {listing.type === 'service' && listing.serviceAttributes?.priceStructure === 'Starting from' && 'From '}
+            ${listing.price.toLocaleString()}
+          </p>
+          <h3 className="font-medium text-foreground text-sm truncate mt-0.5">{listing.title}</h3>
+          <div className="flex items-center gap-1 text-muted-foreground text-xs mt-1">
+            <MapPin className="w-3 h-3" />
+            <span>{listing.location.city} • {listing.distance} mi</span>
+          </div>
+        </div>
+      </Link>
+    );
+  }
 
   if (variant === 'list') {
     return (

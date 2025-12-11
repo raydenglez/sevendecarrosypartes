@@ -115,17 +115,22 @@ export default function Home() {
         {/* Just Arrived */}
         <section>
           <h2 className="text-lg font-bold text-foreground mb-4">Just Arrived</h2>
-          <div className="space-y-3">
-            {justArrivedListings.map((listing, index) => (
+          <div className="grid grid-cols-2 gap-2">
+            {justArrivedListings.slice(0, 6).map((listing, index) => (
               <ListingCard
                 key={listing.id}
                 listing={listing}
-                variant="list"
+                variant="grid"
                 className="animate-fade-in"
                 style={{ animationDelay: `${index * 50}ms` } as React.CSSProperties}
               />
             ))}
           </div>
+          {justArrivedListings.length > 6 && (
+            <button className="w-full mt-4 py-3 text-sm font-medium text-primary hover:text-primary/80 transition-colors">
+              See more listings
+            </button>
+          )}
         </section>
       </main>
 
