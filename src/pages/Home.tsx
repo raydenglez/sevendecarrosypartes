@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Flame, ChevronRight } from 'lucide-react';
+import { Flame, ChevronRight, Bell } from 'lucide-react';
 import { BottomNav } from '@/components/BottomNav';
 import { SearchBar } from '@/components/SearchBar';
 import { SegmentedControl } from '@/components/SegmentedControl';
@@ -31,8 +31,12 @@ export default function Home() {
       {/* Header */}
       <header className="sticky top-0 z-40 bg-background/95 backdrop-blur-xl safe-top">
         <div className="px-4 pt-4 pb-3 space-y-4">
-          <div className="flex justify-center">
+          <div className="flex items-center justify-between">
+            <div className="w-10" />
             <img src={logo} alt="CarNexo" className="h-10 w-10 rounded-xl" />
+            <button className="w-10 h-10 flex items-center justify-center text-foreground">
+              <Bell className="w-6 h-6" />
+            </button>
           </div>
           <SegmentedControl
             options={segments}
