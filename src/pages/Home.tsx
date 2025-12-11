@@ -79,11 +79,13 @@ export default function Home() {
               </Button>
             )}
           </div>
-          <SegmentedControl
-            options={segments}
-            selected={segment}
-            onSelect={setSegment}
-          />
+          <div className="flex justify-center">
+            <SegmentedControl
+              options={segments}
+              selected={segment}
+              onSelect={setSegment}
+            />
+          </div>
           <SearchBar />
           <CategoryFilter
             categories={categories}
