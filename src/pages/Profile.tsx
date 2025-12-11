@@ -1,3 +1,5 @@
+import { useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { 
   Settings,
   MapPin,
@@ -14,20 +16,55 @@ import {
   Bell,
   HelpCircle,
   LogOut,
-  ChevronRight
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { StatCard } from '@/components/StatCard';
 import { SettingsItem } from '@/components/SettingsItem';
 import { BottomNav } from '@/components/BottomNav';
+import { useAuth } from '@/hooks/useAuth';
+import { useToast } from '@/hooks/use-toast';
 import { currentUser, userStats, mockListings } from '@/data/mockData';
-import { cn } from '@/lib/utils';
 
 export default function Profile() {
+  const navigate = useNavigate();
+  const { user, loading, signOut } = useAuth();
+  const { toast } = useToast();
+
+  // Redirect to auth if not logged in
+  useEffect(() => {
+    if (!loading && !user) {
+      navigate('/auth');
+    }
+  }, [user, loading, navigate]);
+
+  const handleSignOut = async () => {
+    await signOut();
+    toast({
+      title: "Signed out",
+      description: "You have been signed out successfully.",
+    });
+    navigate('/');
+  };
+
+  // Use real user data if available, fallback to mock
+  const displayUser = user ? {
+    name: user.user_metadata?.full_name || user.email?.split('@')[0] || 'User',
+    avatarUrl: user.user_metadata?.avatar_url || currentUser.avatarUrl,
+    location: currentUser.location,
+    memberSince: new Date(user.created_at).toLocaleDateString('en-US', { month: 'long', year: 'numeric' }),
+  } : currentUser;
+
   const userListings = mockListings.filter(l => l.ownerId === currentUser.id);
   const vehicleCount = userListings.filter(l => l.type === 'vehicle').length;
   const partsCount = userListings.filter(l => l.type === 'part').length;
-  const serviceCount = userListings.filter(l => l.type === 'service').length;
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-background flex items-center justify-center">
+        <div className="animate-pulse text-muted-foreground">Loading...</div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-background pb-24">
@@ -44,21 +81,21 @@ export default function Profile() {
         <div className="flex flex-col items-center mt-6">
           <div className="relative">
             <img
-              src={currentUser.avatarUrl}
-              alt={currentUser.name}
+              src={displayUser.avatarUrl}
+              alt={displayUser.name}
               className="w-24 h-24 rounded-full object-cover border-4 border-card"
             />
             <button className="absolute bottom-0 right-0 w-8 h-8 rounded-full bg-secondary flex items-center justify-center shadow-blue">
               <Edit className="w-4 h-4 text-secondary-foreground" />
             </button>
           </div>
-          <h2 className="text-xl font-bold text-foreground mt-4">{currentUser.name}</h2>
+          <h2 className="text-xl font-bold text-foreground mt-4">{displayUser.name}</h2>
           <div className="flex items-center gap-1 text-sm text-muted-foreground mt-1">
             <MapPin className="w-4 h-4" />
-            <span>{currentUser.location.city}, {currentUser.location.state}</span>
+            <span>{displayUser.location.city}, {displayUser.location.state}</span>
           </div>
           <p className="text-sm text-muted-foreground">
-            Member since {currentUser.memberSince}
+            Member since {displayUser.memberSince}
           </p>
 
           {/* Action Buttons */}
@@ -209,6 +246,7 @@ export default function Profile() {
         <Button 
           variant="ghost" 
           className="w-full text-primary hover:text-primary hover:bg-primary/10"
+          onClick={handleSignOut}
         >
           <LogOut className="w-5 h-5 mr-2" />
           Log Out
