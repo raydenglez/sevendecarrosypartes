@@ -7,6 +7,7 @@ import { CategoryFilter } from '@/components/CategoryFilter';
 import { ListingCard } from '@/components/ListingCard';
 import { MapPreview } from '@/components/MapPreview';
 import { mockListings, categories } from '@/data/mockData';
+import logo from '@/assets/logo.png';
 
 const segments = [
   { id: 'vehicles', label: 'Vehicles & Parts' },
@@ -30,6 +31,9 @@ export default function Home() {
       {/* Header */}
       <header className="sticky top-0 z-40 bg-background/95 backdrop-blur-xl safe-top">
         <div className="px-4 pt-4 pb-3 space-y-4">
+          <div className="flex justify-center">
+            <img src={logo} alt="CarNexo" className="h-10 w-10 rounded-xl" />
+          </div>
           <SegmentedControl
             options={segments}
             selected={segment}
