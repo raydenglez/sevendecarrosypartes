@@ -24,7 +24,7 @@ export function SegmentedControl({
             className={cn(
               "flex-1 px-6 py-2.5 rounded-full text-sm font-semibold transition-all duration-200",
               isSelected
-                ? "bg-primary text-primary-foreground shadow-orange"
+                ? "bg-secondary text-secondary-foreground shadow-sm"
                 : "text-muted-foreground hover:text-foreground"
             )}
           >
