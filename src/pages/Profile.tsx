@@ -37,13 +37,6 @@ export default function Profile() {
     });
     navigate('/');
   };
-    await signOut();
-    toast({
-      title: "Signed out",
-      description: "You have been signed out successfully.",
-    });
-    navigate('/');
-  };
 
   // Use real user data if available, fallback to mock
   const displayUser = user ? {
