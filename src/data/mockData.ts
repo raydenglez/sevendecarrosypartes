@@ -323,3 +323,38 @@ export const categories = [
   { id: 'bodywork', label: 'Bodywork', icon: 'Paintbrush' },
   { id: 'tires', label: 'Tires', icon: 'Circle' },
 ];
+
+export const mockNotifications = [
+  {
+    id: 'notif-1',
+    userName: 'Carlos Méndez',
+    userAvatar: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=200&h=200&fit=crop&crop=face',
+    message: 'Is the Toyota Corolla still available? I\'m very interested!',
+    time: '2 min ago',
+    isRead: false,
+  },
+  {
+    id: 'notif-2',
+    userName: 'Maria Santos',
+    userAvatar: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=200&h=200&fit=crop&crop=face',
+    message: 'Can we schedule a test drive for the RAV4 tomorrow at 3pm?',
+    time: '15 min ago',
+    isRead: false,
+  },
+  {
+    id: 'notif-3',
+    userName: 'James Wilson',
+    userAvatar: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=200&h=200&fit=crop&crop=face',
+    message: 'Thanks for the quick response! I\'ll come by this weekend.',
+    time: '1 hour ago',
+    isRead: true,
+  },
+  {
+    id: 'notif-4',
+    userName: 'Sofia Rodriguez',
+    userAvatar: 'https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=200&h=200&fit=crop&crop=face',
+    message: 'What\'s the lowest price you can do for the BMW exhaust?',
+    time: '3 hours ago',
+    isRead: true,
+  },
+];
