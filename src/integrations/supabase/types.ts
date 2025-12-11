@@ -14,7 +14,341 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      favorites: {
+        Row: {
+          created_at: string | null
+          id: string
+          listing_id: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string | null
+          id?: string
+          listing_id: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string | null
+          id?: string
+          listing_id?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "favorites_listing_id_fkey"
+            columns: ["listing_id"]
+            isOneToOne: false
+            referencedRelation: "listings"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "favorites_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      listings: {
+        Row: {
+          created_at: string | null
+          description: string | null
+          id: string
+          images: string[] | null
+          is_negotiable: boolean | null
+          is_premium: boolean | null
+          location_city: string | null
+          location_lat: number | null
+          location_lng: number | null
+          location_state: string | null
+          owner_id: string
+          price: number | null
+          status: Database["public"]["Enums"]["listing_status"] | null
+          title: string
+          type: Database["public"]["Enums"]["listing_type"]
+          updated_at: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          description?: string | null
+          id?: string
+          images?: string[] | null
+          is_negotiable?: boolean | null
+          is_premium?: boolean | null
+          location_city?: string | null
+          location_lat?: number | null
+          location_lng?: number | null
+          location_state?: string | null
+          owner_id: string
+          price?: number | null
+          status?: Database["public"]["Enums"]["listing_status"] | null
+          title: string
+          type: Database["public"]["Enums"]["listing_type"]
+          updated_at?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          description?: string | null
+          id?: string
+          images?: string[] | null
+          is_negotiable?: boolean | null
+          is_premium?: boolean | null
+          location_city?: string | null
+          location_lat?: number | null
+          location_lng?: number | null
+          location_state?: string | null
+          owner_id?: string
+          price?: number | null
+          status?: Database["public"]["Enums"]["listing_status"] | null
+          title?: string
+          type?: Database["public"]["Enums"]["listing_type"]
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "listings_owner_id_fkey"
+            columns: ["owner_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      part_attributes: {
+        Row: {
+          brand: string | null
+          compatible_makes: string[] | null
+          compatible_models: string[] | null
+          compatible_years: unknown
+          condition: Database["public"]["Enums"]["vehicle_condition"] | null
+          id: string
+          listing_id: string
+          part_category: string | null
+        }
+        Insert: {
+          brand?: string | null
+          compatible_makes?: string[] | null
+          compatible_models?: string[] | null
+          compatible_years?: unknown
+          condition?: Database["public"]["Enums"]["vehicle_condition"] | null
+          id?: string
+          listing_id: string
+          part_category?: string | null
+        }
+        Update: {
+          brand?: string | null
+          compatible_makes?: string[] | null
+          compatible_models?: string[] | null
+          compatible_years?: unknown
+          condition?: Database["public"]["Enums"]["vehicle_condition"] | null
+          id?: string
+          listing_id?: string
+          part_category?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "part_attributes_listing_id_fkey"
+            columns: ["listing_id"]
+            isOneToOne: true
+            referencedRelation: "listings"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      profiles: {
+        Row: {
+          avatar_url: string | null
+          created_at: string | null
+          email: string | null
+          full_name: string | null
+          id: string
+          is_verified: boolean | null
+          location_city: string | null
+          location_lat: number | null
+          location_lng: number | null
+          location_state: string | null
+          phone: string | null
+          rating_avg: number | null
+          rating_count: number | null
+          updated_at: string | null
+          user_type: Database["public"]["Enums"]["user_type"] | null
+        }
+        Insert: {
+          avatar_url?: string | null
+          created_at?: string | null
+          email?: string | null
+          full_name?: string | null
+          id: string
+          is_verified?: boolean | null
+          location_city?: string | null
+          location_lat?: number | null
+          location_lng?: number | null
+          location_state?: string | null
+          phone?: string | null
+          rating_avg?: number | null
+          rating_count?: number | null
+          updated_at?: string | null
+          user_type?: Database["public"]["Enums"]["user_type"] | null
+        }
+        Update: {
+          avatar_url?: string | null
+          created_at?: string | null
+          email?: string | null
+          full_name?: string | null
+          id?: string
+          is_verified?: boolean | null
+          location_city?: string | null
+          location_lat?: number | null
+          location_lng?: number | null
+          location_state?: string | null
+          phone?: string | null
+          rating_avg?: number | null
+          rating_count?: number | null
+          updated_at?: string | null
+          user_type?: Database["public"]["Enums"]["user_type"] | null
+        }
+        Relationships: []
+      }
+      reviews: {
+        Row: {
+          accuracy_rating: number | null
+          comment: string | null
+          communication_rating: number | null
+          created_at: string | null
+          id: string
+          listing_id: string
+          rating: number
+          reviewer_id: string
+          service_rating: number | null
+        }
+        Insert: {
+          accuracy_rating?: number | null
+          comment?: string | null
+          communication_rating?: number | null
+          created_at?: string | null
+          id?: string
+          listing_id: string
+          rating: number
+          reviewer_id: string
+          service_rating?: number | null
+        }
+        Update: {
+          accuracy_rating?: number | null
+          comment?: string | null
+          communication_rating?: number | null
+          created_at?: string | null
+          id?: string
+          listing_id?: string
+          rating?: number
+          reviewer_id?: string
+          service_rating?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "reviews_listing_id_fkey"
+            columns: ["listing_id"]
+            isOneToOne: false
+            referencedRelation: "listings"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "reviews_reviewer_id_fkey"
+            columns: ["reviewer_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      service_attributes: {
+        Row: {
+          availability: string[] | null
+          id: string
+          listing_id: string
+          price_structure: string | null
+          service_category:
+            | Database["public"]["Enums"]["service_category"]
+            | null
+        }
+        Insert: {
+          availability?: string[] | null
+          id?: string
+          listing_id: string
+          price_structure?: string | null
+          service_category?:
+            | Database["public"]["Enums"]["service_category"]
+            | null
+        }
+        Update: {
+          availability?: string[] | null
+          id?: string
+          listing_id?: string
+          price_structure?: string | null
+          service_category?:
+            | Database["public"]["Enums"]["service_category"]
+            | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "service_attributes_listing_id_fkey"
+            columns: ["listing_id"]
+            isOneToOne: true
+            referencedRelation: "listings"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      vehicle_attributes: {
+        Row: {
+          color: string | null
+          condition: Database["public"]["Enums"]["vehicle_condition"] | null
+          fuel_type: string | null
+          id: string
+          listing_id: string
+          make: string | null
+          mileage: number | null
+          model: string | null
+          transmission: string | null
+          vin: string | null
+          year: number | null
+        }
+        Insert: {
+          color?: string | null
+          condition?: Database["public"]["Enums"]["vehicle_condition"] | null
+          fuel_type?: string | null
+          id?: string
+          listing_id: string
+          make?: string | null
+          mileage?: number | null
+          model?: string | null
+          transmission?: string | null
+          vin?: string | null
+          year?: number | null
+        }
+        Update: {
+          color?: string | null
+          condition?: Database["public"]["Enums"]["vehicle_condition"] | null
+          fuel_type?: string | null
+          id?: string
+          listing_id?: string
+          make?: string | null
+          mileage?: number | null
+          model?: string | null
+          transmission?: string | null
+          vin?: string | null
+          year?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "vehicle_attributes_listing_id_fkey"
+            columns: ["listing_id"]
+            isOneToOne: true
+            referencedRelation: "listings"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
     }
     Views: {
       [_ in never]: never
@@ -23,7 +357,17 @@ export type Database = {
       [_ in never]: never
     }
     Enums: {
-      [_ in never]: never
+      listing_status: "active" | "sold" | "expired" | "draft"
+      listing_type: "vehicle" | "part" | "service"
+      service_category:
+        | "maintenance"
+        | "bodywork"
+        | "car_wash"
+        | "tires"
+        | "electrical"
+        | "other"
+      user_type: "individual" | "dealer" | "service_provider"
+      vehicle_condition: "new" | "like_new" | "good" | "fair" | "poor"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -150,6 +494,19 @@ export type CompositeTypes<
 
 export const Constants = {
   public: {
-    Enums: {},
+    Enums: {
+      listing_status: ["active", "sold", "expired", "draft"],
+      listing_type: ["vehicle", "part", "service"],
+      service_category: [
+        "maintenance",
+        "bodywork",
+        "car_wash",
+        "tires",
+        "electrical",
+        "other",
+      ],
+      user_type: ["individual", "dealer", "service_provider"],
+      vehicle_condition: ["new", "like_new", "good", "fair", "poor"],
+    },
   },
 } as const
