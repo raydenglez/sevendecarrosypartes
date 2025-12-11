@@ -14,7 +14,7 @@ export function SegmentedControl({
   className,
 }: SegmentedControlProps) {
   return (
-    <div className={cn("flex bg-muted rounded-full p-1", className)}>
+    <div className={cn("flex gap-6 border-b border-border/30", className)}>
       {options.map((option) => {
         const isSelected = selected === option.id;
         return (
@@ -22,13 +22,16 @@ export function SegmentedControl({
             key={option.id}
             onClick={() => onSelect(option.id)}
             className={cn(
-              "flex-1 px-6 py-2.5 rounded-full text-sm font-semibold transition-all duration-300 ease-out",
+              "relative pb-2.5 text-sm font-medium transition-all duration-200",
               isSelected
-                ? "bg-secondary text-secondary-foreground shadow-sm scale-[1.02]"
-                : "text-muted-foreground hover:text-foreground hover:bg-muted/50"
+                ? "text-foreground"
+                : "text-muted-foreground hover:text-foreground/80"
             )}
           >
             {option.label}
+            {isSelected && (
+              <span className="absolute bottom-0 left-0 right-0 h-0.5 bg-primary rounded-full" />
+            )}
           </button>
         );
       })}
