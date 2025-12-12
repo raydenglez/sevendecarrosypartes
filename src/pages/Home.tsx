@@ -42,8 +42,9 @@ export default function Home() {
 
   const searchFilters: SearchFilters = useMemo(() => ({
     query: searchQuery,
+    category,
     ...filters,
-  }), [searchQuery, filters]);
+  }), [searchQuery, category, filters]);
 
   const { listings: nearbyListings, loading: listingsLoading } = useNearbyListings(segment, searchFilters);
   const unreadCount = mockNotifications.filter(n => !n.isRead).length;
