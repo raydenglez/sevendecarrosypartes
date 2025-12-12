@@ -16,6 +16,7 @@ import { useInfiniteScroll } from '@/hooks/useInfiniteScroll';
 import { useNearbyListings, SearchFilters } from '@/hooks/useNearbyListings';
 import { vehicleCategories, serviceCategories, mockNotifications } from '@/data/mockData';
 import { Listing } from '@/types';
+import { LocationPermissionModal } from '@/components/LocationPermissionModal';
 import logo from '@/assets/logo.png';
 
 const segments = [
@@ -46,7 +47,13 @@ export default function Home() {
     ...filters,
   }), [searchQuery, category, filters]);
 
-  const { listings: nearbyListings, loading: listingsLoading } = useNearbyListings(segment, searchFilters);
+  const { 
+    listings: nearbyListings, 
+    loading: listingsLoading, 
+    showLocationModal, 
+    setShowLocationModal, 
+    requestLocation 
+  } = useNearbyListings(segment, searchFilters);
   const unreadCount = mockNotifications.filter(n => !n.isRead).length;
 
   // Transform DB listings to match ListingCard format
@@ -232,6 +239,12 @@ export default function Home() {
         onClose={() => setIsFilterOpen(false)}
         filters={filters}
         onApply={setFilters}
+      />
+      
+      <LocationPermissionModal
+        isOpen={showLocationModal}
+        onClose={() => setShowLocationModal(false)}
+        onRetry={requestLocation}
       />
     </div>
   );

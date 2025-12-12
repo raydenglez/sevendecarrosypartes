@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 
 interface DBListing {
@@ -52,9 +52,10 @@ export function useNearbyListings(segment: 'vehicles' | 'services', filters?: Se
   const [listings, setListings] = useState<DBListing[]>([]);
   const [loading, setLoading] = useState(true);
   const [userLocation, setUserLocation] = useState<{ lat: number; lng: number } | null>(null);
+  const [locationDenied, setLocationDenied] = useState(false);
+  const [showLocationModal, setShowLocationModal] = useState(false);
 
-  // Get user location
-  useEffect(() => {
+  const requestLocation = useCallback(() => {
     if (navigator.geolocation) {
       navigator.geolocation.getCurrentPosition(
         (position) => {
@@ -62,16 +63,25 @@ export function useNearbyListings(segment: 'vehicles' | 'services', filters?: Se
             lat: position.coords.latitude,
             lng: position.coords.longitude,
           });
+          setLocationDenied(false);
+          setShowLocationModal(false);
         },
         () => {
           // Default to San Luis, Argentina if location denied
           setUserLocation({ lat: -33.3, lng: -66.35 });
+          setLocationDenied(true);
+          setShowLocationModal(true);
         }
       );
     } else {
       setUserLocation({ lat: -33.3, lng: -66.35 });
     }
   }, []);
+
+  // Get user location on mount
+  useEffect(() => {
+    requestLocation();
+  }, [requestLocation]);
 
   // Fetch and sort listings
   useEffect(() => {
@@ -166,5 +176,13 @@ export function useNearbyListings(segment: 'vehicles' | 'services', filters?: Se
     fetchListings();
   }, [userLocation, segment, filters?.query, filters?.priceRange, filters?.maxDistance, filters?.minRating, filters?.condition, filters?.category]);
 
-  return { listings, loading, userLocation };
+  return { 
+    listings, 
+    loading, 
+    userLocation, 
+    locationDenied, 
+    showLocationModal, 
+    setShowLocationModal, 
+    requestLocation 
+  };
 }
