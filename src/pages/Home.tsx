@@ -14,7 +14,7 @@ import { Button } from '@/components/ui/button';
 import { useAuth } from '@/hooks/useAuth';
 import { useInfiniteScroll } from '@/hooks/useInfiniteScroll';
 import { useNearbyListings, SearchFilters } from '@/hooks/useNearbyListings';
-import { categories, mockNotifications } from '@/data/mockData';
+import { vehicleCategories, serviceCategories, mockNotifications } from '@/data/mockData';
 import { Listing } from '@/types';
 import logo from '@/assets/logo.png';
 
@@ -88,6 +88,7 @@ export default function Home() {
 
   const handleSegmentChange = (id: string) => {
     setSegment(id as 'vehicles' | 'services');
+    setCategory('all'); // Reset category when changing segment
   };
 
   return (
@@ -132,7 +133,7 @@ export default function Home() {
             onFilter={() => setIsFilterOpen(true)}
           />
           <CategoryFilter
-            categories={categories}
+            categories={segment === 'vehicles' ? vehicleCategories : serviceCategories}
             selected={category}
             onSelect={setCategory}
           />

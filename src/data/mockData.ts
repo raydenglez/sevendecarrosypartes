@@ -411,13 +411,19 @@ export const userStats = {
   rating: 4.8,
 };
 
-export const categories = [
+export const vehicleCategories = [
   { id: 'all', label: 'All', icon: 'LayoutGrid' },
   { id: 'vehicles', label: 'Vehicles', icon: 'Car' },
   { id: 'parts', label: 'Parts', icon: 'Settings' },
+];
+
+export const serviceCategories = [
+  { id: 'all', label: 'All', icon: 'LayoutGrid' },
   { id: 'maintenance', label: 'Maintenance', icon: 'Wrench' },
   { id: 'bodywork', label: 'Bodywork', icon: 'Paintbrush' },
+  { id: 'car_wash', label: 'Car Wash', icon: 'Droplets' },
   { id: 'tires', label: 'Tires', icon: 'Circle' },
+  { id: 'electrical', label: 'Electrical', icon: 'Zap' },
 ];
 
 export const mockNotifications = [

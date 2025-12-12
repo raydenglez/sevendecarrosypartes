@@ -6,7 +6,8 @@ import {
   Wrench, 
   Paintbrush, 
   Circle,
-  Bike
+  Droplets,
+  Zap
 } from 'lucide-react';
 
 const iconMap: Record<string, React.ElementType> = {
@@ -16,7 +17,8 @@ const iconMap: Record<string, React.ElementType> = {
   Wrench,
   Paintbrush,
   Circle,
-  Bike,
+  Droplets,
+  Zap,
 };
 
 interface Category {
