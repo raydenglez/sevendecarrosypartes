@@ -29,6 +29,7 @@ export function Map({
   const mapContainer = useRef<HTMLDivElement>(null);
   const map = useRef<mapboxgl.Map | null>(null);
   const markersRef = useRef<mapboxgl.Marker[]>([]);
+  const userMarkerRef = useRef<mapboxgl.Marker | null>(null);
   const [mapLoaded, setMapLoaded] = useState(false);
 
   // Create custom marker element
@@ -185,6 +186,63 @@ export function Map({
       markersRef.current.push(marker);
     });
   }, [listings, mapLoaded, createMarkerElement, onMarkerClick]);
+
+  // Add user location marker
+  useEffect(() => {
+    if (!map.current || !mapLoaded || !userLocation) {
+      userMarkerRef.current?.remove();
+      userMarkerRef.current = null;
+      return;
+    }
+
+    // Remove existing user marker
+    userMarkerRef.current?.remove();
+
+    // Create custom user location element with pulsing effect
+    const el = document.createElement('div');
+    el.className = 'user-location-marker';
+    el.innerHTML = `
+      <div style="
+        position: relative;
+        width: 20px;
+        height: 20px;
+      ">
+        <div style="
+          position: absolute;
+          inset: 0;
+          background: hsl(210, 100%, 60%);
+          border-radius: 50%;
+          animation: userPulse 2s ease-out infinite;
+        "></div>
+        <div style="
+          position: absolute;
+          inset: 4px;
+          background: hsl(210, 100%, 50%);
+          border: 3px solid white;
+          border-radius: 50%;
+          box-shadow: 0 2px 8px rgba(0,0,0,0.4);
+        "></div>
+      </div>
+    `;
+
+    // Add keyframes for pulse animation
+    if (!document.getElementById('user-marker-styles')) {
+      const style = document.createElement('style');
+      style.id = 'user-marker-styles';
+      style.textContent = `
+        @keyframes userPulse {
+          0% { transform: scale(1); opacity: 0.8; }
+          100% { transform: scale(3); opacity: 0; }
+        }
+      `;
+      document.head.appendChild(style);
+    }
+
+    userMarkerRef.current = new mapboxgl.Marker({ element: el, anchor: 'center' })
+      .setLngLat(userLocation)
+      .addTo(map.current);
+
+  }, [userLocation, mapLoaded]);
 
   // Draw route when destination is set
   useEffect(() => {
