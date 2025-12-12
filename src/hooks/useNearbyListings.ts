@@ -25,6 +25,7 @@ export interface SearchFilters {
   maxDistance: number;
   minRating: number;
   condition: string[];
+  category: string;
 }
 
 // Haversine formula to calculate distance between two coordinates
@@ -81,7 +82,7 @@ export function useNearbyListings(segment: 'vehicles' | 'services', filters?: Se
       
       let query = supabase
         .from('listings')
-        .select('*')
+        .select('*, service_attributes(service_category)')
         .eq('status', 'active');
 
       // Filter by segment
@@ -89,6 +90,16 @@ export function useNearbyListings(segment: 'vehicles' | 'services', filters?: Se
         query = query.in('type', ['vehicle', 'part']);
       } else {
         query = query.eq('type', 'service');
+      }
+
+      // Filter by category
+      if (filters?.category && filters.category !== 'all') {
+        if (filters.category === 'vehicles') {
+          query = query.eq('type', 'vehicle');
+        } else if (filters.category === 'parts') {
+          query = query.eq('type', 'part');
+        }
+        // Service categories are filtered client-side after join
       }
 
       // Apply price filter
@@ -137,6 +148,14 @@ export function useNearbyListings(segment: 'vehicles' | 'services', filters?: Se
         );
       }
 
+      // Filter by service category (client-side for joined data)
+      if (filters?.category && !['all', 'vehicles', 'parts'].includes(filters.category)) {
+        listingsWithDistance = listingsWithDistance.filter((l: any) => {
+          const serviceAttrs = l.service_attributes;
+          return serviceAttrs?.service_category === filters.category;
+        });
+      }
+
       // Sort by proximity
       listingsWithDistance.sort((a, b) => a.distance - b.distance);
 
@@ -145,7 +164,7 @@ export function useNearbyListings(segment: 'vehicles' | 'services', filters?: Se
     };
 
     fetchListings();
-  }, [userLocation, segment, filters?.query, filters?.priceRange, filters?.maxDistance, filters?.minRating, filters?.condition]);
+  }, [userLocation, segment, filters?.query, filters?.priceRange, filters?.maxDistance, filters?.minRating, filters?.condition, filters?.category]);
 
   return { listings, loading, userLocation };
 }
