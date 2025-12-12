@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Flame, ChevronRight, Bell, Loader2 } from 'lucide-react';
 import { BottomNav } from '@/components/BottomNav';
@@ -11,7 +11,9 @@ import { NotificationsPanel } from '@/components/NotificationsPanel';
 import { Button } from '@/components/ui/button';
 import { useAuth } from '@/hooks/useAuth';
 import { useInfiniteScroll } from '@/hooks/useInfiniteScroll';
-import { mockListings, categories, mockNotifications } from '@/data/mockData';
+import { useNearbyListings } from '@/hooks/useNearbyListings';
+import { categories, mockNotifications } from '@/data/mockData';
+import { Listing } from '@/types';
 import logo from '@/assets/logo.png';
 
 const segments = [
@@ -22,24 +24,41 @@ const segments = [
 export default function Home() {
   const navigate = useNavigate();
   const { user } = useAuth();
-  const [segment, setSegment] = useState('vehicles');
+  const [segment, setSegment] = useState<'vehicles' | 'services'>('vehicles');
   const [category, setCategory] = useState('all');
   const [isNotificationsOpen, setIsNotificationsOpen] = useState(false);
 
+  const { listings: nearbyListings, loading: listingsLoading } = useNearbyListings(segment);
   const unreadCount = mockNotifications.filter(n => !n.isRead).length;
 
-  const featuredListings = mockListings.filter(l => {
-    if (segment === 'vehicles') {
-      return (l.isPremium || l.type === 'vehicle' || l.type === 'part');
-    }
-    return l.type === 'service';
-  }).slice(0, 3);
+  // Transform DB listings to match ListingCard format
+  const transformedListings: Listing[] = useMemo(() => 
+    nearbyListings.map(l => ({
+      id: l.id,
+      ownerId: l.owner_id || '',
+      type: l.type,
+      status: 'active' as const,
+      title: l.title,
+      description: l.description || '',
+      price: l.price || 0,
+      location: {
+        lat: l.location_lat || 0,
+        lng: l.location_lng || 0,
+        city: l.location_city || 'Unknown',
+        state: l.location_state || undefined,
+      },
+      distance: l.distance ? parseFloat(l.distance.toFixed(1)) : undefined,
+      images: l.images || ['/placeholder.svg'],
+      isPremium: l.is_premium || false,
+      isNegotiable: l.is_negotiable || false,
+      createdAt: l.created_at || new Date().toISOString(),
+      updatedAt: l.created_at || new Date().toISOString(),
+    }))
+  , [nearbyListings]);
 
-  const allListings = mockListings.filter(l => 
-    segment === 'vehicles' ? ['vehicle', 'part'].includes(l.type) : l.type === 'service'
-  );
+  const featuredListings = transformedListings.filter(l => l.isPremium).slice(0, 3);
 
-  const { displayedItems, hasMore, isLoading, reset } = useInfiniteScroll(allListings, {
+  const { displayedItems, hasMore, isLoading, reset } = useInfiniteScroll(transformedListings, {
     initialLimit: 6,
     increment: 6,
   });
@@ -48,6 +67,10 @@ export default function Home() {
   useEffect(() => {
     reset();
   }, [segment, reset]);
+
+  const handleSegmentChange = (id: string) => {
+    setSegment(id as 'vehicles' | 'services');
+  };
 
   return (
     <div className="min-h-screen bg-background pb-24">
@@ -83,7 +106,7 @@ export default function Home() {
             <SegmentedControl
               options={segments}
               selected={segment}
-              onSelect={setSegment}
+              onSelect={handleSegmentChange}
             />
           </div>
           <SearchBar />
@@ -123,7 +146,7 @@ export default function Home() {
         </section>
 
         {/* Map Preview */}
-        <MapPreview listingCount={mockListings.length} onClick={() => navigate('/map')} />
+        <MapPreview listingCount={nearbyListings.length} onClick={() => navigate('/map')} />
 
         {/* Just Arrived */}
         <section>
