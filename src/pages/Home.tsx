@@ -6,6 +6,7 @@ import { SearchBar } from '@/components/SearchBar';
 import { SegmentedControl } from '@/components/SegmentedControl';
 import { CategoryFilter } from '@/components/CategoryFilter';
 import { ListingCard } from '@/components/ListingCard';
+import { ListingCardSkeleton } from '@/components/ListingCardSkeleton';
 import { MapPreview } from '@/components/MapPreview';
 import { NotificationsPanel } from '@/components/NotificationsPanel';
 import { Button } from '@/components/ui/button';
@@ -133,15 +134,25 @@ export default function Home() {
             </button>
           </div>
           <div className="flex gap-4 overflow-x-auto hide-scrollbar -mx-4 px-4 pb-2">
-            {featuredListings.map((listing, index) => (
-              <ListingCard
-                key={listing.id}
-                listing={listing}
-                variant="featured"
-                className="animate-fade-in"
-                style={{ animationDelay: `${index * 100}ms` } as React.CSSProperties}
-              />
-            ))}
+            {listingsLoading ? (
+              <>
+                {[1, 2, 3].map((i) => (
+                  <ListingCardSkeleton key={i} variant="featured" />
+                ))}
+              </>
+            ) : featuredListings.length > 0 ? (
+              featuredListings.map((listing, index) => (
+                <ListingCard
+                  key={listing.id}
+                  listing={listing}
+                  variant="featured"
+                  className="animate-fade-in"
+                  style={{ animationDelay: `${index * 100}ms` } as React.CSSProperties}
+                />
+              ))
+            ) : (
+              <p className="text-muted-foreground text-sm py-4">No featured listings nearby</p>
+            )}
           </div>
         </section>
 
@@ -152,22 +163,34 @@ export default function Home() {
         <section>
           <h2 className="text-lg font-bold text-foreground mb-4">Just Arrived</h2>
           <div className="grid grid-cols-2 gap-2">
-            {displayedItems.map((listing, index) => (
-              <ListingCard
-                key={listing.id}
-                listing={listing}
-                variant="grid"
-                className="animate-fade-in"
-                style={{ animationDelay: `${Math.min(index, 5) * 50}ms` } as React.CSSProperties}
-              />
-            ))}
+            {listingsLoading ? (
+              <>
+                {[1, 2, 3, 4, 5, 6].map((i) => (
+                  <ListingCardSkeleton key={i} variant="grid" />
+                ))}
+              </>
+            ) : displayedItems.length > 0 ? (
+              displayedItems.map((listing, index) => (
+                <ListingCard
+                  key={listing.id}
+                  listing={listing}
+                  variant="grid"
+                  className="animate-fade-in"
+                  style={{ animationDelay: `${Math.min(index, 5) * 50}ms` } as React.CSSProperties}
+                />
+              ))
+            ) : (
+              <p className="text-muted-foreground text-sm py-4 col-span-2 text-center">
+                No listings found nearby
+              </p>
+            )}
           </div>
-          {isLoading && (
+          {!listingsLoading && isLoading && (
             <div className="flex justify-center py-6">
               <Loader2 className="w-6 h-6 text-primary animate-spin" />
             </div>
           )}
-          {!hasMore && displayedItems.length > 0 && (
+          {!listingsLoading && !hasMore && displayedItems.length > 0 && (
             <p className="text-center text-muted-foreground text-sm py-6">
               You've seen all listings
             </p>
