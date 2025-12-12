@@ -54,12 +54,9 @@ export function MapPreview({
           <div className="w-12 h-12 rounded-xl bg-primary/20 backdrop-blur-sm flex items-center justify-center border border-primary/30">
             <MapPin className="w-6 h-6 text-primary" />
           </div>
-          <div>
-            <h3 className="text-xl font-bold text-foreground">Explore on Map</h3>
-            <p className="text-sm text-muted-foreground">
-              Discover <span className="text-primary font-semibold">{listingCount}+</span> listings near you
-            </p>
-          </div>
+          <p className="text-sm text-muted-foreground">
+            Discover <span className="text-primary font-semibold">{listingCount}+</span> listings near you
+          </p>
         </div>
         <div className="w-14 h-14 rounded-xl bg-primary flex items-center justify-center shadow-orange transition-all duration-300 group-hover:scale-110 group-hover:rotate-[-5deg]">
           <ArrowRight className="w-6 h-6 text-primary-foreground transition-transform group-hover:translate-x-0.5" />
