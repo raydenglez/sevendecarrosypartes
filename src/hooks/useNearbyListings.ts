@@ -19,6 +19,14 @@ interface DBListing {
   distance?: number;
 }
 
+export interface SearchFilters {
+  query: string;
+  priceRange: [number, number];
+  maxDistance: number;
+  minRating: number;
+  condition: string[];
+}
+
 // Haversine formula to calculate distance between two coordinates
 function calculateDistance(
   lat1: number,
@@ -39,7 +47,7 @@ function calculateDistance(
   return R * c;
 }
 
-export function useNearbyListings(segment: 'vehicles' | 'services') {
+export function useNearbyListings(segment: 'vehicles' | 'services', filters?: SearchFilters) {
   const [listings, setListings] = useState<DBListing[]>([]);
   const [loading, setLoading] = useState(true);
   const [userLocation, setUserLocation] = useState<{ lat: number; lng: number } | null>(null);
@@ -83,6 +91,11 @@ export function useNearbyListings(segment: 'vehicles' | 'services') {
         query = query.eq('type', 'service');
       }
 
+      // Apply price filter
+      if (filters?.priceRange) {
+        query = query.gte('price', filters.priceRange[0]).lte('price', filters.priceRange[1]);
+      }
+
       const { data, error } = await query;
 
       if (error) {
@@ -91,8 +104,8 @@ export function useNearbyListings(segment: 'vehicles' | 'services') {
         return;
       }
 
-      // Calculate distance and sort by proximity
-      const listingsWithDistance = (data || [])
+      // Calculate distance and apply client-side filters
+      let listingsWithDistance = (data || [])
         .map((listing) => ({
           ...listing,
           distance:
@@ -104,15 +117,35 @@ export function useNearbyListings(segment: 'vehicles' | 'services') {
                   listing.location_lng
                 )
               : Infinity,
-        }))
-        .sort((a, b) => a.distance - b.distance);
+        }));
+
+      // Apply search query filter
+      if (filters?.query) {
+        const searchLower = filters.query.toLowerCase();
+        listingsWithDistance = listingsWithDistance.filter(
+          (l) =>
+            l.title.toLowerCase().includes(searchLower) ||
+            l.description?.toLowerCase().includes(searchLower) ||
+            l.location_city?.toLowerCase().includes(searchLower)
+        );
+      }
+
+      // Apply max distance filter
+      if (filters?.maxDistance) {
+        listingsWithDistance = listingsWithDistance.filter(
+          (l) => l.distance <= filters.maxDistance
+        );
+      }
+
+      // Sort by proximity
+      listingsWithDistance.sort((a, b) => a.distance - b.distance);
 
       setListings(listingsWithDistance as DBListing[]);
       setLoading(false);
     };
 
     fetchListings();
-  }, [userLocation, segment]);
+  }, [userLocation, segment, filters?.query, filters?.priceRange, filters?.maxDistance, filters?.minRating, filters?.condition]);
 
   return { listings, loading, userLocation };
 }

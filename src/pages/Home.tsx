@@ -9,10 +9,11 @@ import { ListingCard } from '@/components/ListingCard';
 import { ListingCardSkeleton } from '@/components/ListingCardSkeleton';
 import { MapPreview } from '@/components/MapPreview';
 import { NotificationsPanel } from '@/components/NotificationsPanel';
+import { FilterSheet, FilterOptions } from '@/components/FilterSheet';
 import { Button } from '@/components/ui/button';
 import { useAuth } from '@/hooks/useAuth';
 import { useInfiniteScroll } from '@/hooks/useInfiniteScroll';
-import { useNearbyListings } from '@/hooks/useNearbyListings';
+import { useNearbyListings, SearchFilters } from '@/hooks/useNearbyListings';
 import { categories, mockNotifications } from '@/data/mockData';
 import { Listing } from '@/types';
 import logo from '@/assets/logo.png';
@@ -22,14 +23,29 @@ const segments = [
   { id: 'services', label: 'Service Providers' },
 ];
 
+const defaultFilters: FilterOptions = {
+  priceRange: [0, 100000],
+  maxDistance: 50,
+  minRating: 0,
+  condition: [],
+};
+
 export default function Home() {
   const navigate = useNavigate();
   const { user } = useAuth();
   const [segment, setSegment] = useState<'vehicles' | 'services'>('vehicles');
   const [category, setCategory] = useState('all');
   const [isNotificationsOpen, setIsNotificationsOpen] = useState(false);
+  const [isFilterOpen, setIsFilterOpen] = useState(false);
+  const [searchQuery, setSearchQuery] = useState('');
+  const [filters, setFilters] = useState<FilterOptions>(defaultFilters);
 
-  const { listings: nearbyListings, loading: listingsLoading } = useNearbyListings(segment);
+  const searchFilters: SearchFilters = useMemo(() => ({
+    query: searchQuery,
+    ...filters,
+  }), [searchQuery, filters]);
+
+  const { listings: nearbyListings, loading: listingsLoading } = useNearbyListings(segment, searchFilters);
   const unreadCount = mockNotifications.filter(n => !n.isRead).length;
 
   // Transform DB listings to match ListingCard format
@@ -110,7 +126,10 @@ export default function Home() {
               onSelect={handleSegmentChange}
             />
           </div>
-          <SearchBar />
+          <SearchBar 
+            onSearch={setSearchQuery}
+            onFilter={() => setIsFilterOpen(true)}
+          />
           <CategoryFilter
             categories={categories}
             selected={category}
@@ -204,6 +223,13 @@ export default function Home() {
         isOpen={isNotificationsOpen}
         onClose={() => setIsNotificationsOpen(false)}
         notifications={mockNotifications}
+      />
+      
+      <FilterSheet
+        isOpen={isFilterOpen}
+        onClose={() => setIsFilterOpen(false)}
+        filters={filters}
+        onApply={setFilters}
       />
     </div>
   );
