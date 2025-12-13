@@ -4,16 +4,18 @@ import { BottomNav } from '@/components/BottomNav';
 import { ListingCard } from '@/components/ListingCard';
 import { Button } from '@/components/ui/button';
 import { useAuth } from '@/hooks/useAuth';
+import { useFavoritesContext } from '@/contexts/FavoritesContext';
 import { mockListings } from '@/data/mockData';
 
 export default function Favorites() {
   const navigate = useNavigate();
   const { user, loading } = useAuth();
+  const { favoriteIds, loading: favoritesLoading } = useFavoritesContext();
   
-  // Simulate some favorites (will be from DB when connected)
-  const favorites = user ? mockListings.slice(0, 4) : [];
+  // Filter listings to only show favorites
+  const favorites = mockListings.filter(listing => favoriteIds.has(listing.id));
 
-  if (loading) {
+  if (loading || favoritesLoading) {
     return (
       <div className="min-h-screen bg-background flex items-center justify-center">
         <div className="animate-pulse text-muted-foreground">Loading...</div>
