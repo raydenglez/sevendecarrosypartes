@@ -26,6 +26,7 @@ import { BottomNav } from '@/components/BottomNav';
 import { useAuth } from '@/hooks/useAuth';
 import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
+import { ImageCropModal } from '@/components/ImageCropModal';
 
 interface ProfileData {
   name: string;
@@ -59,8 +60,10 @@ export default function Profile() {
   });
   const [dataLoading, setDataLoading] = useState(true);
   const [uploading, setUploading] = useState(false);
+  const [cropModalOpen, setCropModalOpen] = useState(false);
+  const [selectedImageSrc, setSelectedImageSrc] = useState<string | null>(null);
 
-  const handleAvatarUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
+  const handleFileSelect = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
     if (!file || !user) return;
 
@@ -84,34 +87,47 @@ export default function Profile() {
       return;
     }
 
+    // Create object URL and open crop modal
+    const imageUrl = URL.createObjectURL(file);
+    setSelectedImageSrc(imageUrl);
+    setCropModalOpen(true);
+    
+    // Reset input so same file can be selected again
+    event.target.value = '';
+  };
+
+  const handleCropComplete = async (croppedBlob: Blob) => {
+    if (!user) return;
+
     setUploading(true);
 
     try {
-      const fileExt = file.name.split('.').pop();
-      const fileName = `${user.id}/avatar.${fileExt}`;
+      const fileName = `${user.id}/avatar.jpg`;
 
       // Upload to storage
       const { error: uploadError } = await supabase.storage
         .from('avatars')
-        .upload(fileName, file, { upsert: true });
+        .upload(fileName, croppedBlob, { upsert: true, contentType: 'image/jpeg' });
 
       if (uploadError) throw uploadError;
 
-      // Get public URL
+      // Get public URL with cache buster
       const { data: { publicUrl } } = supabase.storage
         .from('avatars')
         .getPublicUrl(fileName);
 
+      const urlWithCacheBuster = `${publicUrl}?t=${Date.now()}`;
+
       // Update profile with new avatar URL
       const { error: updateError } = await supabase
         .from('profiles')
-        .update({ avatar_url: publicUrl })
+        .update({ avatar_url: urlWithCacheBuster })
         .eq('id', user.id);
 
       if (updateError) throw updateError;
 
       // Update local state
-      setProfileData(prev => prev ? { ...prev, avatarUrl: publicUrl } : null);
+      setProfileData(prev => prev ? { ...prev, avatarUrl: urlWithCacheBuster } : null);
 
       toast({
         title: "Avatar updated",
@@ -126,6 +142,19 @@ export default function Profile() {
       });
     } finally {
       setUploading(false);
+      // Clean up object URL
+      if (selectedImageSrc) {
+        URL.revokeObjectURL(selectedImageSrc);
+        setSelectedImageSrc(null);
+      }
+    }
+  };
+
+  const handleCropModalClose = () => {
+    setCropModalOpen(false);
+    if (selectedImageSrc) {
+      URL.revokeObjectURL(selectedImageSrc);
+      setSelectedImageSrc(null);
     }
   };
 
@@ -260,7 +289,7 @@ export default function Profile() {
               <input
                 type="file"
                 accept="image/*"
-                onChange={handleAvatarUpload}
+                onChange={handleFileSelect}
                 className="hidden"
                 disabled={uploading}
               />
@@ -434,6 +463,15 @@ export default function Profile() {
       </div>
 
       <BottomNav />
+
+      {selectedImageSrc && (
+        <ImageCropModal
+          open={cropModalOpen}
+          onClose={handleCropModalClose}
+          imageSrc={selectedImageSrc}
+          onCropComplete={handleCropComplete}
+        />
+      )}
     </div>
   );
 }
