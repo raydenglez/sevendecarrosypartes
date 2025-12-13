@@ -12,8 +12,12 @@ import {
   Loader2,
   Car,
   Wrench,
-  Settings
+  Settings,
+  Share2,
+  Copy,
+  Check
 } from 'lucide-react';
+import { toast } from 'sonner';
 import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { supabase } from '@/integrations/supabase/client';
@@ -41,6 +45,34 @@ export default function SellerProfile() {
   const [reviews, setReviews] = useState<Review[]>([]);
   const [loading, setLoading] = useState(true);
   const [activeTab, setActiveTab] = useState('listings');
+  const [copied, setCopied] = useState(false);
+
+  const handleShare = async () => {
+    const shareUrl = window.location.href;
+    const shareData = {
+      title: `${seller?.name} on CarNexo`,
+      text: `Check out ${seller?.name}'s profile on CarNexo - ${seller?.ratingAvg.toFixed(1)}★ rated seller`,
+      url: shareUrl,
+    };
+
+    try {
+      if (navigator.share) {
+        await navigator.share(shareData);
+      } else {
+        await navigator.clipboard.writeText(shareUrl);
+        setCopied(true);
+        toast.success('Profile link copied to clipboard!');
+        setTimeout(() => setCopied(false), 2000);
+      }
+    } catch (error) {
+      if ((error as Error).name !== 'AbortError') {
+        await navigator.clipboard.writeText(shareUrl);
+        setCopied(true);
+        toast.success('Profile link copied to clipboard!');
+        setTimeout(() => setCopied(false), 2000);
+      }
+    }
+  };
 
   useEffect(() => {
     async function fetchSellerData() {
@@ -196,7 +228,16 @@ export default function SellerProfile() {
             <ArrowLeft className="w-5 h-5 text-foreground" />
           </button>
           <h1 className="font-semibold text-foreground">Seller Profile</h1>
-          <div className="w-10" />
+          <button 
+            onClick={handleShare}
+            className="w-10 h-10 rounded-full bg-card flex items-center justify-center"
+          >
+            {copied ? (
+              <Check className="w-5 h-5 text-success" />
+            ) : (
+              <Share2 className="w-5 h-5 text-foreground" />
+            )}
+          </button>
         </div>
       </div>
 
