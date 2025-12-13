@@ -3,6 +3,7 @@ import { Listing } from '@/types';
 import { cn } from '@/lib/utils';
 import { Link } from 'react-router-dom';
 import { CSSProperties } from 'react';
+import { useFavoritesContext } from '@/contexts/FavoritesContext';
 
 interface ListingCardProps {
   listing: Listing;
@@ -12,6 +13,15 @@ interface ListingCardProps {
 }
 
 export function ListingCard({ listing, variant = 'featured', className, style }: ListingCardProps) {
+  const { isFavorite, toggleFavorite } = useFavoritesContext();
+  const favorited = isFavorite(listing.id);
+
+  const handleFavoriteClick = (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    toggleFavorite(listing.id);
+  };
+
   // Grid variant - Facebook Marketplace style
   if (variant === 'grid') {
     return (
@@ -40,10 +50,13 @@ export function ListingCard({ listing, variant = 'featured', className, style }:
             </span>
           )}
           <button 
-            className="absolute top-2 right-2 p-1.5 rounded-full bg-background/30 backdrop-blur-sm text-foreground hover:bg-background/50 transition-all"
-            onClick={(e) => e.preventDefault()}
+            className={cn(
+              "absolute top-2 right-2 p-1.5 rounded-full bg-background/30 backdrop-blur-sm transition-all",
+              favorited ? "text-primary" : "text-foreground hover:bg-background/50"
+            )}
+            onClick={handleFavoriteClick}
           >
-            <Heart className="w-4 h-4" />
+            <Heart className={cn("w-4 h-4", favorited && "fill-current")} />
           </button>
         </div>
         <div className="p-2.5">
@@ -81,8 +94,14 @@ export function ListingCard({ listing, variant = 'featured', className, style }:
         <div className="flex-1 min-w-0">
           <div className="flex items-start justify-between gap-2">
             <h3 className="font-semibold text-foreground truncate">{listing.title}</h3>
-            <button className="p-1 text-muted-foreground hover:text-primary transition-colors">
-              <Heart className="w-5 h-5" />
+            <button 
+              className={cn(
+                "p-1 transition-colors",
+                favorited ? "text-primary" : "text-muted-foreground hover:text-primary"
+              )}
+              onClick={handleFavoriteClick}
+            >
+              <Heart className={cn("w-5 h-5", favorited && "fill-current")} />
             </button>
           </div>
           {listing.vehicleAttributes && (
@@ -133,10 +152,13 @@ export function ListingCard({ listing, variant = 'featured', className, style }:
           </span>
         )}
         <button 
-          className="absolute top-3 right-3 p-2 rounded-full bg-background/20 backdrop-blur-sm text-foreground hover:bg-background/40 transition-all"
-          onClick={(e) => e.preventDefault()}
+          className={cn(
+            "absolute top-3 right-3 p-2 rounded-full bg-background/20 backdrop-blur-sm transition-all",
+            favorited ? "text-primary" : "text-foreground hover:bg-background/40"
+          )}
+          onClick={handleFavoriteClick}
         >
-          <Heart className="w-5 h-5" />
+          <Heart className={cn("w-5 h-5", favorited && "fill-current")} />
         </button>
       </div>
       <div className="p-4">
