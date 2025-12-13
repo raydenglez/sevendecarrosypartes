@@ -17,6 +17,7 @@ import {
   HelpCircle,
   LogOut,
   Loader2,
+  Camera,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { StatCard } from '@/components/StatCard';
@@ -57,6 +58,76 @@ export default function Profile() {
     servicesCount: 0,
   });
   const [dataLoading, setDataLoading] = useState(true);
+  const [uploading, setUploading] = useState(false);
+
+  const handleAvatarUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (!file || !user) return;
+
+    // Validate file type
+    if (!file.type.startsWith('image/')) {
+      toast({
+        title: "Invalid file type",
+        description: "Please upload an image file.",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    // Validate file size (max 5MB)
+    if (file.size > 5 * 1024 * 1024) {
+      toast({
+        title: "File too large",
+        description: "Please upload an image smaller than 5MB.",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    setUploading(true);
+
+    try {
+      const fileExt = file.name.split('.').pop();
+      const fileName = `${user.id}/avatar.${fileExt}`;
+
+      // Upload to storage
+      const { error: uploadError } = await supabase.storage
+        .from('avatars')
+        .upload(fileName, file, { upsert: true });
+
+      if (uploadError) throw uploadError;
+
+      // Get public URL
+      const { data: { publicUrl } } = supabase.storage
+        .from('avatars')
+        .getPublicUrl(fileName);
+
+      // Update profile with new avatar URL
+      const { error: updateError } = await supabase
+        .from('profiles')
+        .update({ avatar_url: publicUrl })
+        .eq('id', user.id);
+
+      if (updateError) throw updateError;
+
+      // Update local state
+      setProfileData(prev => prev ? { ...prev, avatarUrl: publicUrl } : null);
+
+      toast({
+        title: "Avatar updated",
+        description: "Your profile picture has been updated successfully.",
+      });
+    } catch (error) {
+      console.error('Error uploading avatar:', error);
+      toast({
+        title: "Upload failed",
+        description: "Failed to upload avatar. Please try again.",
+        variant: "destructive",
+      });
+    } finally {
+      setUploading(false);
+    }
+  };
 
   useEffect(() => {
     async function fetchProfileData() {
@@ -180,9 +251,20 @@ export default function Profile() {
               alt={profileData?.name || 'User'}
               className="w-24 h-24 rounded-full object-cover border-4 border-card"
             />
-            <button className="absolute bottom-0 right-0 w-8 h-8 rounded-full bg-secondary flex items-center justify-center shadow-blue">
-              <Edit className="w-4 h-4 text-secondary-foreground" />
-            </button>
+            <label className="absolute bottom-0 right-0 w-8 h-8 rounded-full bg-secondary flex items-center justify-center shadow-blue cursor-pointer hover:bg-secondary/80 transition-colors">
+              {uploading ? (
+                <Loader2 className="w-4 h-4 text-secondary-foreground animate-spin" />
+              ) : (
+                <Camera className="w-4 h-4 text-secondary-foreground" />
+              )}
+              <input
+                type="file"
+                accept="image/*"
+                onChange={handleAvatarUpload}
+                className="hidden"
+                disabled={uploading}
+              />
+            </label>
           </div>
           <h2 className="text-xl font-bold text-foreground mt-4">{profileData?.name || 'User'}</h2>
           <div className="flex items-center gap-1 text-sm text-muted-foreground mt-1">
