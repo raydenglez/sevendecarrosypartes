@@ -1,4 +1,5 @@
 import { useNavigate } from 'react-router-dom';
+import { useState, useEffect } from 'react';
 import { 
   Settings,
   MapPin,
@@ -15,6 +16,7 @@ import {
   Bell,
   HelpCircle,
   LogOut,
+  Loader2,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { StatCard } from '@/components/StatCard';
@@ -22,12 +24,101 @@ import { SettingsItem } from '@/components/SettingsItem';
 import { BottomNav } from '@/components/BottomNav';
 import { useAuth } from '@/hooks/useAuth';
 import { useToast } from '@/hooks/use-toast';
-import { currentUser, userStats, mockListings } from '@/data/mockData';
+import { supabase } from '@/integrations/supabase/client';
+
+interface ProfileData {
+  name: string;
+  avatarUrl: string;
+  location: { city: string; state: string };
+  memberSince: string;
+  ratingAvg: number;
+}
+
+interface UserStats {
+  published: number;
+  favorites: number;
+  rating: number;
+  vehicleCount: number;
+  partsCount: number;
+  servicesCount: number;
+}
 
 export default function Profile() {
   const navigate = useNavigate();
   const { user, loading, signOut } = useAuth();
   const { toast } = useToast();
+  const [profileData, setProfileData] = useState<ProfileData | null>(null);
+  const [stats, setStats] = useState<UserStats>({
+    published: 0,
+    favorites: 0,
+    rating: 0,
+    vehicleCount: 0,
+    partsCount: 0,
+    servicesCount: 0,
+  });
+  const [dataLoading, setDataLoading] = useState(true);
+
+  useEffect(() => {
+    async function fetchProfileData() {
+      if (!user) {
+        setDataLoading(false);
+        return;
+      }
+
+      try {
+        // Fetch profile data
+        const { data: profile } = await supabase
+          .from('profiles')
+          .select('*')
+          .eq('id', user.id)
+          .maybeSingle();
+
+        if (profile) {
+          setProfileData({
+            name: profile.full_name || user.email?.split('@')[0] || 'User',
+            avatarUrl: profile.avatar_url || 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=150&h=150&fit=crop&crop=face',
+            location: {
+              city: profile.location_city || 'Unknown',
+              state: profile.location_state || '',
+            },
+            memberSince: new Date(profile.created_at || user.created_at).toLocaleDateString('en-US', { month: 'long', year: 'numeric' }),
+            ratingAvg: profile.rating_avg || 0,
+          });
+        }
+
+        // Fetch listings count by type
+        const { data: listings } = await supabase
+          .from('listings')
+          .select('type')
+          .eq('owner_id', user.id);
+
+        const vehicleCount = listings?.filter(l => l.type === 'vehicle').length || 0;
+        const partsCount = listings?.filter(l => l.type === 'part').length || 0;
+        const servicesCount = listings?.filter(l => l.type === 'service').length || 0;
+
+        // Fetch favorites count
+        const { count: favoritesCount } = await supabase
+          .from('favorites')
+          .select('*', { count: 'exact', head: true })
+          .eq('user_id', user.id);
+
+        setStats({
+          published: listings?.length || 0,
+          favorites: favoritesCount || 0,
+          rating: profile?.rating_avg || 0,
+          vehicleCount,
+          partsCount,
+          servicesCount,
+        });
+      } catch (error) {
+        console.error('Error fetching profile data:', error);
+      } finally {
+        setDataLoading(false);
+      }
+    }
+
+    fetchProfileData();
+  }, [user]);
 
   const handleSignOut = async () => {
     await signOut();
@@ -38,22 +129,10 @@ export default function Profile() {
     navigate('/');
   };
 
-  // Use real user data if available, fallback to mock
-  const displayUser = user ? {
-    name: user.user_metadata?.full_name || user.email?.split('@')[0] || 'User',
-    avatarUrl: user.user_metadata?.avatar_url || currentUser.avatarUrl,
-    location: currentUser.location,
-    memberSince: new Date(user.created_at).toLocaleDateString('en-US', { month: 'long', year: 'numeric' }),
-  } : currentUser;
-
-  const userListings = mockListings.filter(l => l.ownerId === currentUser.id);
-  const vehicleCount = userListings.filter(l => l.type === 'vehicle').length;
-  const partsCount = userListings.filter(l => l.type === 'part').length;
-
-  if (loading) {
+  if (loading || dataLoading) {
     return (
       <div className="min-h-screen bg-background flex items-center justify-center">
-        <div className="animate-pulse text-muted-foreground">Loading...</div>
+        <Loader2 className="w-8 h-8 animate-spin text-primary" />
       </div>
     );
   }
@@ -97,21 +176,21 @@ export default function Profile() {
         <div className="flex flex-col items-center mt-6">
           <div className="relative">
             <img
-              src={displayUser.avatarUrl}
-              alt={displayUser.name}
+              src={profileData?.avatarUrl || 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=150&h=150&fit=crop&crop=face'}
+              alt={profileData?.name || 'User'}
               className="w-24 h-24 rounded-full object-cover border-4 border-card"
             />
             <button className="absolute bottom-0 right-0 w-8 h-8 rounded-full bg-secondary flex items-center justify-center shadow-blue">
               <Edit className="w-4 h-4 text-secondary-foreground" />
             </button>
           </div>
-          <h2 className="text-xl font-bold text-foreground mt-4">{displayUser.name}</h2>
+          <h2 className="text-xl font-bold text-foreground mt-4">{profileData?.name || 'User'}</h2>
           <div className="flex items-center gap-1 text-sm text-muted-foreground mt-1">
             <MapPin className="w-4 h-4" />
-            <span>{displayUser.location.city}, {displayUser.location.state}</span>
+            <span>{profileData?.location.city}{profileData?.location.state ? `, ${profileData.location.state}` : ''}</span>
           </div>
           <p className="text-sm text-muted-foreground">
-            Member since {displayUser.memberSince}
+            Member since {profileData?.memberSince || 'Unknown'}
           </p>
 
           {/* Action Buttons */}
@@ -132,17 +211,17 @@ export default function Profile() {
       <div className="px-4 grid grid-cols-3 gap-3 animate-fade-in">
         <StatCard
           label="Published"
-          value={userStats.published}
+          value={stats.published}
           icon={<FileText className="w-3 h-3" />}
         />
         <StatCard
           label="Favorites"
-          value={userStats.favorites}
+          value={stats.favorites}
           icon={<Heart className="w-3 h-3 text-primary fill-primary" />}
         />
         <StatCard
           label="Rating"
-          value={userStats.rating}
+          value={stats.rating.toFixed(1)}
           suffix="/ 5.0"
           icon={<Star className="w-3 h-3 text-warning fill-warning" />}
         />
@@ -167,7 +246,7 @@ export default function Profile() {
               <div className="flex items-center gap-2 mb-1">
                 <Car className="w-4 h-4 text-foreground" />
                 <span className="text-xs font-medium px-2 py-0.5 rounded bg-success/90 text-success-foreground">
-                  {vehicleCount} ACTIVE
+                  {stats.vehicleCount} ACTIVE
                 </span>
               </div>
               <p className="text-foreground font-semibold">Vehicles</p>
@@ -186,7 +265,7 @@ export default function Profile() {
               <div className="flex items-center gap-2 mb-1">
                 <Settings className="w-4 h-4 text-foreground" />
                 <span className="text-xs font-medium px-2 py-0.5 rounded bg-secondary/90 text-secondary-foreground">
-                  {partsCount} SOLD
+                  {stats.partsCount} LISTED
                 </span>
               </div>
               <p className="text-foreground font-semibold">Parts</p>
