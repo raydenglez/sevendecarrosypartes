@@ -13,6 +13,7 @@ import Favorites from "./pages/Favorites";
 import Messages from "./pages/Messages";
 import Auth from "./pages/Auth";
 import MapView from "./pages/MapView";
+import SellerProfile from "./pages/SellerProfile";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -34,6 +35,7 @@ const App = () => (
             <Route path="/favorites" element={<Favorites />} />
             <Route path="/messages" element={<Messages />} />
             <Route path="/map" element={<MapView />} />
+            <Route path="/seller/:id" element={<SellerProfile />} />
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />
           </Routes>
