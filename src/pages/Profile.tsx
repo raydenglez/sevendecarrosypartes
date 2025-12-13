@@ -27,10 +27,12 @@ import { useAuth } from '@/hooks/useAuth';
 import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
 import { ImageCropModal } from '@/components/ImageCropModal';
+import { EditProfileModal } from '@/components/EditProfileModal';
 
 interface ProfileData {
   name: string;
   avatarUrl: string;
+  phone: string;
   location: { city: string; state: string };
   memberSince: string;
   ratingAvg: number;
@@ -62,6 +64,7 @@ export default function Profile() {
   const [uploading, setUploading] = useState(false);
   const [cropModalOpen, setCropModalOpen] = useState(false);
   const [selectedImageSrc, setSelectedImageSrc] = useState<string | null>(null);
+  const [editModalOpen, setEditModalOpen] = useState(false);
 
   const handleFileSelect = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
@@ -177,6 +180,7 @@ export default function Profile() {
           setProfileData({
             name: profile.full_name || user.email?.split('@')[0] || 'User',
             avatarUrl: profile.avatar_url || 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=150&h=150&fit=crop&crop=face',
+            phone: profile.phone || '',
             location: {
               city: profile.location_city || 'Unknown',
               state: profile.location_state || '',
@@ -306,7 +310,7 @@ export default function Profile() {
 
           {/* Action Buttons */}
           <div className="flex gap-3 mt-4">
-            <Button variant="carnexoSecondary" size="sm" className="px-6">
+            <Button variant="carnexoSecondary" size="sm" className="px-6" onClick={() => setEditModalOpen(true)}>
               <Edit className="w-4 h-4 mr-2" />
               Edit Profile
             </Button>
@@ -470,6 +474,31 @@ export default function Profile() {
           onClose={handleCropModalClose}
           imageSrc={selectedImageSrc}
           onCropComplete={handleCropComplete}
+        />
+      )}
+
+      {user && profileData && (
+        <EditProfileModal
+          open={editModalOpen}
+          onClose={() => setEditModalOpen(false)}
+          userId={user.id}
+          initialData={{
+            fullName: profileData.name,
+            phone: profileData.phone,
+            locationCity: profileData.location.city === 'Unknown' ? '' : profileData.location.city,
+            locationState: profileData.location.state,
+          }}
+          onProfileUpdated={(data) => {
+            setProfileData(prev => prev ? {
+              ...prev,
+              name: data.fullName,
+              phone: data.phone || '',
+              location: {
+                city: data.locationCity || 'Unknown',
+                state: data.locationState || '',
+              },
+            } : null);
+          }}
         />
       )}
     </div>
