@@ -1,24 +1,92 @@
+import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Heart } from 'lucide-react';
 import { BottomNav } from '@/components/BottomNav';
 import { ListingCard } from '@/components/ListingCard';
+import { ListingCardSkeleton } from '@/components/ListingCardSkeleton';
 import { Button } from '@/components/ui/button';
 import { useAuth } from '@/hooks/useAuth';
 import { useFavoritesContext } from '@/contexts/FavoritesContext';
-import { mockListings } from '@/data/mockData';
+import { supabase } from '@/integrations/supabase/client';
+import { Listing } from '@/types';
 
 export default function Favorites() {
   const navigate = useNavigate();
-  const { user, loading } = useAuth();
+  const { user, loading: authLoading } = useAuth();
   const { favoriteIds, loading: favoritesLoading } = useFavoritesContext();
-  
-  // Filter listings to only show favorites
-  const favorites = mockListings.filter(listing => favoriteIds.has(listing.id));
+  const [listings, setListings] = useState<Listing[]>([]);
+  const [listingsLoading, setListingsLoading] = useState(false);
 
-  if (loading || favoritesLoading) {
+  // Fetch listings for favorite IDs
+  useEffect(() => {
+    async function fetchFavoriteListings() {
+      if (favoriteIds.size === 0) {
+        setListings([]);
+        return;
+      }
+
+      setListingsLoading(true);
+      try {
+        const { data, error } = await supabase
+          .from('listings')
+          .select('*')
+          .in('id', Array.from(favoriteIds))
+          .eq('status', 'active');
+
+        if (error) throw error;
+
+        const mappedListings: Listing[] = (data || []).map((item) => ({
+          id: item.id,
+          ownerId: item.owner_id,
+          type: item.type,
+          status: item.status || 'active',
+          title: item.title,
+          description: item.description || '',
+          price: item.price || 0,
+          location: {
+            lat: item.location_lat || 0,
+            lng: item.location_lng || 0,
+            city: item.location_city || 'Unknown',
+            state: item.location_state || undefined,
+          },
+          images: item.images || ['/placeholder.svg'],
+          isPremium: item.is_premium || false,
+          isNegotiable: item.is_negotiable || false,
+          createdAt: item.created_at || new Date().toISOString(),
+          updatedAt: item.updated_at || new Date().toISOString(),
+        }));
+
+        setListings(mappedListings);
+      } catch (error) {
+        console.error('Error fetching favorite listings:', error);
+      } finally {
+        setListingsLoading(false);
+      }
+    }
+
+    if (!favoritesLoading) {
+      fetchFavoriteListings();
+    }
+  }, [favoriteIds, favoritesLoading]);
+
+  const isLoading = authLoading || favoritesLoading;
+
+  if (isLoading) {
     return (
-      <div className="min-h-screen bg-background flex items-center justify-center">
-        <div className="animate-pulse text-muted-foreground">Loading...</div>
+      <div className="min-h-screen bg-background pb-24">
+        <header className="sticky top-0 z-40 bg-background/95 backdrop-blur-xl safe-top">
+          <div className="px-4 py-4">
+            <h1 className="text-xl font-bold text-foreground">Favorites</h1>
+          </div>
+        </header>
+        <main className="px-4">
+          <div className="space-y-3">
+            {[1, 2, 3].map((i) => (
+              <ListingCardSkeleton key={i} variant="list" />
+            ))}
+          </div>
+        </main>
+        <BottomNav />
       </div>
     );
   }
@@ -55,15 +123,21 @@ export default function Favorites() {
         <div className="px-4 py-4">
           <h1 className="text-xl font-bold text-foreground">Favorites</h1>
           <p className="text-sm text-muted-foreground mt-1">
-            {favorites.length} saved listings
+            {listings.length} saved listings
           </p>
         </div>
       </header>
 
       <main className="px-4 animate-fade-in">
-        {favorites.length > 0 ? (
+        {listingsLoading ? (
           <div className="space-y-3">
-            {favorites.map((listing, index) => (
+            {[1, 2, 3].map((i) => (
+              <ListingCardSkeleton key={i} variant="list" />
+            ))}
+          </div>
+        ) : listings.length > 0 ? (
+          <div className="space-y-3">
+            {listings.map((listing, index) => (
               <ListingCard
                 key={listing.id}
                 listing={listing}

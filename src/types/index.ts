@@ -1,5 +1,5 @@
 export type ListingType = 'vehicle' | 'part' | 'service';
-export type ListingStatus = 'active' | 'sold' | 'inactive';
+export type ListingStatus = 'active' | 'sold' | 'inactive' | 'expired' | 'draft';
 export type UserType = 'user' | 'pro_seller' | 'service_provider';
 export type FuelType = 'gasoline' | 'diesel' | 'electric' | 'hybrid' | 'other';
 export type TransmissionType = 'automatic' | 'manual' | 'cvt';
