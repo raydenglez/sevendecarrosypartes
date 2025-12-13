@@ -1,6 +1,18 @@
-import { useState, useRef, useCallback, ReactNode } from 'react';
+import { useState, useRef, useCallback, ReactNode, useEffect } from 'react';
 import { Loader2, ArrowDown } from 'lucide-react';
 import { cn } from '@/lib/utils';
+
+// Haptic feedback utility
+const triggerHaptic = (type: 'light' | 'medium' | 'heavy' = 'light') => {
+  if ('vibrate' in navigator) {
+    const patterns = {
+      light: 10,
+      medium: 20,
+      heavy: 30,
+    };
+    navigator.vibrate(patterns[type]);
+  }
+};
 
 interface PullToRefreshProps {
   onRefresh: () => Promise<void>;
@@ -18,6 +30,7 @@ export function PullToRefresh({ onRefresh, children, className }: PullToRefreshP
 
   const threshold = 80;
   const maxPull = 120;
+  const hasTriggeredHaptic = useRef(false);
 
   const handleTouchStart = useCallback((e: React.TouchEvent) => {
     if (containerRef.current?.scrollTop === 0 && !isRefreshing) {
@@ -37,6 +50,14 @@ export function PullToRefresh({ onRefresh, children, className }: PullToRefreshP
       const resistance = 0.5;
       const distance = Math.min(diff * resistance, maxPull);
       setPullDistance(distance);
+
+      // Trigger haptic when crossing threshold
+      if (distance >= threshold && !hasTriggeredHaptic.current) {
+        hasTriggeredHaptic.current = true;
+        triggerHaptic('medium');
+      } else if (distance < threshold && hasTriggeredHaptic.current) {
+        hasTriggeredHaptic.current = false;
+      }
     }
   }, [isPulling, isRefreshing]);
 
@@ -44,16 +65,19 @@ export function PullToRefresh({ onRefresh, children, className }: PullToRefreshP
     if (!isPulling) return;
 
     setIsPulling(false);
+    hasTriggeredHaptic.current = false;
 
     if (pullDistance >= threshold && !isRefreshing) {
       setIsRefreshing(true);
       setPullDistance(60); // Keep indicator visible during refresh
+      triggerHaptic('heavy'); // Strong haptic on refresh start
       
       try {
         await onRefresh();
       } finally {
         setIsRefreshing(false);
         setPullDistance(0);
+        triggerHaptic('light'); // Light haptic on refresh complete
       }
     } else {
       setPullDistance(0);
