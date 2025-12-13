@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { 
   ArrowLeft, 
@@ -12,20 +12,115 @@ import {
   MessageSquare,
   MapPin,
   ExternalLink,
-  CheckCircle
+  CheckCircle,
+  Loader2
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { SellerCard } from '@/components/SellerCard';
-import { mockListings, mockReviews } from '@/data/mockData';
+import { supabase } from '@/integrations/supabase/client';
 import { cn } from '@/lib/utils';
+import type { Listing, User } from '@/types';
 
 export default function ListingDetail() {
   const { id } = useParams();
   const navigate = useNavigate();
   const [isFavorite, setIsFavorite] = useState(false);
   const [activeImage, setActiveImage] = useState(0);
+  const [listing, setListing] = useState<Listing | null>(null);
+  const [loading, setLoading] = useState(true);
 
-  const listing = mockListings.find(l => l.id === id);
+  useEffect(() => {
+    async function fetchListing() {
+      if (!id) return;
+      
+      setLoading(true);
+      const { data, error } = await supabase
+        .from('listings')
+        .select(`
+          *,
+          profiles:owner_id (
+            id,
+            full_name,
+            avatar_url,
+            rating_avg,
+            rating_count,
+            is_verified,
+            user_type,
+            location_city,
+            location_state
+          ),
+          vehicle_attributes (*)
+        `)
+        .eq('id', id)
+        .maybeSingle();
+
+      if (data) {
+        const owner: User | undefined = data.profiles ? {
+          id: data.profiles.id,
+          name: data.profiles.full_name || 'Unknown',
+          email: '',
+          location: {
+            lat: 0,
+            lng: 0,
+            city: data.profiles.location_city || '',
+            state: data.profiles.location_state || ''
+          },
+          avatarUrl: data.profiles.avatar_url || undefined,
+          type: data.profiles.user_type === 'dealer' ? 'pro_seller' : 
+                data.profiles.user_type === 'service_provider' ? 'service_provider' : 'user',
+          ratingAvg: Number(data.profiles.rating_avg) || 0,
+          totalReviews: data.profiles.rating_count || 0,
+          memberSince: '',
+          isVerified: data.profiles.is_verified || false,
+          badges: []
+        } : undefined;
+
+        const transformedListing: Listing = {
+          id: data.id,
+          ownerId: data.owner_id,
+          owner,
+          type: data.type,
+          status: data.status || 'active',
+          title: data.title,
+          description: data.description || '',
+          price: Number(data.price) || 0,
+          location: {
+            lat: Number(data.location_lat) || 0,
+            lng: Number(data.location_lng) || 0,
+            city: data.location_city || '',
+            state: data.location_state || ''
+          },
+          images: data.images || ['/placeholder.svg'],
+          isPremium: data.is_premium || false,
+          isNegotiable: data.is_negotiable || false,
+          createdAt: data.created_at || '',
+          updatedAt: data.updated_at || '',
+          vehicleAttributes: data.vehicle_attributes ? {
+            make: data.vehicle_attributes.make || '',
+            model: data.vehicle_attributes.model || '',
+            year: data.vehicle_attributes.year || 0,
+            mileage: data.vehicle_attributes.mileage || 0,
+            fuelType: data.vehicle_attributes.fuel_type as any || 'gasoline',
+            transmission: data.vehicle_attributes.transmission as any || 'automatic',
+            color: data.vehicle_attributes.color || undefined,
+            vin: data.vehicle_attributes.vin || undefined
+          } : undefined
+        };
+        setListing(transformedListing);
+      }
+      setLoading(false);
+    }
+
+    fetchListing();
+  }, [id]);
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-background flex items-center justify-center">
+        <Loader2 className="w-8 h-8 animate-spin text-primary" />
+      </div>
+    );
+  }
 
   if (!listing) {
     return (
