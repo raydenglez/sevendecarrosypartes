@@ -101,9 +101,10 @@ export default function Home() {
   };
 
   return (
-    <PullToRefresh onRefresh={refresh} className="min-h-screen bg-background pb-24">
-      {/* Header */}
-      <header className="sticky top-0 z-40 bg-background/95 backdrop-blur-xl safe-top">
+    <div className="min-h-screen bg-background pb-24">
+      <PullToRefresh onRefresh={refresh} className="min-h-full">
+        {/* Header */}
+        <header className="sticky top-0 z-40 bg-background/95 backdrop-blur-xl safe-top">
         <div className="px-4 pt-4 pb-3 space-y-4">
           <div className="flex items-center justify-between">
             <div className="w-10" />
@@ -226,7 +227,8 @@ export default function Home() {
             </p>
           )}
         </section>
-      </main>
+        </main>
+      </PullToRefresh>
 
       <BottomNav />
       
@@ -248,6 +250,6 @@ export default function Home() {
         onClose={() => setShowLocationModal(false)}
         onRetry={requestLocation}
       />
-    </PullToRefresh>
+    </div>
   );
 }
