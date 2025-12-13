@@ -10,6 +10,7 @@ import { ListingCardSkeleton } from '@/components/ListingCardSkeleton';
 import { MapPreview } from '@/components/MapPreview';
 import { NotificationsPanel } from '@/components/NotificationsPanel';
 import { FilterSheet, FilterOptions } from '@/components/FilterSheet';
+import { PullToRefresh } from '@/components/PullToRefresh';
 import { Button } from '@/components/ui/button';
 import { useAuth } from '@/hooks/useAuth';
 import { useInfiniteScroll } from '@/hooks/useInfiniteScroll';
@@ -52,7 +53,8 @@ export default function Home() {
     loading: listingsLoading, 
     showLocationModal, 
     setShowLocationModal, 
-    requestLocation 
+    requestLocation,
+    refresh
   } = useNearbyListings(segment, searchFilters);
   const unreadCount = mockNotifications.filter(n => !n.isRead).length;
 
@@ -99,7 +101,7 @@ export default function Home() {
   };
 
   return (
-    <div className="min-h-screen bg-background pb-24">
+    <PullToRefresh onRefresh={refresh} className="min-h-screen bg-background pb-24">
       {/* Header */}
       <header className="sticky top-0 z-40 bg-background/95 backdrop-blur-xl safe-top">
         <div className="px-4 pt-4 pb-3 space-y-4">
@@ -246,6 +248,6 @@ export default function Home() {
         onClose={() => setShowLocationModal(false)}
         onRetry={requestLocation}
       />
-    </div>
+    </PullToRefresh>
   );
 }

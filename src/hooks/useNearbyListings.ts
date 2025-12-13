@@ -54,6 +54,7 @@ export function useNearbyListings(segment: 'vehicles' | 'services', filters?: Se
   const [userLocation, setUserLocation] = useState<{ lat: number; lng: number } | null>(null);
   const [locationDenied, setLocationDenied] = useState(false);
   const [showLocationModal, setShowLocationModal] = useState(false);
+  const [refreshKey, setRefreshKey] = useState(0);
 
   const requestLocation = useCallback(() => {
     if (navigator.geolocation) {
@@ -174,7 +175,15 @@ export function useNearbyListings(segment: 'vehicles' | 'services', filters?: Se
     };
 
     fetchListings();
-  }, [userLocation, segment, filters?.query, filters?.priceRange, filters?.maxDistance, filters?.minRating, filters?.condition, filters?.category]);
+  }, [userLocation, segment, filters?.query, filters?.priceRange, filters?.maxDistance, filters?.minRating, filters?.condition, filters?.category, refreshKey]);
+
+  const refresh = useCallback(async () => {
+    setRefreshKey(prev => prev + 1);
+    // Return a promise that resolves when loading is complete
+    return new Promise<void>((resolve) => {
+      setTimeout(resolve, 500); // Give time for the fetch to start
+    });
+  }, []);
 
   return { 
     listings, 
@@ -183,6 +192,7 @@ export function useNearbyListings(segment: 'vehicles' | 'services', filters?: Se
     locationDenied, 
     showLocationModal, 
     setShowLocationModal, 
-    requestLocation 
+    requestLocation,
+    refresh
   };
 }
