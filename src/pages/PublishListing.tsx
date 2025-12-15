@@ -119,6 +119,10 @@ export default function PublishListing() {
     address?: string;
   } | null>(null);
 
+  // Drag and drop state
+  const [draggedIndex, setDraggedIndex] = useState<number | null>(null);
+  const [dragOverIndex, setDragOverIndex] = useState<number | null>(null);
+
   // Vehicle form
   const vehicleForm = useForm<VehicleFormData>({
     resolver: zodResolver(vehicleSchema),
@@ -248,6 +252,55 @@ export default function PublishListing() {
     if (coverIndex >= newImages.length) {
       setCoverIndex(Math.max(0, newImages.length - 1));
     }
+  };
+
+  // Drag and drop handlers
+  const handleDragStart = (index: number) => {
+    setDraggedIndex(index);
+  };
+
+  const handleDragOver = (e: React.DragEvent, index: number) => {
+    e.preventDefault();
+    if (draggedIndex !== null && draggedIndex !== index) {
+      setDragOverIndex(index);
+    }
+  };
+
+  const handleDragLeave = () => {
+    setDragOverIndex(null);
+  };
+
+  const handleDrop = (e: React.DragEvent, dropIndex: number) => {
+    e.preventDefault();
+    if (draggedIndex === null || draggedIndex === dropIndex) {
+      setDraggedIndex(null);
+      setDragOverIndex(null);
+      return;
+    }
+
+    const newImages = [...images];
+    const [draggedImage] = newImages.splice(draggedIndex, 1);
+    newImages.splice(dropIndex, 0, draggedImage);
+    
+    // Update cover index if needed
+    let newCoverIndex = coverIndex;
+    if (coverIndex === draggedIndex) {
+      newCoverIndex = dropIndex;
+    } else if (draggedIndex < coverIndex && dropIndex >= coverIndex) {
+      newCoverIndex = coverIndex - 1;
+    } else if (draggedIndex > coverIndex && dropIndex <= coverIndex) {
+      newCoverIndex = coverIndex + 1;
+    }
+    
+    setImages(newImages);
+    setCoverIndex(newCoverIndex);
+    setDraggedIndex(null);
+    setDragOverIndex(null);
+  };
+
+  const handleDragEnd = () => {
+    setDraggedIndex(null);
+    setDragOverIndex(null);
   };
 
   const onSubmit = async (data: VehicleFormData | PartFormData | ServiceFormData) => {
@@ -396,113 +449,93 @@ export default function PublishListing() {
         {/* Image Gallery */}
         <section>
           <div className="flex items-center justify-between mb-3">
-            <h2 className="text-lg font-bold text-foreground">Visual Gallery</h2>
+            <div>
+              <h2 className="text-lg font-bold text-foreground">Visual Gallery</h2>
+              {images.length > 1 && (
+                <p className="text-xs text-muted-foreground mt-0.5">Drag to reorder • First image is cover</p>
+              )}
+            </div>
             <span className="text-xs text-muted-foreground bg-muted px-2 py-1 rounded">
               {images.length}/10 photos
             </span>
           </div>
-          <div className="flex gap-3">
-            {/* Cover Image */}
-            <div 
-              className="relative w-32 aspect-[3/4] rounded-xl overflow-hidden bg-muted shrink-0 cursor-pointer"
-              onClick={() => images.length === 0 && fileInputRef.current?.click()}
-            >
-              {images[coverIndex] ? (
-                <>
-                  <img
-                    src={images[coverIndex]}
-                    alt="Cover"
-                    className="w-full h-full object-cover"
-                  />
+          
+          <div className="grid grid-cols-3 gap-2">
+            {images.map((img, idx) => (
+              <div
+                key={`${img}-${idx}`}
+                draggable
+                onDragStart={() => handleDragStart(idx)}
+                onDragOver={(e) => handleDragOver(e, idx)}
+                onDragLeave={handleDragLeave}
+                onDrop={(e) => handleDrop(e, idx)}
+                onDragEnd={handleDragEnd}
+                className={cn(
+                  "relative aspect-square rounded-xl overflow-hidden bg-muted cursor-grab active:cursor-grabbing transition-all duration-200",
+                  idx === 0 && "col-span-2 row-span-2",
+                  draggedIndex === idx && "opacity-50 scale-95",
+                  dragOverIndex === idx && "ring-2 ring-primary ring-offset-2 ring-offset-background"
+                )}
+                onClick={() => idx !== 0 && setCoverIndex(idx)}
+              >
+                <img 
+                  src={img} 
+                  alt={`Listing image ${idx + 1}`} 
+                  className="w-full h-full object-cover pointer-events-none"
+                  draggable={false}
+                />
+                
+                {/* Cover badge */}
+                {idx === 0 && (
                   <span className="absolute bottom-2 left-2 text-[10px] font-semibold px-2 py-1 rounded bg-primary text-primary-foreground">
                     COVER
                   </span>
-                  <button 
-                    className="absolute top-2 right-2 w-6 h-6 rounded-full bg-background/80 flex items-center justify-center"
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      handleRemoveImage(coverIndex);
-                    }}
-                  >
-                    <X className="w-3 h-3" />
-                  </button>
-                </>
-              ) : (
-                <div className="w-full h-full flex flex-col items-center justify-center gap-2">
-                  {isUploading ? (
-                    <Loader2 className="w-8 h-8 text-muted-foreground animate-spin" />
-                  ) : (
-                    <>
-                      <Camera className="w-8 h-8 text-muted-foreground" />
-                      <span className="text-xs text-muted-foreground">Add cover</span>
-                    </>
-                  )}
+                )}
+                
+                {/* Drag handle indicator */}
+                <div className="absolute top-2 left-2 w-6 h-6 rounded-full bg-background/80 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+                  <GripVertical className="w-3 h-3 text-muted-foreground" />
                 </div>
-              )}
-            </div>
-
-            {/* Thumbnail Grid */}
-            <div className="flex-1 grid grid-cols-2 gap-2">
-              {images.slice(1, 3).map((img, idx) => (
-                <div 
-                  key={idx} 
-                  className="relative aspect-square rounded-lg overflow-hidden bg-muted cursor-pointer"
-                  onClick={() => setCoverIndex(idx + 1)}
-                >
-                  <img src={img} alt="" className="w-full h-full object-cover" />
-                  <button 
-                    className="absolute top-1 right-1 w-5 h-5 rounded-full bg-background/80 flex items-center justify-center"
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      handleRemoveImage(idx + 1);
-                    }}
-                  >
-                    <X className="w-3 h-3" />
-                  </button>
-                </div>
-              ))}
-              {images.length < 10 && (
+                
+                {/* Remove button */}
                 <button 
-                  className="aspect-square rounded-lg border-2 border-dashed border-muted flex flex-col items-center justify-center gap-1 text-muted-foreground hover:border-primary hover:text-primary transition-colors disabled:opacity-50"
-                  onClick={() => fileInputRef.current?.click()}
-                  disabled={isUploading}
+                  className="absolute top-2 right-2 w-6 h-6 rounded-full bg-background/80 flex items-center justify-center hover:bg-destructive hover:text-destructive-foreground transition-colors"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    handleRemoveImage(idx);
+                  }}
                 >
-                  {isUploading ? (
-                    <Loader2 className="w-6 h-6 animate-spin" />
-                  ) : (
-                    <>
-                      <Camera className="w-6 h-6" />
-                      <span className="text-xs">Add</span>
-                    </>
-                  )}
+                  <X className="w-3 h-3" />
                 </button>
-              )}
-            </div>
+                
+                {/* Position indicator */}
+                <span className="absolute bottom-2 right-2 text-[10px] font-medium px-1.5 py-0.5 rounded bg-background/80 text-foreground">
+                  {idx + 1}
+                </span>
+              </div>
+            ))}
+            
+            {/* Add image button */}
+            {images.length < 10 && (
+              <button 
+                className={cn(
+                  "aspect-square rounded-xl border-2 border-dashed border-muted flex flex-col items-center justify-center gap-2 text-muted-foreground hover:border-primary hover:text-primary transition-colors disabled:opacity-50",
+                  images.length === 0 && "col-span-2 row-span-2"
+                )}
+                onClick={() => fileInputRef.current?.click()}
+                disabled={isUploading}
+              >
+                {isUploading ? (
+                  <Loader2 className="w-8 h-8 animate-spin" />
+                ) : (
+                  <>
+                    <Camera className="w-8 h-8" />
+                    <span className="text-sm font-medium">Add Photo</span>
+                  </>
+                )}
+              </button>
+            )}
           </div>
-          
-          {/* Show remaining images if more than 3 */}
-          {images.length > 3 && (
-            <div className="mt-3 grid grid-cols-4 gap-2">
-              {images.slice(3).map((img, idx) => (
-                <div 
-                  key={idx} 
-                  className="relative aspect-square rounded-lg overflow-hidden bg-muted cursor-pointer"
-                  onClick={() => setCoverIndex(idx + 3)}
-                >
-                  <img src={img} alt="" className="w-full h-full object-cover" />
-                  <button 
-                    className="absolute top-1 right-1 w-5 h-5 rounded-full bg-background/80 flex items-center justify-center"
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      handleRemoveImage(idx + 3);
-                    }}
-                  >
-                    <X className="w-3 h-3" />
-                  </button>
-                </div>
-              ))}
-            </div>
-          )}
         </section>
 
         {/* Listing Type */}
