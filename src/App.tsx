@@ -9,6 +9,7 @@ import Home from "./pages/Home";
 import ListingDetail from "./pages/ListingDetail";
 import Profile from "./pages/Profile";
 import PublishListing from "./pages/PublishListing";
+import EditListing from "./pages/EditListing";
 import Favorites from "./pages/Favorites";
 import Messages from "./pages/Messages";
 import Auth from "./pages/Auth";
@@ -34,6 +35,7 @@ const App = () => (
             <Route path="/listing/:id" element={<ListingDetail />} />
             <Route path="/profile" element={<Profile />} />
             <Route path="/publish" element={<PublishListing />} />
+            <Route path="/listing/:id/edit" element={<EditListing />} />
             <Route path="/favorites" element={<Favorites />} />
             <Route path="/messages" element={<Messages />} />
             <Route path="/map" element={<MapView />} />
