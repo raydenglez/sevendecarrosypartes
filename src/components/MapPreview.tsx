@@ -23,18 +23,12 @@ export function MapPreview({
       {/* Animated glow effect */}
       <div className="absolute -inset-0.5 bg-gradient-to-r from-primary/20 via-primary/10 to-primary/20 rounded-2xl blur opacity-60 group-hover:opacity-100 transition-opacity duration-500" />
       
-      {/* Map background pattern */}
+      {/* Map background image */}
       <div className="absolute inset-0 rounded-2xl overflow-hidden">
-        <div 
-          className="absolute inset-0 bg-muted transition-transform duration-500 group-hover:scale-110"
-          style={{
-            backgroundImage: `
-              radial-gradient(circle at 20% 30%, hsl(var(--primary) / 0.15) 0%, transparent 25%),
-              radial-gradient(circle at 80% 70%, hsl(var(--primary) / 0.1) 0%, transparent 20%),
-              radial-gradient(circle at 60% 20%, hsl(var(--primary) / 0.08) 0%, transparent 15%),
-              linear-gradient(135deg, hsl(var(--muted)) 0%, hsl(var(--background)) 100%)
-            `
-          }}
+        <img
+          src="https://images.unsplash.com/photo-1524661135-423995f22d0b?w=800&q=80"
+          alt="Map preview"
+          className="absolute inset-0 w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
         />
         <div className="absolute inset-0 bg-gradient-to-r from-background/80 via-background/60 to-background/40" />
         <div className="absolute inset-0 bg-gradient-to-t from-background/50 to-transparent" />
