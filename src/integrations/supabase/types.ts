@@ -521,6 +521,7 @@ export type Database = {
         }
         Returns: boolean
       }
+      recalculate_vehicle_premium: { Args: never; Returns: undefined }
     }
     Enums: {
       app_role: "admin" | "moderator" | "user"
