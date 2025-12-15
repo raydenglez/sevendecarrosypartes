@@ -30,6 +30,7 @@ import {
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { useAuth } from '@/hooks/useAuth';
 import { ImageCropModal } from '@/components/ImageCropModal';
+import { LocationPicker } from '@/components/LocationPicker';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
 import { cn } from '@/lib/utils';
@@ -108,6 +109,16 @@ export default function PublishListing() {
   const [selectedImageSrc, setSelectedImageSrc] = useState<string>('');
   const [isUploading, setIsUploading] = useState(false);
 
+  // Location state
+  const [locationPickerOpen, setLocationPickerOpen] = useState(false);
+  const [location, setLocation] = useState<{
+    lat: number;
+    lng: number;
+    city: string;
+    state: string;
+    address?: string;
+  } | null>(null);
+
   // Vehicle form
   const vehicleForm = useForm<VehicleFormData>({
     resolver: zodResolver(vehicleSchema),
@@ -153,6 +164,7 @@ export default function PublishListing() {
     setImages([]);
     setDescription('');
     setCoverIndex(0);
+    setLocation(null);
   };
 
   const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -259,6 +271,10 @@ export default function PublishListing() {
           is_negotiable: data.isNegotiable,
           images: images.length > 0 ? images : null,
           status: 'active',
+          location_lat: location?.lat || null,
+          location_lng: location?.lng || null,
+          location_city: location?.city || null,
+          location_state: location?.state || null,
         })
         .select()
         .single();
@@ -741,6 +757,57 @@ export default function PublishListing() {
                 />
               </section>
 
+              {/* Location */}
+              <section>
+                <h2 className="text-lg font-bold text-foreground mb-3">Location</h2>
+                <div 
+                  className="bg-card rounded-2xl overflow-hidden cursor-pointer border border-border hover:border-primary/50 transition-colors"
+                  onClick={() => setLocationPickerOpen(true)}
+                >
+                  <div className="p-4 flex items-center justify-between">
+                    <div className="flex items-center gap-3">
+                      <div className="w-10 h-10 rounded-full bg-secondary/20 flex items-center justify-center">
+                        <MapPin className="w-5 h-5 text-secondary" />
+                      </div>
+                      <div>
+                        {location ? (
+                          <>
+                            <div className="flex items-center gap-2">
+                              <span className="text-xs font-medium text-green-500">SELECTED</span>
+                            </div>
+                            <p className="font-medium text-foreground">
+                              {location.city}{location.state ? `, ${location.state}` : ''}
+                            </p>
+                            {location.address && (
+                              <p className="text-xs text-muted-foreground truncate max-w-[200px]">
+                                {location.address}
+                              </p>
+                            )}
+                          </>
+                        ) : (
+                          <>
+                            <p className="text-sm text-muted-foreground">Tap to add location</p>
+                            <p className="font-medium text-foreground">Select on map</p>
+                          </>
+                        )}
+                      </div>
+                    </div>
+                    <span className="text-sm font-medium text-primary">
+                      {location ? 'Edit' : 'Add'}
+                    </span>
+                  </div>
+                  {location && (
+                    <div className="h-32">
+                      <img
+                        src={`https://api.mapbox.com/styles/v1/mapbox/dark-v11/static/pin-l+ff6a00(${location.lng},${location.lat})/${location.lng},${location.lat},13,0/800x400@2x?access_token=pk.eyJ1IjoicmF5ZGVuZ2xleiIsImEiOiJjbWoyMmNmazMwN3dxM2ZxMWx6YWh6NWNpIn0.1ktomA51sIeX7o7QGB2y9w`}
+                        alt="Location"
+                        className="w-full h-full object-cover"
+                      />
+                    </div>
+                  )}
+                </div>
+              </section>
+
               {/* Publish Button */}
               <Button 
                 type="submit" 
@@ -873,6 +940,52 @@ export default function PublishListing() {
                 />
               </section>
 
+              {/* Location */}
+              <section>
+                <h2 className="text-lg font-bold text-foreground mb-3">Location</h2>
+                <div 
+                  className="bg-card rounded-2xl overflow-hidden cursor-pointer border border-border hover:border-primary/50 transition-colors"
+                  onClick={() => setLocationPickerOpen(true)}
+                >
+                  <div className="p-4 flex items-center justify-between">
+                    <div className="flex items-center gap-3">
+                      <div className="w-10 h-10 rounded-full bg-secondary/20 flex items-center justify-center">
+                        <MapPin className="w-5 h-5 text-secondary" />
+                      </div>
+                      <div>
+                        {location ? (
+                          <>
+                            <div className="flex items-center gap-2">
+                              <span className="text-xs font-medium text-green-500">SELECTED</span>
+                            </div>
+                            <p className="font-medium text-foreground">
+                              {location.city}{location.state ? `, ${location.state}` : ''}
+                            </p>
+                          </>
+                        ) : (
+                          <>
+                            <p className="text-sm text-muted-foreground">Tap to add location</p>
+                            <p className="font-medium text-foreground">Select on map</p>
+                          </>
+                        )}
+                      </div>
+                    </div>
+                    <span className="text-sm font-medium text-primary">
+                      {location ? 'Edit' : 'Add'}
+                    </span>
+                  </div>
+                  {location && (
+                    <div className="h-32">
+                      <img
+                        src={`https://api.mapbox.com/styles/v1/mapbox/dark-v11/static/pin-l+ff6a00(${location.lng},${location.lat})/${location.lng},${location.lat},13,0/800x400@2x?access_token=pk.eyJ1IjoicmF5ZGVuZ2xleiIsImEiOiJjbWoyMmNmazMwN3dxM2ZxMWx6YWh6NWNpIn0.1ktomA51sIeX7o7QGB2y9w`}
+                        alt="Location"
+                        className="w-full h-full object-cover"
+                      />
+                    </div>
+                  )}
+                </div>
+              </section>
+
               {/* Publish Button */}
               <Button 
                 type="submit" 
@@ -992,6 +1105,52 @@ export default function PublishListing() {
                 />
               </section>
 
+              {/* Location */}
+              <section>
+                <h2 className="text-lg font-bold text-foreground mb-3">Location</h2>
+                <div 
+                  className="bg-card rounded-2xl overflow-hidden cursor-pointer border border-border hover:border-primary/50 transition-colors"
+                  onClick={() => setLocationPickerOpen(true)}
+                >
+                  <div className="p-4 flex items-center justify-between">
+                    <div className="flex items-center gap-3">
+                      <div className="w-10 h-10 rounded-full bg-secondary/20 flex items-center justify-center">
+                        <MapPin className="w-5 h-5 text-secondary" />
+                      </div>
+                      <div>
+                        {location ? (
+                          <>
+                            <div className="flex items-center gap-2">
+                              <span className="text-xs font-medium text-green-500">SELECTED</span>
+                            </div>
+                            <p className="font-medium text-foreground">
+                              {location.city}{location.state ? `, ${location.state}` : ''}
+                            </p>
+                          </>
+                        ) : (
+                          <>
+                            <p className="text-sm text-muted-foreground">Tap to add location</p>
+                            <p className="font-medium text-foreground">Select on map</p>
+                          </>
+                        )}
+                      </div>
+                    </div>
+                    <span className="text-sm font-medium text-primary">
+                      {location ? 'Edit' : 'Add'}
+                    </span>
+                  </div>
+                  {location && (
+                    <div className="h-32">
+                      <img
+                        src={`https://api.mapbox.com/styles/v1/mapbox/dark-v11/static/pin-l+ff6a00(${location.lng},${location.lat})/${location.lng},${location.lat},13,0/800x400@2x?access_token=pk.eyJ1IjoicmF5ZGVuZ2xleiIsImEiOiJjbWoyMmNmazMwN3dxM2ZxMWx6YWh6NWNpIn0.1ktomA51sIeX7o7QGB2y9w`}
+                        alt="Location"
+                        className="w-full h-full object-cover"
+                      />
+                    </div>
+                  )}
+                </div>
+              </section>
+
               {/* Publish Button */}
               <Button 
                 type="submit" 
@@ -1026,6 +1185,14 @@ export default function PublishListing() {
         }}
         imageSrc={selectedImageSrc}
         onCropComplete={handleCropComplete}
+      />
+
+      {/* Location Picker Modal */}
+      <LocationPicker
+        open={locationPickerOpen}
+        onClose={() => setLocationPickerOpen(false)}
+        onLocationSelect={setLocation}
+        initialLocation={location}
       />
     </div>
   );
