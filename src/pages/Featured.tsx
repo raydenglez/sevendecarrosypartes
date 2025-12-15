@@ -14,7 +14,7 @@ export default function Featured() {
     query: '',
     category: 'all',
     priceRange: [0, 100000],
-    maxDistance: 50,
+    maxDistance: 10000,
     minRating: 0,
     condition: [],
   });
