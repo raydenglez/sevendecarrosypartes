@@ -226,37 +226,40 @@ export default function EditListing() {
       }
 
       // Populate form based on type
-      if (data.type === 'vehicle' && data.vehicle_attributes) {
+      if (data.type === 'vehicle') {
+        const attrs = data.vehicle_attributes;
         vehicleForm.reset({
           title: data.title,
           price: Number(data.price) || 0,
           isNegotiable: data.is_negotiable || false,
-          make: data.vehicle_attributes.make || '',
-          model: data.vehicle_attributes.model || '',
-          year: data.vehicle_attributes.year || new Date().getFullYear(),
-          mileage: data.vehicle_attributes.mileage || 0,
-          vin: data.vehicle_attributes.vin || '',
-          fuelType: data.vehicle_attributes.fuel_type || '',
-          transmission: data.vehicle_attributes.transmission || '',
-          color: data.vehicle_attributes.color || '',
-          condition: data.vehicle_attributes.condition || undefined,
+          make: attrs?.make || '',
+          model: attrs?.model || '',
+          year: attrs?.year || new Date().getFullYear(),
+          mileage: attrs?.mileage || 0,
+          vin: attrs?.vin || '',
+          fuelType: attrs?.fuel_type || undefined,
+          transmission: attrs?.transmission || undefined,
+          color: attrs?.color || '',
+          condition: attrs?.condition || undefined,
         });
-      } else if (data.type === 'part' && data.part_attributes) {
+      } else if (data.type === 'part') {
+        const attrs = data.part_attributes;
         partForm.reset({
           title: data.title,
           price: Number(data.price) || 0,
           isNegotiable: data.is_negotiable || false,
-          partCategory: data.part_attributes.part_category || '',
-          brand: data.part_attributes.brand || '',
-          condition: data.part_attributes.condition || undefined,
+          partCategory: attrs?.part_category || '',
+          brand: attrs?.brand || '',
+          condition: attrs?.condition || undefined,
         });
-      } else if (data.type === 'service' && data.service_attributes) {
+      } else if (data.type === 'service') {
+        const attrs = data.service_attributes;
         serviceForm.reset({
           title: data.title,
           price: Number(data.price) || 0,
           isNegotiable: data.is_negotiable || false,
-          serviceCategory: data.service_attributes.service_category || 'maintenance',
-          priceStructure: data.service_attributes.price_structure || '',
+          serviceCategory: attrs?.service_category || 'maintenance',
+          priceStructure: attrs?.price_structure || '',
         });
       }
 
