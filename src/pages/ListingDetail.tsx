@@ -19,15 +19,55 @@ import { Button } from '@/components/ui/button';
 import { SellerCard } from '@/components/SellerCard';
 import { supabase } from '@/integrations/supabase/client';
 import { cn } from '@/lib/utils';
+import { useAuth } from '@/hooks/useAuth';
+import { getOrCreateConversation } from '@/hooks/useConversations';
+import { useToast } from '@/hooks/use-toast';
 import type { Listing, User } from '@/types';
 
 export default function ListingDetail() {
   const { id } = useParams();
   const navigate = useNavigate();
+  const { user } = useAuth();
+  const { toast } = useToast();
   const [isFavorite, setIsFavorite] = useState(false);
   const [activeImage, setActiveImage] = useState(0);
   const [listing, setListing] = useState<Listing | null>(null);
   const [loading, setLoading] = useState(true);
+  const [contactLoading, setContactLoading] = useState(false);
+
+  const handleContact = async () => {
+    if (!user) {
+      navigate('/auth');
+      return;
+    }
+
+    if (!listing || listing.ownerId === user.id) {
+      toast({
+        title: "Cannot message",
+        description: "You cannot message yourself",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    setContactLoading(true);
+    const conversationId = await getOrCreateConversation(
+      listing.id,
+      listing.ownerId,
+      user.id
+    );
+
+    if (conversationId) {
+      navigate(`/chat/${conversationId}`);
+    } else {
+      toast({
+        title: "Error",
+        description: "Could not start conversation. Please try again.",
+        variant: "destructive",
+      });
+    }
+    setContactLoading(false);
+  };
 
   useEffect(() => {
     async function fetchListing() {
@@ -304,8 +344,18 @@ export default function ListingDetail() {
             <Phone className="w-5 h-5 mr-2" />
             Call
           </Button>
-          <Button variant="contact" size="lg" className="flex-[2]">
-            <MessageSquare className="w-5 h-5 mr-2" />
+          <Button 
+            variant="contact" 
+            size="lg" 
+            className="flex-[2]"
+            onClick={handleContact}
+            disabled={contactLoading}
+          >
+            {contactLoading ? (
+              <Loader2 className="w-5 h-5 mr-2 animate-spin" />
+            ) : (
+              <MessageSquare className="w-5 h-5 mr-2" />
+            )}
             Contact
           </Button>
         </div>
