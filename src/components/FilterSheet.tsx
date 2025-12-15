@@ -36,7 +36,7 @@ export function FilterSheet({ isOpen, onClose, filters, onApply }: FilterSheetPr
 
   const handleReset = () => {
     const defaultFilters: FilterOptions = {
-      priceRange: [0, 100000],
+      priceRange: [0, 1000000],
       maxDistance: 50,
       minRating: 0,
       condition: [],
@@ -75,8 +75,8 @@ export function FilterSheet({ isOpen, onClose, filters, onApply }: FilterSheetPr
             <Slider
               value={localFilters.priceRange}
               onValueChange={(value) => setLocalFilters(prev => ({ ...prev, priceRange: value as [number, number] }))}
-              max={100000}
-              step={500}
+              max={1000000}
+              step={5000}
               className="mt-2"
             />
             <div className="flex justify-between text-sm text-muted-foreground">
