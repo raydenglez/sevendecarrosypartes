@@ -28,6 +28,7 @@ import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
 import { ImageCropModal } from '@/components/ImageCropModal';
 import { EditProfileModal } from '@/components/EditProfileModal';
+import { NotificationToggle } from '@/components/NotificationToggle';
 
 interface ProfileData {
   name: string;
@@ -436,12 +437,14 @@ export default function Profile() {
             description="English, Spanish, Portuguese"
             value="English"
           />
+          <div className="px-4">
+            <NotificationToggle />
+          </div>
           <SettingsItem
             icon={<Bell className="w-5 h-5 text-warning" />}
             iconBg="bg-warning/20"
-            label="Notifications"
-            description="Search alerts and messages"
-            badge
+            label="Notification Settings"
+            description="Search alerts and preferences"
           />
           <SettingsItem
             icon={<HelpCircle className="w-5 h-5 text-muted-foreground" />}
