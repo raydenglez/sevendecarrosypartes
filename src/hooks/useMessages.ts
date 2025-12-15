@@ -85,6 +85,17 @@ export function useMessages(conversationId: string | undefined) {
   const sendMessage = async (content: string): Promise<boolean> => {
     if (!conversationId || !user || !content.trim()) return false;
 
+    // Get recipient ID before sending
+    const { data: conversation } = await supabase
+      .from('conversations')
+      .select('buyer_id, seller_id')
+      .eq('id', conversationId)
+      .single();
+
+    const recipientId = conversation?.buyer_id === user.id 
+      ? conversation?.seller_id 
+      : conversation?.buyer_id;
+
     const { error } = await supabase
       .from('messages')
       .insert({
@@ -103,6 +114,28 @@ export function useMessages(conversationId: string | undefined) {
       .from('conversations')
       .update({ last_message_at: new Date().toISOString() })
       .eq('id', conversationId);
+
+    // Send push notification to recipient
+    if (recipientId) {
+      // Get sender name for notification
+      const { data: senderProfile } = await supabase
+        .from('profiles')
+        .select('full_name')
+        .eq('id', user.id)
+        .single();
+
+      const senderName = senderProfile?.full_name || 'Someone';
+
+      // Fire and forget - don't wait for push notification
+      supabase.functions.invoke('send-push-notification', {
+        body: {
+          userId: recipientId,
+          title: `Message from ${senderName}`,
+          body: content.trim().slice(0, 100),
+          conversationId,
+        },
+      }).catch(console.error);
+    }
 
     return true;
   };
