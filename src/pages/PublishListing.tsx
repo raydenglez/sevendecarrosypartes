@@ -1,5 +1,8 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { z } from 'zod';
 import { 
   X, 
   Camera, 
@@ -10,29 +13,217 @@ import {
   Scan,
   Upload,
   ChevronDown,
-  Plus
+  Plus,
+  Loader2
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
+import { Textarea } from '@/components/ui/textarea';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { useAuth } from '@/hooks/useAuth';
+import { supabase } from '@/integrations/supabase/client';
+import { toast } from 'sonner';
 import { cn } from '@/lib/utils';
 
 type ListingType = 'vehicle' | 'part' | 'service';
+
+const baseSchema = z.object({
+  title: z.string().min(5, 'Title must be at least 5 characters').max(100),
+  description: z.string().max(1000, 'Description cannot exceed 1000 characters').optional(),
+  price: z.coerce.number().min(0, 'Price must be positive'),
+  isNegotiable: z.boolean().default(false),
+});
+
+const vehicleSchema = baseSchema.extend({
+  make: z.string().min(1, 'Make is required'),
+  model: z.string().min(1, 'Model is required'),
+  year: z.coerce.number().min(1900).max(new Date().getFullYear() + 1),
+  mileage: z.coerce.number().min(0).optional(),
+  vin: z.string().optional(),
+  fuelType: z.string().optional(),
+  transmission: z.string().optional(),
+  color: z.string().optional(),
+  condition: z.enum(['new', 'like_new', 'good', 'fair', 'poor']).optional(),
+});
+
+const partSchema = baseSchema.extend({
+  partCategory: z.string().min(1, 'Category is required'),
+  brand: z.string().optional(),
+  condition: z.enum(['new', 'like_new', 'good', 'fair', 'poor']).optional(),
+});
+
+const serviceSchema = baseSchema.extend({
+  serviceCategory: z.enum(['maintenance', 'bodywork', 'car_wash', 'tires', 'electrical', 'other']),
+  priceStructure: z.string().optional(),
+});
+
+type VehicleFormData = z.infer<typeof vehicleSchema>;
+type PartFormData = z.infer<typeof partSchema>;
+type ServiceFormData = z.infer<typeof serviceSchema>;
+
+const typeOptions = [
+  { id: 'vehicle' as const, label: 'Vehicle', icon: Car },
+  { id: 'part' as const, label: 'Part', icon: Settings },
+  { id: 'service' as const, label: 'Service', icon: Wrench },
+];
+
+const conditionOptions = [
+  { value: 'new', label: 'New' },
+  { value: 'like_new', label: 'Like New' },
+  { value: 'good', label: 'Good' },
+  { value: 'fair', label: 'Fair' },
+  { value: 'poor', label: 'Poor' },
+];
+
+const serviceCategoryOptions = [
+  { value: 'maintenance', label: 'Maintenance' },
+  { value: 'bodywork', label: 'Bodywork' },
+  { value: 'car_wash', label: 'Car Wash' },
+  { value: 'tires', label: 'Tires' },
+  { value: 'electrical', label: 'Electrical' },
+  { value: 'other', label: 'Other' },
+];
 
 export default function PublishListing() {
   const navigate = useNavigate();
   const { user, loading } = useAuth();
   const [listingType, setListingType] = useState<ListingType>('vehicle');
-  const [images, setImages] = useState<string[]>([
-    'https://images.unsplash.com/photo-1552519507-da3b142c6e3d?w=400&h=300&fit=crop'
-  ]);
+  const [images, setImages] = useState<string[]>([]);
   const [coverIndex, setCoverIndex] = useState(0);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [description, setDescription] = useState('');
 
-  const typeOptions = [
-    { id: 'vehicle' as const, label: 'Vehicle', icon: Car },
-    { id: 'part' as const, label: 'Part', icon: Settings },
-    { id: 'service' as const, label: 'Service', icon: Wrench },
-  ];
+  // Vehicle form
+  const vehicleForm = useForm<VehicleFormData>({
+    resolver: zodResolver(vehicleSchema),
+    defaultValues: {
+      title: '',
+      price: 0,
+      isNegotiable: false,
+      make: '',
+      model: '',
+      year: new Date().getFullYear(),
+      mileage: 0,
+    },
+  });
+
+  // Part form
+  const partForm = useForm<PartFormData>({
+    resolver: zodResolver(partSchema),
+    defaultValues: {
+      title: '',
+      price: 0,
+      isNegotiable: false,
+      partCategory: '',
+    },
+  });
+
+  // Service form
+  const serviceForm = useForm<ServiceFormData>({
+    resolver: zodResolver(serviceSchema),
+    defaultValues: {
+      title: '',
+      price: 0,
+      isNegotiable: false,
+      serviceCategory: 'maintenance',
+    },
+  });
+
+  const currentForm = listingType === 'vehicle' ? vehicleForm : listingType === 'part' ? partForm : serviceForm;
+
+  const handleClearForm = () => {
+    vehicleForm.reset();
+    partForm.reset();
+    serviceForm.reset();
+    setImages([]);
+    setDescription('');
+    setCoverIndex(0);
+  };
+
+  const onSubmit = async (data: VehicleFormData | PartFormData | ServiceFormData) => {
+    if (!user) {
+      toast.error('Please sign in to publish a listing');
+      return;
+    }
+
+    setIsSubmitting(true);
+
+    try {
+      // Create the listing first
+      const { data: listing, error: listingError } = await supabase
+        .from('listings')
+        .insert({
+          owner_id: user.id,
+          type: listingType,
+          title: data.title,
+          description: description || null,
+          price: data.price,
+          is_negotiable: data.isNegotiable,
+          images: images.length > 0 ? images : null,
+          status: 'active',
+        })
+        .select()
+        .single();
+
+      if (listingError) throw listingError;
+
+      // Insert type-specific attributes
+      if (listingType === 'vehicle' && listing) {
+        const vehicleData = data as VehicleFormData;
+        const { error: attrError } = await supabase
+          .from('vehicle_attributes')
+          .insert({
+            listing_id: listing.id,
+            make: vehicleData.make,
+            model: vehicleData.model,
+            year: vehicleData.year,
+            mileage: vehicleData.mileage || null,
+            vin: vehicleData.vin || null,
+            fuel_type: vehicleData.fuelType || null,
+            transmission: vehicleData.transmission || null,
+            color: vehicleData.color || null,
+            condition: vehicleData.condition || null,
+          });
+        if (attrError) throw attrError;
+      } else if (listingType === 'part' && listing) {
+        const partData = data as PartFormData;
+        const { error: attrError } = await supabase
+          .from('part_attributes')
+          .insert({
+            listing_id: listing.id,
+            part_category: partData.partCategory,
+            brand: partData.brand || null,
+            condition: partData.condition || null,
+          });
+        if (attrError) throw attrError;
+      } else if (listingType === 'service' && listing) {
+        const serviceData = data as ServiceFormData;
+        const { error: attrError } = await supabase
+          .from('service_attributes')
+          .insert({
+            listing_id: listing.id,
+            service_category: serviceData.serviceCategory,
+            price_structure: serviceData.priceStructure || null,
+          });
+        if (attrError) throw attrError;
+      }
+
+      toast.success('Listing published successfully!');
+      navigate(`/listing/${listing.id}`);
+    } catch (error: any) {
+      console.error('Error publishing listing:', error);
+      toast.error(error.message || 'Failed to publish listing');
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
 
   if (loading) {
     return (
@@ -42,7 +233,6 @@ export default function PublishListing() {
     );
   }
 
-  // Show sign-in prompt for guests
   if (!user) {
     return (
       <div className="min-h-screen bg-background">
@@ -80,7 +270,7 @@ export default function PublishListing() {
             <X className="w-5 h-5" />
           </Button>
           <h1 className="text-lg font-bold text-foreground">Publish Listing</h1>
-          <Button variant="ghost" className="text-muted-foreground">
+          <Button variant="ghost" className="text-muted-foreground" onClick={handleClearForm}>
             Clear
           </Button>
         </div>
@@ -108,7 +298,14 @@ export default function PublishListing() {
                   <span className="absolute bottom-2 left-2 text-[10px] font-semibold px-2 py-1 rounded bg-primary text-primary-foreground">
                     COVER
                   </span>
-                  <button className="absolute top-2 right-2 w-6 h-6 rounded-full bg-background/80 flex items-center justify-center">
+                  <button 
+                    className="absolute top-2 right-2 w-6 h-6 rounded-full bg-background/80 flex items-center justify-center"
+                    onClick={() => {
+                      const newImages = images.filter((_, i) => i !== coverIndex);
+                      setImages(newImages);
+                      if (coverIndex >= newImages.length) setCoverIndex(Math.max(0, newImages.length - 1));
+                    }}
+                  >
                     <X className="w-3 h-3" />
                   </button>
                 </>
@@ -124,7 +321,13 @@ export default function PublishListing() {
               {images.slice(1, 3).map((img, idx) => (
                 <div key={idx} className="relative aspect-square rounded-lg overflow-hidden bg-muted">
                   <img src={img} alt="" className="w-full h-full object-cover" />
-                  <button className="absolute top-1 right-1 w-5 h-5 rounded-full bg-background/80 flex items-center justify-center">
+                  <button 
+                    className="absolute top-1 right-1 w-5 h-5 rounded-full bg-background/80 flex items-center justify-center"
+                    onClick={() => {
+                      const actualIndex = idx + 1;
+                      setImages(images.filter((_, i) => i !== actualIndex));
+                    }}
+                  >
                     <X className="w-3 h-3" />
                   </button>
                 </div>
@@ -149,6 +352,7 @@ export default function PublishListing() {
               return (
                 <button
                   key={option.id}
+                  type="button"
                   onClick={() => setListingType(option.id)}
                   className={cn(
                     "flex flex-col items-center gap-2 p-4 rounded-xl border-2 transition-all",
@@ -165,167 +369,505 @@ export default function PublishListing() {
           </div>
         </section>
 
-        {/* General Information */}
-        <section>
-          <h2 className="text-lg font-bold text-foreground mb-3">General Information</h2>
-          <div className="space-y-3">
-            <div>
-              <label className="text-sm text-muted-foreground mb-1.5 block">Listing Title</label>
-              <Input placeholder="Ex: 2020 Toyota Corolla XLE" />
-            </div>
-            <div>
-              <label className="text-sm text-muted-foreground mb-1.5 block">Price</label>
-              <Input type="number" placeholder="0" />
-            </div>
-          </div>
-        </section>
-
-        {/* Publish Button */}
-        <Button variant="carnexo" size="lg" className="w-full">
-          Publish Listing
-          <ChevronDown className="w-5 h-5 ml-2 rotate-[-90deg]" />
-        </Button>
-
-        {/* Quick Key Data */}
+        {/* Form based on listing type */}
         {listingType === 'vehicle' && (
-          <section>
-            <div className="flex items-center gap-2 mb-3">
-              <span className="text-primary">🔑</span>
-              <h2 className="text-lg font-bold text-foreground">Quick Key Data</h2>
-            </div>
-            <div className="grid grid-cols-2 gap-3">
-              <div>
-                <label className="text-sm text-muted-foreground mb-1.5 block">Make</label>
-                <div className="relative">
-                  <Input placeholder="Select" className="pr-10" />
-                  <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+          <Form {...vehicleForm}>
+            <form onSubmit={vehicleForm.handleSubmit(onSubmit)} className="space-y-6">
+              {/* General Information */}
+              <section>
+                <h2 className="text-lg font-bold text-foreground mb-3">General Information</h2>
+                <div className="space-y-3">
+                  <FormField
+                    control={vehicleForm.control}
+                    name="title"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Listing Title</FormLabel>
+                        <FormControl>
+                          <Input placeholder="Ex: 2020 Toyota Corolla XLE" {...field} />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                  <FormField
+                    control={vehicleForm.control}
+                    name="price"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Price</FormLabel>
+                        <FormControl>
+                          <Input type="number" placeholder="0" {...field} />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
                 </div>
-              </div>
-              <div>
-                <label className="text-sm text-muted-foreground mb-1.5 block">Model</label>
-                <Input placeholder="Ex: Corolla" />
-              </div>
-              <div>
-                <label className="text-sm text-muted-foreground mb-1.5 block">Year</label>
-                <Input type="number" placeholder="2023" />
-              </div>
-              <div>
-                <label className="text-sm text-muted-foreground mb-1.5 block">Mileage / Hours</label>
-                <Input type="number" placeholder="0" />
-              </div>
-            </div>
-            <div className="mt-3">
-              <label className="text-sm text-muted-foreground mb-1.5 block">VIN / Serial Number</label>
-              <div className="relative">
-                <Input placeholder="XXXXXXXXXXXXXXXXX" className="pr-16" />
-                <button className="absolute right-2 top-1/2 -translate-y-1/2 text-xs font-semibold text-primary flex items-center gap-1">
-                  <Scan className="w-4 h-4" />
-                  SCAN
-                </button>
-              </div>
-            </div>
-          </section>
+              </section>
+
+              {/* Quick Key Data */}
+              <section>
+                <div className="flex items-center gap-2 mb-3">
+                  <span className="text-primary">🔑</span>
+                  <h2 className="text-lg font-bold text-foreground">Quick Key Data</h2>
+                </div>
+                <div className="grid grid-cols-2 gap-3">
+                  <FormField
+                    control={vehicleForm.control}
+                    name="make"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Make</FormLabel>
+                        <FormControl>
+                          <Input placeholder="Ex: Toyota" {...field} />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                  <FormField
+                    control={vehicleForm.control}
+                    name="model"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Model</FormLabel>
+                        <FormControl>
+                          <Input placeholder="Ex: Corolla" {...field} />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                  <FormField
+                    control={vehicleForm.control}
+                    name="year"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Year</FormLabel>
+                        <FormControl>
+                          <Input type="number" placeholder="2023" {...field} />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                  <FormField
+                    control={vehicleForm.control}
+                    name="mileage"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Mileage</FormLabel>
+                        <FormControl>
+                          <Input type="number" placeholder="0" {...field} />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                </div>
+                <div className="mt-3">
+                  <FormField
+                    control={vehicleForm.control}
+                    name="vin"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>VIN / Serial Number</FormLabel>
+                        <FormControl>
+                          <div className="relative">
+                            <Input placeholder="XXXXXXXXXXXXXXXXX" className="pr-16" {...field} />
+                            <button type="button" className="absolute right-2 top-1/2 -translate-y-1/2 text-xs font-semibold text-primary flex items-center gap-1">
+                              <Scan className="w-4 h-4" />
+                              SCAN
+                            </button>
+                          </div>
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                </div>
+              </section>
+
+              {/* Technical Specs */}
+              <section>
+                <div className="flex items-center gap-2 mb-3">
+                  <span className="text-secondary">⚙️</span>
+                  <h2 className="text-lg font-bold text-foreground">Technical Specs</h2>
+                </div>
+                <div className="grid grid-cols-2 gap-3">
+                  <FormField
+                    control={vehicleForm.control}
+                    name="fuelType"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Fuel Type</FormLabel>
+                        <Select onValueChange={field.onChange} value={field.value}>
+                          <FormControl>
+                            <SelectTrigger>
+                              <SelectValue placeholder="Select" />
+                            </SelectTrigger>
+                          </FormControl>
+                          <SelectContent>
+                            <SelectItem value="gasoline">Gasoline</SelectItem>
+                            <SelectItem value="diesel">Diesel</SelectItem>
+                            <SelectItem value="electric">Electric</SelectItem>
+                            <SelectItem value="hybrid">Hybrid</SelectItem>
+                            <SelectItem value="other">Other</SelectItem>
+                          </SelectContent>
+                        </Select>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                  <FormField
+                    control={vehicleForm.control}
+                    name="transmission"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Transmission</FormLabel>
+                        <Select onValueChange={field.onChange} value={field.value}>
+                          <FormControl>
+                            <SelectTrigger>
+                              <SelectValue placeholder="Select" />
+                            </SelectTrigger>
+                          </FormControl>
+                          <SelectContent>
+                            <SelectItem value="automatic">Automatic</SelectItem>
+                            <SelectItem value="manual">Manual</SelectItem>
+                            <SelectItem value="cvt">CVT</SelectItem>
+                          </SelectContent>
+                        </Select>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                  <FormField
+                    control={vehicleForm.control}
+                    name="color"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Color</FormLabel>
+                        <FormControl>
+                          <Input placeholder="Ex: Red" {...field} />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                  <FormField
+                    control={vehicleForm.control}
+                    name="condition"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Condition</FormLabel>
+                        <Select onValueChange={field.onChange} value={field.value}>
+                          <FormControl>
+                            <SelectTrigger>
+                              <SelectValue placeholder="Select" />
+                            </SelectTrigger>
+                          </FormControl>
+                          <SelectContent>
+                            {conditionOptions.map((opt) => (
+                              <SelectItem key={opt.value} value={opt.value}>{opt.label}</SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                </div>
+              </section>
+
+              {/* Description */}
+              <section>
+                <div className="flex items-center justify-between mb-3">
+                  <h2 className="text-lg font-bold text-foreground">Description</h2>
+                  <span className="text-xs text-muted-foreground">{description.length}/1000</span>
+                </div>
+                <Textarea
+                  value={description}
+                  onChange={(e) => setDescription(e.target.value.slice(0, 1000))}
+                  placeholder="Describe important details, special features, etc."
+                  className="h-32 resize-none"
+                />
+              </section>
+
+              {/* Publish Button */}
+              <Button 
+                type="submit" 
+                variant="carnexo" 
+                size="lg" 
+                className="w-full"
+                disabled={isSubmitting}
+              >
+                {isSubmitting ? (
+                  <>
+                    <Loader2 className="w-5 h-5 mr-2 animate-spin" />
+                    Publishing...
+                  </>
+                ) : (
+                  <>
+                    Publish Listing
+                    <ChevronDown className="w-5 h-5 ml-2 rotate-[-90deg]" />
+                  </>
+                )}
+              </Button>
+            </form>
+          </Form>
         )}
 
-        {/* Technical Specs */}
-        {listingType === 'vehicle' && (
-          <section>
-            <div className="flex items-center gap-2 mb-3">
-              <span className="text-secondary">⚙️</span>
-              <h2 className="text-lg font-bold text-foreground">Technical Specs</h2>
-            </div>
-            <div className="grid grid-cols-2 gap-3">
-              <div>
-                <label className="text-sm text-muted-foreground mb-1.5 block">Fuel Type</label>
-                <div className="relative">
-                  <Input defaultValue="Gasoline" className="pr-10" />
-                  <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+        {listingType === 'part' && (
+          <Form {...partForm}>
+            <form onSubmit={partForm.handleSubmit(onSubmit)} className="space-y-6">
+              {/* General Information */}
+              <section>
+                <h2 className="text-lg font-bold text-foreground mb-3">General Information</h2>
+                <div className="space-y-3">
+                  <FormField
+                    control={partForm.control}
+                    name="title"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Listing Title</FormLabel>
+                        <FormControl>
+                          <Input placeholder="Ex: OEM Brake Pads for Honda Civic" {...field} />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                  <FormField
+                    control={partForm.control}
+                    name="price"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Price</FormLabel>
+                        <FormControl>
+                          <Input type="number" placeholder="0" {...field} />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
                 </div>
-              </div>
-              <div>
-                <label className="text-sm text-muted-foreground mb-1.5 block">Transmission</label>
-                <div className="relative">
-                  <Input defaultValue="Automatic" className="pr-10" />
-                  <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+              </section>
+
+              {/* Part Details */}
+              <section>
+                <div className="flex items-center gap-2 mb-3">
+                  <span className="text-primary">🔧</span>
+                  <h2 className="text-lg font-bold text-foreground">Part Details</h2>
                 </div>
-              </div>
-              <div>
-                <label className="text-sm text-muted-foreground mb-1.5 block">Engine</label>
-                <Input placeholder="Ex: 2.0L Turbo" />
-              </div>
-              <div>
-                <label className="text-sm text-muted-foreground mb-1.5 block">Color</label>
-                <Input placeholder="Ex: Red" />
-              </div>
-            </div>
-          </section>
+                <div className="space-y-3">
+                  <FormField
+                    control={partForm.control}
+                    name="partCategory"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Category</FormLabel>
+                        <FormControl>
+                          <Input placeholder="Ex: Brakes, Engine, Suspension" {...field} />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                  <FormField
+                    control={partForm.control}
+                    name="brand"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Brand</FormLabel>
+                        <FormControl>
+                          <Input placeholder="Ex: Bosch, ACDelco" {...field} />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                  <FormField
+                    control={partForm.control}
+                    name="condition"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Condition</FormLabel>
+                        <Select onValueChange={field.onChange} value={field.value}>
+                          <FormControl>
+                            <SelectTrigger>
+                              <SelectValue placeholder="Select condition" />
+                            </SelectTrigger>
+                          </FormControl>
+                          <SelectContent>
+                            {conditionOptions.map((opt) => (
+                              <SelectItem key={opt.value} value={opt.value}>{opt.label}</SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                </div>
+              </section>
+
+              {/* Description */}
+              <section>
+                <div className="flex items-center justify-between mb-3">
+                  <h2 className="text-lg font-bold text-foreground">Description</h2>
+                  <span className="text-xs text-muted-foreground">{description.length}/1000</span>
+                </div>
+                <Textarea
+                  value={description}
+                  onChange={(e) => setDescription(e.target.value.slice(0, 1000))}
+                  placeholder="Describe the part, compatibility, condition details..."
+                  className="h-32 resize-none"
+                />
+              </section>
+
+              {/* Publish Button */}
+              <Button 
+                type="submit" 
+                variant="carnexo" 
+                size="lg" 
+                className="w-full"
+                disabled={isSubmitting}
+              >
+                {isSubmitting ? (
+                  <>
+                    <Loader2 className="w-5 h-5 mr-2 animate-spin" />
+                    Publishing...
+                  </>
+                ) : (
+                  <>
+                    Publish Listing
+                    <ChevronDown className="w-5 h-5 ml-2 rotate-[-90deg]" />
+                  </>
+                )}
+              </Button>
+            </form>
+          </Form>
         )}
 
-        {/* Condition & History */}
-        <section>
-          <div className="flex items-center gap-2 mb-3">
-            <span className="text-destructive">📍</span>
-            <h2 className="text-lg font-bold text-foreground">Condition & History</h2>
-          </div>
-          <div className="space-y-3">
-            <div>
-              <label className="text-sm text-muted-foreground mb-1.5 block">Current Condition</label>
-              <div className="relative">
-                <Input defaultValue="Used" className="pr-10" />
-                <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
-              </div>
-            </div>
-            <div>
-              <label className="text-sm text-muted-foreground mb-1.5 block">Documents / Certifications</label>
-              <button className="w-full py-8 border-2 border-dashed border-muted rounded-xl flex flex-col items-center gap-2 text-muted-foreground hover:border-primary hover:text-primary transition-colors">
-                <Upload className="w-8 h-8" />
-                <span className="text-sm font-medium">Upload files</span>
-                <span className="text-xs">PDF, JPG or PNG (Max 3MB)</span>
-              </button>
-            </div>
-          </div>
-        </section>
-
-        {/* Description */}
-        <section>
-          <div className="flex items-center justify-between mb-3">
-            <h2 className="text-lg font-bold text-foreground">Description</h2>
-            <span className="text-xs text-muted-foreground">0/1000</span>
-          </div>
-          <textarea
-            placeholder="Describe important details, special features, etc."
-            className="w-full h-32 p-4 bg-muted rounded-xl text-foreground placeholder:text-muted-foreground resize-none focus:outline-none focus:ring-2 focus:ring-primary/50"
-          />
-        </section>
-
-        {/* Location */}
-        <section>
-          <h2 className="text-lg font-bold text-foreground mb-3">Location</h2>
-          <div className="bg-card rounded-2xl overflow-hidden">
-            <div className="p-4 flex items-center justify-between">
-              <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-full bg-secondary/20 flex items-center justify-center">
-                  <MapPin className="w-5 h-5 text-secondary" />
+        {listingType === 'service' && (
+          <Form {...serviceForm}>
+            <form onSubmit={serviceForm.handleSubmit(onSubmit)} className="space-y-6">
+              {/* General Information */}
+              <section>
+                <h2 className="text-lg font-bold text-foreground mb-3">General Information</h2>
+                <div className="space-y-3">
+                  <FormField
+                    control={serviceForm.control}
+                    name="title"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Service Title</FormLabel>
+                        <FormControl>
+                          <Input placeholder="Ex: Full Car Detail & Ceramic Coating" {...field} />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                  <FormField
+                    control={serviceForm.control}
+                    name="price"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Starting Price</FormLabel>
+                        <FormControl>
+                          <Input type="number" placeholder="0" {...field} />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
                 </div>
-                <div>
-                  <div className="flex items-center gap-2">
-                    <span className="text-xs font-medium text-success">DETECTED</span>
-                    <span className="text-xs text-muted-foreground">• 2.5mi</span>
-                  </div>
-                  <p className="font-medium text-foreground">Miami, FL, USA</p>
+              </section>
+
+              {/* Service Details */}
+              <section>
+                <div className="flex items-center gap-2 mb-3">
+                  <span className="text-primary">🛠️</span>
+                  <h2 className="text-lg font-bold text-foreground">Service Details</h2>
                 </div>
-              </div>
-              <button className="text-sm font-medium text-primary">Edit</button>
-            </div>
-            <div className="h-40">
-              <img
-                src="https://api.mapbox.com/styles/v1/mapbox/dark-v11/static/pin-l+ff6a00(-80.1918,25.7617)/-80.1918,25.7617,12,0/800x400@2x?access_token=pk.eyJ1IjoibG92YWJsZSIsImEiOiJjbHJwOWhtYmkwMjR1MmpwZnFuZnk5ZmdhIn0.9Wxs0c6BcEPauFsj_TxmPA"
-                alt="Location"
-                className="w-full h-full object-cover"
-              />
-            </div>
-          </div>
-        </section>
+                <div className="space-y-3">
+                  <FormField
+                    control={serviceForm.control}
+                    name="serviceCategory"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Category</FormLabel>
+                        <Select onValueChange={field.onChange} value={field.value}>
+                          <FormControl>
+                            <SelectTrigger>
+                              <SelectValue placeholder="Select category" />
+                            </SelectTrigger>
+                          </FormControl>
+                          <SelectContent>
+                            {serviceCategoryOptions.map((opt) => (
+                              <SelectItem key={opt.value} value={opt.value}>{opt.label}</SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                  <FormField
+                    control={serviceForm.control}
+                    name="priceStructure"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Price Structure</FormLabel>
+                        <FormControl>
+                          <Input placeholder="Ex: Per hour, Fixed price, Quote" {...field} />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                </div>
+              </section>
+
+              {/* Description */}
+              <section>
+                <div className="flex items-center justify-between mb-3">
+                  <h2 className="text-lg font-bold text-foreground">Description</h2>
+                  <span className="text-xs text-muted-foreground">{description.length}/1000</span>
+                </div>
+                <Textarea
+                  value={description}
+                  onChange={(e) => setDescription(e.target.value.slice(0, 1000))}
+                  placeholder="Describe your service, what's included, experience..."
+                  className="h-32 resize-none"
+                />
+              </section>
+
+              {/* Publish Button */}
+              <Button 
+                type="submit" 
+                variant="carnexo" 
+                size="lg" 
+                className="w-full"
+                disabled={isSubmitting}
+              >
+                {isSubmitting ? (
+                  <>
+                    <Loader2 className="w-5 h-5 mr-2 animate-spin" />
+                    Publishing...
+                  </>
+                ) : (
+                  <>
+                    Publish Listing
+                    <ChevronDown className="w-5 h-5 ml-2 rotate-[-90deg]" />
+                  </>
+                )}
+              </Button>
+            </form>
+          </Form>
+        )}
       </div>
     </div>
   );
