@@ -14,7 +14,6 @@ import {
   Wrench,
   Settings,
   Share2,
-  Copy,
   Check
 } from 'lucide-react';
 import { toast } from 'sonner';
@@ -24,12 +23,16 @@ import { supabase } from '@/integrations/supabase/client';
 import { cn } from '@/lib/utils';
 import { ListingCard } from '@/components/ListingCard';
 import { BottomNav } from '@/components/BottomNav';
+import { ReviewsList } from '@/components/ReviewsList';
 import type { Listing, User } from '@/types';
 
 interface Review {
   id: string;
   rating: number;
-  comment: string;
+  communication_rating: number | null;
+  accuracy_rating: number | null;
+  service_rating: number | null;
+  comment: string | null;
   created_at: string;
   reviewer: {
     full_name: string;
@@ -173,6 +176,9 @@ export default function SellerProfile() {
         .select(`
           id,
           rating,
+          communication_rating,
+          accuracy_rating,
+          service_rating,
           comment,
           created_at,
           reviewer:reviewer_id (
@@ -181,8 +187,7 @@ export default function SellerProfile() {
           )
         `)
         .in('listing_id', listingsData?.map(l => l.id) || [])
-        .order('created_at', { ascending: false })
-        .limit(10);
+        .order('created_at', { ascending: false });
 
       if (reviewsData) {
         setReviews(reviewsData as any);
@@ -432,51 +437,24 @@ export default function SellerProfile() {
               <p className="text-muted-foreground">No reviews yet</p>
             </div>
           ) : (
-            <div className="space-y-4">
-              {reviews.map(review => (
-                <div key={review.id} className="p-4 bg-card rounded-xl border border-border">
-                  <div className="flex items-start gap-3">
-                    {review.reviewer?.avatar_url ? (
-                      <img
-                        src={review.reviewer.avatar_url}
-                        alt={review.reviewer.full_name || 'Reviewer'}
-                        className="w-10 h-10 rounded-full object-cover"
-                      />
-                    ) : (
-                      <div className="w-10 h-10 rounded-full bg-muted flex items-center justify-center">
-                        <span className="text-sm font-medium text-muted-foreground">
-                          {(review.reviewer?.full_name || 'A').charAt(0).toUpperCase()}
-                        </span>
-                      </div>
-                    )}
-                    <div className="flex-1">
-                      <div className="flex items-center justify-between">
-                        <p className="font-medium text-foreground">
-                          {review.reviewer?.full_name || 'Anonymous'}
-                        </p>
-                        <span className="text-xs text-muted-foreground">
-                          {new Date(review.created_at).toLocaleDateString()}
-                        </span>
-                      </div>
-                      <div className="flex items-center gap-1 mt-1">
-                        {Array.from({ length: 5 }).map((_, i) => (
-                          <Star 
-                            key={i} 
-                            className={cn(
-                              "w-3 h-3",
-                              i < review.rating ? "text-warning fill-warning" : "text-muted"
-                            )} 
-                          />
-                        ))}
-                      </div>
-                      {review.comment && (
-                        <p className="text-sm text-muted-foreground mt-2">{review.comment}</p>
-                      )}
-                    </div>
-                  </div>
-                </div>
-              ))}
-            </div>
+            <ReviewsList
+              reviews={reviews.map(r => ({
+                id: r.id,
+                rating: r.rating,
+                communication_rating: r.communication_rating,
+                accuracy_rating: r.accuracy_rating,
+                service_rating: r.service_rating,
+                comment: r.comment,
+                created_at: r.created_at,
+                reviewer: r.reviewer ? {
+                  id: '',
+                  full_name: r.reviewer.full_name,
+                  avatar_url: r.reviewer.avatar_url
+                } : null
+              }))}
+              averageRating={seller.ratingAvg}
+              totalReviews={seller.totalReviews}
+            />
           )}
         </TabsContent>
       </Tabs>
