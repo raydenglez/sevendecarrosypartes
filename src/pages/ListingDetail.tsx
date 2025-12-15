@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { 
   ArrowLeft, 
@@ -13,7 +13,8 @@ import {
   MapPin,
   ExternalLink,
   CheckCircle,
-  Loader2
+  Loader2,
+  Star
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { SellerCard } from '@/components/SellerCard';
@@ -22,6 +23,9 @@ import { cn } from '@/lib/utils';
 import { useAuth } from '@/hooks/useAuth';
 import { getOrCreateConversation } from '@/hooks/useConversations';
 import { useToast } from '@/hooks/use-toast';
+import { ReviewForm } from '@/components/ReviewForm';
+import { ReviewsList, type Review } from '@/components/ReviewsList';
+import { useReviewEligibility } from '@/hooks/useReviewEligibility';
 import type { Listing, User } from '@/types';
 
 export default function ListingDetail() {
@@ -34,6 +38,57 @@ export default function ListingDetail() {
   const [listing, setListing] = useState<Listing | null>(null);
   const [loading, setLoading] = useState(true);
   const [contactLoading, setContactLoading] = useState(false);
+  const [reviews, setReviews] = useState<Review[]>([]);
+  const [reviewsLoading, setReviewsLoading] = useState(true);
+
+  const eligibility = useReviewEligibility(id || '', listing?.ownerId || '');
+
+  const fetchReviews = useCallback(async () => {
+    if (!id) return;
+    setReviewsLoading(true);
+    
+    const { data, error } = await supabase
+      .from('reviews')
+      .select(`
+        id,
+        rating,
+        communication_rating,
+        accuracy_rating,
+        service_rating,
+        comment,
+        created_at,
+        profiles:reviewer_id (
+          id,
+          full_name,
+          avatar_url
+        )
+      `)
+      .eq('listing_id', id)
+      .order('created_at', { ascending: false });
+
+    if (!error && data) {
+      const transformedReviews: Review[] = data.map((r: any) => ({
+        id: r.id,
+        rating: r.rating,
+        communication_rating: r.communication_rating,
+        accuracy_rating: r.accuracy_rating,
+        service_rating: r.service_rating,
+        comment: r.comment,
+        created_at: r.created_at,
+        reviewer: r.profiles ? {
+          id: r.profiles.id,
+          full_name: r.profiles.full_name,
+          avatar_url: r.profiles.avatar_url
+        } : null
+      }));
+      setReviews(transformedReviews);
+    }
+    setReviewsLoading(false);
+  }, [id]);
+
+  useEffect(() => {
+    fetchReviews();
+  }, [fetchReviews]);
 
   const handleContact = async () => {
     if (!user) {
@@ -335,6 +390,41 @@ export default function ListingDetail() {
             <SellerCard seller={listing.owner} />
           </div>
         )}
+
+        {/* Reviews Section */}
+        <div>
+          <div className="flex items-center gap-2 mb-4">
+            <Star className="w-5 h-5 text-primary fill-primary" />
+            <h2 className="text-lg font-bold text-foreground">Reviews</h2>
+            {reviews.length > 0 && (
+              <span className="text-sm text-muted-foreground">({reviews.length})</span>
+            )}
+          </div>
+
+          {/* Review Form */}
+          {!eligibility.loading && (
+            <div className="mb-6">
+              <ReviewForm
+                listingId={listing.id}
+                onSuccess={fetchReviews}
+                eligibility={eligibility}
+              />
+            </div>
+          )}
+
+          {/* Reviews List */}
+          {reviewsLoading ? (
+            <div className="flex justify-center py-8">
+              <Loader2 className="w-6 h-6 animate-spin text-muted-foreground" />
+            </div>
+          ) : (
+            <ReviewsList
+              reviews={reviews}
+              averageRating={reviews.length > 0 ? reviews.reduce((acc, r) => acc + r.rating, 0) / reviews.length : 0}
+              totalReviews={reviews.length}
+            />
+          )}
+        </div>
       </div>
 
       {/* Fixed CTA */}
