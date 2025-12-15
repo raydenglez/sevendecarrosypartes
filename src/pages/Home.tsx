@@ -15,7 +15,9 @@ import { Button } from '@/components/ui/button';
 import { useAuth } from '@/hooks/useAuth';
 import { useInfiniteScroll } from '@/hooks/useInfiniteScroll';
 import { useNearbyListings, SearchFilters } from '@/hooks/useNearbyListings';
-import { vehicleCategories, serviceCategories, mockNotifications } from '@/data/mockData';
+import { useUnreadMessages } from '@/hooks/useUnreadMessages';
+import { useConversations } from '@/hooks/useConversations';
+import { vehicleCategories, serviceCategories } from '@/data/mockData';
 import { Listing } from '@/types';
 import { LocationPermissionModal } from '@/components/LocationPermissionModal';
 import logo from '@/assets/logo.png';
@@ -41,6 +43,8 @@ export default function Home() {
   const [isFilterOpen, setIsFilterOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const [filters, setFilters] = useState<FilterOptions>(defaultFilters);
+  const { unreadCount } = useUnreadMessages();
+  const { conversations } = useConversations();
 
   const searchFilters: SearchFilters = useMemo(() => ({
     query: searchQuery,
@@ -56,7 +60,6 @@ export default function Home() {
     requestLocation,
     refresh
   } = useNearbyListings(segment, searchFilters);
-  const unreadCount = mockNotifications.filter(n => !n.isRead).length;
 
   // Transform DB listings to match ListingCard format
   const transformedListings: Listing[] = useMemo(() => 
@@ -238,7 +241,11 @@ export default function Home() {
       <NotificationsPanel 
         isOpen={isNotificationsOpen}
         onClose={() => setIsNotificationsOpen(false)}
-        notifications={mockNotifications}
+        conversations={conversations}
+        onViewAll={() => {
+          setIsNotificationsOpen(false);
+          navigate('/messages');
+        }}
       />
       
       <FilterSheet
