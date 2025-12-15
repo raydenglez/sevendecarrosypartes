@@ -37,14 +37,29 @@ export function ListingCard({ listing, variant = 'featured', className, style }:
           <img
             src={listing.images[0]}
             alt={listing.title}
-            className="w-full h-full object-cover"
+            className={cn("w-full h-full object-cover", listing.status !== 'active' && "opacity-60")}
           />
-          {listing.isPremium && (
+          {listing.status === 'sold' && (
+            <div className="absolute inset-0 bg-background/60 flex items-center justify-center">
+              <span className="bg-primary text-primary-foreground font-bold px-4 py-2 rounded-lg text-sm">SOLD</span>
+            </div>
+          )}
+          {listing.status === 'draft' && (
+            <span className="absolute top-2 left-2 bg-yellow-500 text-yellow-950 text-[10px] font-bold px-1.5 py-0.5 rounded">
+              DRAFT
+            </span>
+          )}
+          {listing.status === 'expired' && (
+            <span className="absolute top-2 left-2 bg-muted text-muted-foreground text-[10px] font-bold px-1.5 py-0.5 rounded">
+              EXPIRED
+            </span>
+          )}
+          {listing.status === 'active' && listing.isPremium && (
             <span className="absolute top-2 left-2 carnexo-badge-premium text-[10px] px-1.5 py-0.5">
               PREMIUM
             </span>
           )}
-          {listing.type === 'service' && (
+          {listing.status === 'active' && listing.type === 'service' && !listing.isPremium && (
             <span className="absolute top-2 left-2 carnexo-badge-service text-[10px] px-1.5 py-0.5">
               SERVICE
             </span>
@@ -88,8 +103,18 @@ export function ListingCard({ listing, variant = 'featured', className, style }:
           <img
             src={listing.images[0]}
             alt={listing.title}
-            className="w-full h-full object-cover"
+            className={cn("w-full h-full object-cover", listing.status !== 'active' && "opacity-60")}
           />
+          {listing.status === 'sold' && (
+            <div className="absolute inset-0 bg-background/60 flex items-center justify-center">
+              <span className="bg-primary text-primary-foreground font-bold px-2 py-1 rounded text-xs">SOLD</span>
+            </div>
+          )}
+          {listing.status === 'draft' && (
+            <span className="absolute top-1 left-1 bg-yellow-500 text-yellow-950 text-[9px] font-bold px-1 py-0.5 rounded">
+              DRAFT
+            </span>
+          )}
         </div>
         <div className="flex-1 min-w-0">
           <div className="flex items-start justify-between gap-2">
@@ -139,14 +164,29 @@ export function ListingCard({ listing, variant = 'featured', className, style }:
         <img
           src={listing.images[0]}
           alt={listing.title}
-          className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+          className={cn("w-full h-full object-cover transition-transform duration-500 group-hover:scale-105", listing.status !== 'active' && "opacity-60")}
         />
-        {listing.isPremium && (
+        {listing.status === 'sold' && (
+          <div className="absolute inset-0 bg-background/60 flex items-center justify-center">
+            <span className="bg-primary text-primary-foreground font-bold px-4 py-2 rounded-lg">SOLD</span>
+          </div>
+        )}
+        {listing.status === 'draft' && (
+          <span className="absolute top-3 left-3 bg-yellow-500 text-yellow-950 text-xs font-bold px-2 py-1 rounded">
+            DRAFT
+          </span>
+        )}
+        {listing.status === 'expired' && (
+          <span className="absolute top-3 left-3 bg-muted text-muted-foreground text-xs font-bold px-2 py-1 rounded">
+            EXPIRED
+          </span>
+        )}
+        {listing.status === 'active' && listing.isPremium && (
           <span className="absolute top-3 left-3 carnexo-badge-premium">
             PREMIUM
           </span>
         )}
-        {listing.type === 'service' && (
+        {listing.status === 'active' && listing.type === 'service' && !listing.isPremium && (
           <span className="absolute top-3 left-3 carnexo-badge-service">
             SERVICE
           </span>

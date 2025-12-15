@@ -313,10 +313,25 @@ export default function ListingDetail() {
       <div className="px-4 pt-5 space-y-6 animate-fade-in">
         {/* Price & Title */}
         <div>
-          <div className="flex items-center gap-3 mb-2">
+          <div className="flex items-center gap-3 mb-2 flex-wrap">
             <span className="text-3xl font-bold text-primary">
               ${listing.price.toLocaleString()}
             </span>
+            {listing.status === 'sold' && (
+              <span className="bg-primary text-primary-foreground text-xs font-bold px-2 py-1 rounded">
+                SOLD
+              </span>
+            )}
+            {listing.status === 'draft' && (
+              <span className="bg-yellow-500 text-yellow-950 text-xs font-bold px-2 py-1 rounded">
+                DRAFT
+              </span>
+            )}
+            {listing.status === 'expired' && (
+              <span className="bg-muted text-muted-foreground text-xs font-bold px-2 py-1 rounded">
+                EXPIRED
+              </span>
+            )}
             {listing.owner?.isVerified && (
               <span className="carnexo-badge-verified flex items-center gap-1">
                 <CheckCircle className="w-3 h-3" />
