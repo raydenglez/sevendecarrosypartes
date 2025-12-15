@@ -1,15 +1,15 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { ArrowLeft, Filter, List, Layers, Search, X, Navigation, Loader2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Map, getTravelTime } from '@/components/Map';
 import { MapBusinessCard } from '@/components/MapBusinessCard';
-import { mockListings } from '@/data/mockData';
 import { ListingCard } from '@/components/ListingCard';
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from '@/components/ui/sheet';
 import { Listing } from '@/types';
 import { Badge } from '@/components/ui/badge';
+import { supabase } from '@/integrations/supabase/client';
 
 export default function MapView() {
   const navigate = useNavigate();
@@ -22,6 +22,51 @@ export default function MapView() {
   const [filterType, setFilterType] = useState<'all' | 'vehicle' | 'part' | 'service'>('all');
   const [showRoute, setShowRoute] = useState(false);
   const [mapCenter, setMapCenter] = useState<[number, number]>([-122.4194, 37.7749]);
+  const [dbListings, setDbListings] = useState<Listing[]>([]);
+  const [isLoadingListings, setIsLoadingListings] = useState(true);
+
+  // Fetch listings from database
+  useEffect(() => {
+    const fetchListings = async () => {
+      setIsLoadingListings(true);
+      const { data, error } = await supabase
+        .from('listings')
+        .select('*')
+        .eq('status', 'active');
+
+      if (error) {
+        console.error('Error fetching listings:', error);
+        setIsLoadingListings(false);
+        return;
+      }
+
+      const transformed: Listing[] = (data || []).map(l => ({
+        id: l.id,
+        ownerId: l.owner_id,
+        type: l.type,
+        status: 'active' as const,
+        title: l.title,
+        description: l.description || '',
+        price: l.price || 0,
+        location: {
+          lat: l.location_lat || 0,
+          lng: l.location_lng || 0,
+          city: l.location_city || 'Unknown',
+          state: l.location_state || undefined,
+        },
+        images: l.images || ['/placeholder.svg'],
+        isPremium: l.is_premium || false,
+        isNegotiable: l.is_negotiable || false,
+        createdAt: l.created_at || new Date().toISOString(),
+        updatedAt: l.updated_at || new Date().toISOString(),
+      }));
+
+      setDbListings(transformed);
+      setIsLoadingListings(false);
+    };
+
+    fetchListings();
+  }, []);
 
   // Get user location on mount
   useEffect(() => {
@@ -45,12 +90,14 @@ export default function MapView() {
   }, []);
 
   // Filter listings
-  const filteredListings = mockListings.filter(listing => {
-    const matchesSearch = listing.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-                         listing.location.city.toLowerCase().includes(searchQuery.toLowerCase());
-    const matchesType = filterType === 'all' || listing.type === filterType;
-    return matchesSearch && matchesType && listing.location?.lat && listing.location?.lng;
-  });
+  const filteredListings = useMemo(() => {
+    return dbListings.filter(listing => {
+      const matchesSearch = listing.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+                           listing.location.city.toLowerCase().includes(searchQuery.toLowerCase());
+      const matchesType = filterType === 'all' || listing.type === filterType;
+      return matchesSearch && matchesType && listing.location?.lat && listing.location?.lng;
+    });
+  }, [dbListings, searchQuery, filterType]);
 
   // Handle marker click
   const handleMarkerClick = useCallback(async (listing: Listing) => {
