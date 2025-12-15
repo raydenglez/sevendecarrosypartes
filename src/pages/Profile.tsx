@@ -351,7 +351,10 @@ export default function Profile() {
         </div>
         <div className="grid grid-cols-2 gap-3">
           {/* Vehicles Card */}
-          <div className="relative aspect-[4/3] rounded-2xl overflow-hidden group">
+          <div 
+            className="relative aspect-[4/3] rounded-2xl overflow-hidden group cursor-pointer"
+            onClick={() => navigate('/my-listings?type=vehicle')}
+          >
             <img
               src="https://images.unsplash.com/photo-1552519507-da3b142c6e3d?w=400&h=300&fit=crop"
               alt="Vehicles"
@@ -370,7 +373,10 @@ export default function Profile() {
           </div>
 
           {/* Parts Card */}
-          <div className="relative aspect-[4/3] rounded-2xl overflow-hidden group">
+          <div 
+            className="relative aspect-[4/3] rounded-2xl overflow-hidden group cursor-pointer"
+            onClick={() => navigate('/my-listings?type=part')}
+          >
             <img
               src="https://images.unsplash.com/photo-1486262715619-67b85e0b08d3?w=400&h=300&fit=crop"
               alt="Parts"
@@ -389,7 +395,10 @@ export default function Profile() {
           </div>
 
           {/* Services Card - Full Width */}
-          <div className="relative col-span-2 h-28 rounded-2xl overflow-hidden group">
+          <div 
+            className="relative col-span-2 h-28 rounded-2xl overflow-hidden group cursor-pointer"
+            onClick={() => navigate('/my-listings?type=service')}
+          >
             <img
               src="https://images.unsplash.com/photo-1625047509168-a7026f36de04?w=800&h=300&fit=crop"
               alt="Services"
