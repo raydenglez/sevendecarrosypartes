@@ -28,7 +28,7 @@ const segments = [
 ];
 
 const defaultFilters: FilterOptions = {
-  priceRange: [0, 100000],
+  priceRange: [0, 1000000],
   maxDistance: 50,
   minRating: 0,
   condition: [],
