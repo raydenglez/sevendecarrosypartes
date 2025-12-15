@@ -347,7 +347,7 @@ export default function Profile() {
       <section className="px-4 mt-6 animate-fade-in" style={{ animationDelay: '100ms' }}>
         <div className="flex items-center justify-between mb-4">
           <h2 className="text-lg font-bold text-foreground">My Listings</h2>
-          <button className="text-sm font-medium text-primary">View all</button>
+          <button className="text-sm font-medium text-primary" onClick={() => navigate('/my-listings')}>View all</button>
         </div>
         <div className="grid grid-cols-2 gap-3">
           {/* Vehicles Card */}
