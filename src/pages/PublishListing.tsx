@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -14,7 +14,8 @@ import {
   Upload,
   ChevronDown,
   Plus,
-  Loader2
+  Loader2,
+  GripVertical
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -28,6 +29,7 @@ import {
 } from '@/components/ui/select';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { useAuth } from '@/hooks/useAuth';
+import { ImageCropModal } from '@/components/ImageCropModal';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
 import { cn } from '@/lib/utils';
@@ -99,6 +101,12 @@ export default function PublishListing() {
   const [coverIndex, setCoverIndex] = useState(0);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [description, setDescription] = useState('');
+  
+  // Image upload state
+  const fileInputRef = useRef<HTMLInputElement>(null);
+  const [cropModalOpen, setCropModalOpen] = useState(false);
+  const [selectedImageSrc, setSelectedImageSrc] = useState<string>('');
+  const [isUploading, setIsUploading] = useState(false);
 
   // Vehicle form
   const vehicleForm = useForm<VehicleFormData>({
@@ -145,6 +153,89 @@ export default function PublishListing() {
     setImages([]);
     setDescription('');
     setCoverIndex(0);
+  };
+
+  const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    // Validate file type
+    if (!file.type.startsWith('image/')) {
+      toast.error('Please select an image file');
+      return;
+    }
+
+    // Validate file size (max 5MB)
+    if (file.size > 5 * 1024 * 1024) {
+      toast.error('Image must be less than 5MB');
+      return;
+    }
+
+    // Create preview URL and open crop modal
+    const reader = new FileReader();
+    reader.onload = () => {
+      setSelectedImageSrc(reader.result as string);
+      setCropModalOpen(true);
+    };
+    reader.readAsDataURL(file);
+    
+    // Reset input so same file can be selected again
+    e.target.value = '';
+  };
+
+  const handleCropComplete = async (croppedBlob: Blob) => {
+    if (!user) return;
+    
+    setCropModalOpen(false);
+    setIsUploading(true);
+
+    try {
+      const fileExt = 'jpg';
+      const fileName = `${user.id}/${Date.now()}.${fileExt}`;
+
+      const { error: uploadError } = await supabase.storage
+        .from('listings')
+        .upload(fileName, croppedBlob, {
+          contentType: 'image/jpeg',
+          upsert: false,
+        });
+
+      if (uploadError) throw uploadError;
+
+      const { data: { publicUrl } } = supabase.storage
+        .from('listings')
+        .getPublicUrl(fileName);
+
+      setImages(prev => [...prev, publicUrl]);
+      toast.success('Image uploaded successfully');
+    } catch (error: any) {
+      console.error('Upload error:', error);
+      toast.error(error.message || 'Failed to upload image');
+    } finally {
+      setIsUploading(false);
+      setSelectedImageSrc('');
+    }
+  };
+
+  const handleRemoveImage = async (index: number) => {
+    const imageUrl = images[index];
+    
+    // Extract file path from URL
+    try {
+      const urlParts = imageUrl.split('/listings/');
+      if (urlParts.length > 1) {
+        const filePath = urlParts[1];
+        await supabase.storage.from('listings').remove([filePath]);
+      }
+    } catch (error) {
+      console.error('Error deleting from storage:', error);
+    }
+
+    const newImages = images.filter((_, i) => i !== index);
+    setImages(newImages);
+    if (coverIndex >= newImages.length) {
+      setCoverIndex(Math.max(0, newImages.length - 1));
+    }
   };
 
   const onSubmit = async (data: VehicleFormData | PartFormData | ServiceFormData) => {
@@ -277,17 +368,29 @@ export default function PublishListing() {
       </header>
 
       <div className="px-4 pt-6 space-y-6 animate-fade-in">
+        {/* Hidden file input */}
+        <input
+          ref={fileInputRef}
+          type="file"
+          accept="image/*"
+          className="hidden"
+          onChange={handleFileSelect}
+        />
+
         {/* Image Gallery */}
         <section>
           <div className="flex items-center justify-between mb-3">
             <h2 className="text-lg font-bold text-foreground">Visual Gallery</h2>
             <span className="text-xs text-muted-foreground bg-muted px-2 py-1 rounded">
-              Max 10 photos
+              {images.length}/10 photos
             </span>
           </div>
           <div className="flex gap-3">
             {/* Cover Image */}
-            <div className="relative w-32 aspect-[3/4] rounded-xl overflow-hidden bg-muted shrink-0">
+            <div 
+              className="relative w-32 aspect-[3/4] rounded-xl overflow-hidden bg-muted shrink-0 cursor-pointer"
+              onClick={() => images.length === 0 && fileInputRef.current?.click()}
+            >
               {images[coverIndex] ? (
                 <>
                   <img
@@ -300,18 +403,24 @@ export default function PublishListing() {
                   </span>
                   <button 
                     className="absolute top-2 right-2 w-6 h-6 rounded-full bg-background/80 flex items-center justify-center"
-                    onClick={() => {
-                      const newImages = images.filter((_, i) => i !== coverIndex);
-                      setImages(newImages);
-                      if (coverIndex >= newImages.length) setCoverIndex(Math.max(0, newImages.length - 1));
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      handleRemoveImage(coverIndex);
                     }}
                   >
                     <X className="w-3 h-3" />
                   </button>
                 </>
               ) : (
-                <div className="w-full h-full flex items-center justify-center">
-                  <Camera className="w-8 h-8 text-muted-foreground" />
+                <div className="w-full h-full flex flex-col items-center justify-center gap-2">
+                  {isUploading ? (
+                    <Loader2 className="w-8 h-8 text-muted-foreground animate-spin" />
+                  ) : (
+                    <>
+                      <Camera className="w-8 h-8 text-muted-foreground" />
+                      <span className="text-xs text-muted-foreground">Add cover</span>
+                    </>
+                  )}
                 </div>
               )}
             </div>
@@ -319,13 +428,17 @@ export default function PublishListing() {
             {/* Thumbnail Grid */}
             <div className="flex-1 grid grid-cols-2 gap-2">
               {images.slice(1, 3).map((img, idx) => (
-                <div key={idx} className="relative aspect-square rounded-lg overflow-hidden bg-muted">
+                <div 
+                  key={idx} 
+                  className="relative aspect-square rounded-lg overflow-hidden bg-muted cursor-pointer"
+                  onClick={() => setCoverIndex(idx + 1)}
+                >
                   <img src={img} alt="" className="w-full h-full object-cover" />
                   <button 
                     className="absolute top-1 right-1 w-5 h-5 rounded-full bg-background/80 flex items-center justify-center"
-                    onClick={() => {
-                      const actualIndex = idx + 1;
-                      setImages(images.filter((_, i) => i !== actualIndex));
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      handleRemoveImage(idx + 1);
                     }}
                   >
                     <X className="w-3 h-3" />
@@ -333,13 +446,47 @@ export default function PublishListing() {
                 </div>
               ))}
               {images.length < 10 && (
-                <button className="aspect-square rounded-lg border-2 border-dashed border-muted flex flex-col items-center justify-center gap-1 text-muted-foreground hover:border-primary hover:text-primary transition-colors">
-                  <Camera className="w-6 h-6" />
-                  <span className="text-xs">Add</span>
+                <button 
+                  className="aspect-square rounded-lg border-2 border-dashed border-muted flex flex-col items-center justify-center gap-1 text-muted-foreground hover:border-primary hover:text-primary transition-colors disabled:opacity-50"
+                  onClick={() => fileInputRef.current?.click()}
+                  disabled={isUploading}
+                >
+                  {isUploading ? (
+                    <Loader2 className="w-6 h-6 animate-spin" />
+                  ) : (
+                    <>
+                      <Camera className="w-6 h-6" />
+                      <span className="text-xs">Add</span>
+                    </>
+                  )}
                 </button>
               )}
             </div>
           </div>
+          
+          {/* Show remaining images if more than 3 */}
+          {images.length > 3 && (
+            <div className="mt-3 grid grid-cols-4 gap-2">
+              {images.slice(3).map((img, idx) => (
+                <div 
+                  key={idx} 
+                  className="relative aspect-square rounded-lg overflow-hidden bg-muted cursor-pointer"
+                  onClick={() => setCoverIndex(idx + 3)}
+                >
+                  <img src={img} alt="" className="w-full h-full object-cover" />
+                  <button 
+                    className="absolute top-1 right-1 w-5 h-5 rounded-full bg-background/80 flex items-center justify-center"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      handleRemoveImage(idx + 3);
+                    }}
+                  >
+                    <X className="w-3 h-3" />
+                  </button>
+                </div>
+              ))}
+            </div>
+          )}
         </section>
 
         {/* Listing Type */}
@@ -869,6 +1016,17 @@ export default function PublishListing() {
           </Form>
         )}
       </div>
+
+      {/* Image Crop Modal */}
+      <ImageCropModal
+        open={cropModalOpen}
+        onClose={() => {
+          setCropModalOpen(false);
+          setSelectedImageSrc('');
+        }}
+        imageSrc={selectedImageSrc}
+        onCropComplete={handleCropComplete}
+      />
     </div>
   );
 }
