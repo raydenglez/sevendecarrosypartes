@@ -1,6 +1,7 @@
 import { NavLink, useLocation } from 'react-router-dom';
 import { Home, Heart, Plus, MessageSquare, User } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { useUnreadMessages } from '@/hooks/useUnreadMessages';
 
 const navItems = [
   { path: '/', icon: Home, label: 'Home' },
@@ -12,6 +13,7 @@ const navItems = [
 
 export function BottomNav() {
   const location = useLocation();
+  const { unreadCount } = useUnreadMessages();
 
   return (
     <nav className="fixed bottom-0 left-0 right-0 z-50 bg-card/95 backdrop-blur-xl border-t border-border safe-bottom">
@@ -46,12 +48,16 @@ export function BottomNav() {
                   isActive ? 'text-primary' : 'text-muted-foreground'
                 )}
               >
-                <Icon className={cn('w-5 h-5', isActive && 'text-primary')} />
+                <div className="relative">
+                  <Icon className={cn('w-5 h-5', isActive && 'text-primary')} />
+                  {item.path === '/messages' && unreadCount > 0 && (
+                    <span className="absolute -top-1 -right-1 min-w-[16px] h-4 px-1 rounded-full bg-primary text-[10px] font-bold text-primary-foreground flex items-center justify-center animate-pulse">
+                      {unreadCount > 99 ? '99+' : unreadCount}
+                    </span>
+                  )}
+                </div>
                 <span className="text-[10px] font-medium">{item.label}</span>
               </div>
-              {item.path === '/messages' && (
-                <span className="absolute top-1 right-3 w-2 h-2 rounded-full bg-primary animate-pulse" />
-              )}
             </NavLink>
           );
         })}
