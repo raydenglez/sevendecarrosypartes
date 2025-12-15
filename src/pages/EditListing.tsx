@@ -99,11 +99,21 @@ const serviceCategoryOptions = [
   { value: 'other', label: 'Other' },
 ];
 
+type ListingStatus = 'active' | 'sold' | 'expired' | 'draft';
+
+const statusOptions = [
+  { value: 'active', label: 'Active', description: 'Visible to everyone', color: 'text-green-500' },
+  { value: 'sold', label: 'Sold', description: 'Marked as sold', color: 'text-primary' },
+  { value: 'expired', label: 'Expired', description: 'No longer available', color: 'text-muted-foreground' },
+  { value: 'draft', label: 'Draft', description: 'Only visible to you', color: 'text-yellow-500' },
+];
+
 export default function EditListing() {
   const { id } = useParams();
   const navigate = useNavigate();
   const { user, loading: authLoading } = useAuth();
   const [listingType, setListingType] = useState<ListingType>('vehicle');
+  const [listingStatus, setListingStatus] = useState<ListingStatus>('active');
   const [images, setImages] = useState<string[]>([]);
   const [coverIndex, setCoverIndex] = useState(0);
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -200,8 +210,9 @@ export default function EditListing() {
         return;
       }
 
-      // Set listing type
+      // Set listing type and status
       setListingType(data.type as ListingType);
+      setListingStatus((data.status as ListingStatus) || 'active');
       setDescription(data.description || '');
       setImages(data.images || []);
       
@@ -458,6 +469,7 @@ export default function EditListing() {
           price: data.price,
           is_negotiable: data.isNegotiable,
           images: images.length > 0 ? images : null,
+          status: listingStatus,
           location_lat: location?.lat || null,
           location_lng: location?.lng || null,
           location_city: location?.city || null,
@@ -682,6 +694,34 @@ export default function EditListing() {
             {listingType === 'service' && <Wrench className="w-6 h-6 text-primary" />}
             <span className="font-medium text-foreground capitalize">{listingType}</span>
             <span className="text-xs text-muted-foreground ml-auto">Cannot be changed</span>
+          </div>
+        </section>
+
+        {/* Listing Status */}
+        <section>
+          <h2 className="text-lg font-bold text-foreground mb-3">Listing Status</h2>
+          <div className="grid grid-cols-2 gap-3">
+            {statusOptions.map((option) => {
+              const isSelected = listingStatus === option.value;
+              return (
+                <button
+                  key={option.value}
+                  type="button"
+                  onClick={() => setListingStatus(option.value as ListingStatus)}
+                  className={cn(
+                    "flex flex-col items-start gap-1 p-4 rounded-xl border-2 transition-all text-left",
+                    isSelected
+                      ? "border-primary bg-primary/10"
+                      : "border-transparent bg-muted hover:bg-muted/80"
+                  )}
+                >
+                  <span className={cn("font-medium", isSelected ? "text-primary" : "text-foreground")}>
+                    {option.label}
+                  </span>
+                  <span className="text-xs text-muted-foreground">{option.description}</span>
+                </button>
+              );
+            })}
           </div>
         </section>
 
