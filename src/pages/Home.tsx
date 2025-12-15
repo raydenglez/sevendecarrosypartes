@@ -159,7 +159,10 @@ export default function Home() {
               <h2 className="text-lg font-bold text-foreground">Featured Near You</h2>
               <Flame className="w-5 h-5 text-primary" />
             </div>
-            <button className="text-sm font-medium text-primary flex items-center gap-1">
+            <button 
+              onClick={() => navigate('/featured')}
+              className="text-sm font-medium text-primary flex items-center gap-1"
+            >
               See all
               <ChevronRight className="w-4 h-4" />
             </button>
