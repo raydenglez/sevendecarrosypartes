@@ -31,6 +31,7 @@ import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '
 import { useAuth } from '@/hooks/useAuth';
 import { ImageCropModal } from '@/components/ImageCropModal';
 import { LocationPicker } from '@/components/LocationPicker';
+import { VinScanner } from '@/components/VinScanner';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
 import { cn } from '@/lib/utils';
@@ -118,6 +119,9 @@ export default function PublishListing() {
     state: string;
     address?: string;
   } | null>(null);
+
+  // VIN scanner state
+  const [vinScannerOpen, setVinScannerOpen] = useState(false);
 
   // Drag and drop state
   const [draggedIndex, setDraggedIndex] = useState<number | null>(null);
@@ -301,6 +305,31 @@ export default function PublishListing() {
   const handleDragEnd = () => {
     setDraggedIndex(null);
     setDragOverIndex(null);
+  };
+
+  const handleVinDetected = (details: {
+    make: string;
+    model: string;
+    year: number;
+    fuelType?: string;
+    transmission?: string;
+    vin: string;
+  }) => {
+    vehicleForm.setValue('vin', details.vin);
+    vehicleForm.setValue('make', details.make);
+    vehicleForm.setValue('model', details.model);
+    vehicleForm.setValue('year', details.year);
+    if (details.fuelType) {
+      vehicleForm.setValue('fuelType', details.fuelType);
+    }
+    if (details.transmission) {
+      vehicleForm.setValue('transmission', details.transmission);
+    }
+    // Auto-generate title suggestion
+    const suggestedTitle = `${details.year} ${details.make} ${details.model}`;
+    if (!vehicleForm.getValues('title')) {
+      vehicleForm.setValue('title', suggestedTitle);
+    }
   };
 
   const onSubmit = async (data: VehicleFormData | PartFormData | ServiceFormData) => {
@@ -672,7 +701,11 @@ export default function PublishListing() {
                         <FormControl>
                           <div className="relative">
                             <Input placeholder="XXXXXXXXXXXXXXXXX" className="pr-16" {...field} />
-                            <button type="button" className="absolute right-2 top-1/2 -translate-y-1/2 text-xs font-semibold text-primary flex items-center gap-1">
+                            <button 
+                              type="button" 
+                              className="absolute right-2 top-1/2 -translate-y-1/2 text-xs font-semibold text-primary flex items-center gap-1 hover:text-primary/80 transition-colors"
+                              onClick={() => setVinScannerOpen(true)}
+                            >
                               <Scan className="w-4 h-4" />
                               SCAN
                             </button>
@@ -1226,6 +1259,13 @@ export default function PublishListing() {
         onClose={() => setLocationPickerOpen(false)}
         onLocationSelect={setLocation}
         initialLocation={location}
+      />
+
+      {/* VIN Scanner Modal */}
+      <VinScanner
+        open={vinScannerOpen}
+        onClose={() => setVinScannerOpen(false)}
+        onVehicleDetected={handleVinDetected}
       />
     </div>
   );
