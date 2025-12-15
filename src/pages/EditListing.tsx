@@ -108,6 +108,22 @@ const statusOptions = [
   { value: 'draft', label: 'Draft', description: 'Only visible to you', color: 'text-yellow-500' },
 ];
 
+function parseVehicleFromTitle(title: string): { year?: number; make?: string; model?: string } {
+  const yearMatch = title.match(/\b(19\d{2}|20\d{2})\b/);
+  const year = yearMatch ? Number(yearMatch[1]) : undefined;
+
+  const withoutYear = yearMatch
+    ? title.replace(yearMatch[0], '').replace(/\s{2,}/g, ' ').trim()
+    : title.trim();
+
+  const parts = withoutYear.split(' ').filter(Boolean);
+  if (parts.length === 0) return { year };
+
+  const make = parts[0];
+  const model = parts.slice(1).join(' ') || undefined;
+  return { year, make, model };
+}
+
 export default function EditListing() {
   const { id } = useParams();
   const navigate = useNavigate();
@@ -228,13 +244,14 @@ export default function EditListing() {
       // Populate form based on type
       if (data.type === 'vehicle') {
         const attrs = data.vehicle_attributes;
+        const parsed = !attrs ? parseVehicleFromTitle(data.title || '') : {};
         vehicleForm.reset({
           title: data.title,
           price: Number(data.price) || 0,
           isNegotiable: data.is_negotiable || false,
-          make: attrs?.make || '',
-          model: attrs?.model || '',
-          year: attrs?.year || new Date().getFullYear(),
+          make: attrs?.make || parsed.make || '',
+          model: attrs?.model || parsed.model || '',
+          year: attrs?.year || parsed.year || new Date().getFullYear(),
           mileage: attrs?.mileage || 0,
           vin: attrs?.vin || '',
           fuelType: attrs?.fuel_type || undefined,
@@ -487,39 +504,48 @@ export default function EditListing() {
         const vehicleData = data as VehicleFormData;
         const { error: attrError } = await supabase
           .from('vehicle_attributes')
-          .update({
-            make: vehicleData.make,
-            model: vehicleData.model,
-            year: vehicleData.year,
-            mileage: vehicleData.mileage || null,
-            vin: vehicleData.vin || null,
-            fuel_type: vehicleData.fuelType || null,
-            transmission: vehicleData.transmission || null,
-            color: vehicleData.color || null,
-            condition: vehicleData.condition || null,
-          })
-          .eq('listing_id', id);
+          .upsert(
+            {
+              listing_id: id,
+              make: vehicleData.make,
+              model: vehicleData.model,
+              year: vehicleData.year,
+              mileage: vehicleData.mileage || null,
+              vin: vehicleData.vin || null,
+              fuel_type: vehicleData.fuelType || null,
+              transmission: vehicleData.transmission || null,
+              color: vehicleData.color || null,
+              condition: vehicleData.condition || null,
+            },
+            { onConflict: 'listing_id' }
+          );
         if (attrError) throw attrError;
       } else if (listingType === 'part') {
         const partData = data as PartFormData;
         const { error: attrError } = await supabase
           .from('part_attributes')
-          .update({
-            part_category: partData.partCategory,
-            brand: partData.brand || null,
-            condition: partData.condition || null,
-          })
-          .eq('listing_id', id);
+          .upsert(
+            {
+              listing_id: id,
+              part_category: partData.partCategory,
+              brand: partData.brand || null,
+              condition: partData.condition || null,
+            },
+            { onConflict: 'listing_id' }
+          );
         if (attrError) throw attrError;
       } else if (listingType === 'service') {
         const serviceData = data as ServiceFormData;
         const { error: attrError } = await supabase
           .from('service_attributes')
-          .update({
-            service_category: serviceData.serviceCategory,
-            price_structure: serviceData.priceStructure || null,
-          })
-          .eq('listing_id', id);
+          .upsert(
+            {
+              listing_id: id,
+              service_category: serviceData.serviceCategory,
+              price_structure: serviceData.priceStructure || null,
+            },
+            { onConflict: 'listing_id' }
+          );
         if (attrError) throw attrError;
       }
 
