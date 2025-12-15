@@ -14,7 +14,9 @@ import {
   ExternalLink,
   CheckCircle,
   Loader2,
-  Star
+  Star,
+  Pencil,
+  Trash2
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { SellerCard } from '@/components/SellerCard';
@@ -255,6 +257,16 @@ export default function ListingDetail() {
             <ArrowLeft className="w-5 h-5" />
           </Button>
           <div className="flex gap-2">
+            {user && listing.ownerId === user.id && (
+              <Button
+                variant="ghost"
+                size="icon"
+                className="bg-background/20 backdrop-blur-sm hover:bg-background/40"
+                onClick={() => navigate(`/listing/${id}/edit`)}
+              >
+                <Pencil className="w-5 h-5" />
+              </Button>
+            )}
             <Button
               variant="ghost"
               size="icon"
@@ -262,17 +274,19 @@ export default function ListingDetail() {
             >
               <Share2 className="w-5 h-5" />
             </Button>
-            <Button
-              variant="ghost"
-              size="icon"
-              className={cn(
-                "bg-background/20 backdrop-blur-sm hover:bg-background/40",
-                isFavorite && "text-primary"
-              )}
-              onClick={() => setIsFavorite(!isFavorite)}
-            >
-              <Heart className={cn("w-5 h-5", isFavorite && "fill-current")} />
-            </Button>
+            {user && listing.ownerId !== user.id && (
+              <Button
+                variant="ghost"
+                size="icon"
+                className={cn(
+                  "bg-background/20 backdrop-blur-sm hover:bg-background/40",
+                  isFavorite && "text-primary"
+                )}
+                onClick={() => setIsFavorite(!isFavorite)}
+              >
+                <Heart className={cn("w-5 h-5", isFavorite && "fill-current")} />
+              </Button>
+            )}
           </div>
         </div>
 
@@ -430,24 +444,38 @@ export default function ListingDetail() {
       {/* Fixed CTA */}
       <div className="fixed bottom-0 left-0 right-0 p-4 bg-background/95 backdrop-blur-xl border-t border-border safe-bottom">
         <div className="flex gap-3 max-w-lg mx-auto">
-          <Button variant="call" size="lg" className="flex-1">
-            <Phone className="w-5 h-5 mr-2" />
-            Call
-          </Button>
-          <Button 
-            variant="contact" 
-            size="lg" 
-            className="flex-[2]"
-            onClick={handleContact}
-            disabled={contactLoading}
-          >
-            {contactLoading ? (
-              <Loader2 className="w-5 h-5 mr-2 animate-spin" />
-            ) : (
-              <MessageSquare className="w-5 h-5 mr-2" />
-            )}
-            Contact
-          </Button>
+          {user && listing.ownerId === user.id ? (
+            <Button 
+              variant="carnexo" 
+              size="lg" 
+              className="flex-1"
+              onClick={() => navigate(`/listing/${id}/edit`)}
+            >
+              <Pencil className="w-5 h-5 mr-2" />
+              Edit Listing
+            </Button>
+          ) : (
+            <>
+              <Button variant="call" size="lg" className="flex-1">
+                <Phone className="w-5 h-5 mr-2" />
+                Call
+              </Button>
+              <Button 
+                variant="contact" 
+                size="lg" 
+                className="flex-[2]"
+                onClick={handleContact}
+                disabled={contactLoading}
+              >
+                {contactLoading ? (
+                  <Loader2 className="w-5 h-5 mr-2 animate-spin" />
+                ) : (
+                  <MessageSquare className="w-5 h-5 mr-2" />
+                )}
+                Contact
+              </Button>
+            </>
+          )}
         </div>
       </div>
     </div>
