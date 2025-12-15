@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import { ArrowLeft, Car, Settings, Wrench, Loader2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { BottomNav } from '@/components/BottomNav';
@@ -15,10 +15,13 @@ type StatusFilter = 'all' | 'active' | 'sold' | 'expired' | 'draft';
 
 export default function MyListings() {
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
   const { user, loading: authLoading } = useAuth();
   const [listings, setListings] = useState<Listing[]>([]);
   const [loading, setLoading] = useState(true);
-  const [typeFilter, setTypeFilter] = useState<FilterType>('all');
+  
+  const initialType = (searchParams.get('type') as FilterType) || 'all';
+  const [typeFilter, setTypeFilter] = useState<FilterType>(initialType);
   const [statusFilter, setStatusFilter] = useState<StatusFilter>('all');
 
   useEffect(() => {
