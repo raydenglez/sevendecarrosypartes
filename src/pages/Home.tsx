@@ -86,7 +86,14 @@ export default function Home() {
     }))
   , [nearbyListings]);
 
-  const featuredListings = transformedListings.filter(l => l.isPremium).slice(0, 3);
+  // For vehicles: use is_premium flag (top 10% by price)
+  // For services: use proximity (closest = featured, already sorted by distance)
+  const featuredListings = useMemo(() => {
+    if (segment === 'vehicles') {
+      return transformedListings.filter(l => l.isPremium).slice(0, 3);
+    }
+    return transformedListings.slice(0, 3);
+  }, [transformedListings, segment]);
 
   const { displayedItems, hasMore, isLoading, reset } = useInfiniteScroll(transformedListings, {
     initialLimit: 6,
