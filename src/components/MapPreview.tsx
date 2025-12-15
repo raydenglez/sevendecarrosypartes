@@ -1,5 +1,6 @@
 import { MapPin, ArrowRight } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import mapPreviewImage from '@/assets/map-preview.jpg';
 
 interface MapPreviewProps {
   listingCount?: number;
@@ -26,7 +27,7 @@ export function MapPreview({
       {/* Map background image */}
       <div className="absolute inset-0 rounded-2xl overflow-hidden">
         <img
-          src="https://images.unsplash.com/photo-1524661135-423995f22d0b?w=800&q=80"
+          src={mapPreviewImage}
           alt="Map preview"
           className="absolute inset-0 w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
         />
