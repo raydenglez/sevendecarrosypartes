@@ -4,20 +4,13 @@ import { ArrowLeft, Flame } from 'lucide-react';
 import { BottomNav } from '@/components/BottomNav';
 import { ListingCard } from '@/components/ListingCard';
 import { ListingCardSkeleton } from '@/components/ListingCardSkeleton';
-import { LocationPermissionModal } from '@/components/LocationPermissionModal';
 import { useNearbyListings } from '@/hooks/useNearbyListings';
 import { Listing } from '@/types';
 
 export default function Featured() {
   const navigate = useNavigate();
   
-  const { 
-    listings: nearbyListings, 
-    loading,
-    showLocationModal,
-    setShowLocationModal,
-    requestLocation
-  } = useNearbyListings('vehicles', {
+  const { listings: nearbyListings, loading } = useNearbyListings('vehicles', {
     query: '',
     category: 'all',
     priceRange: [0, 100000],
@@ -98,12 +91,6 @@ export default function Featured() {
       </main>
 
       <BottomNav />
-      
-      <LocationPermissionModal
-        isOpen={showLocationModal}
-        onClose={() => setShowLocationModal(false)}
-        onRetry={requestLocation}
-      />
     </div>
   );
 }
