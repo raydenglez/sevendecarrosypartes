@@ -11,6 +11,21 @@ import CarNexoLogo from '@/components/CarNexoLogo';
 import { useAuth } from '@/hooks/useAuth';
 import { useToast } from '@/hooks/use-toast';
 
+// Background component with gradient - defined outside to prevent re-renders
+const AuthBackground = ({ children }: { children: React.ReactNode }) => (
+  <div className="min-h-screen relative overflow-hidden bg-background">
+    {/* Gradient orbs */}
+    <div className="absolute top-[-20%] left-[-10%] w-[500px] h-[500px] rounded-full bg-primary/20 blur-[120px] animate-pulse" />
+    <div className="absolute bottom-[-20%] right-[-10%] w-[400px] h-[400px] rounded-full bg-secondary/20 blur-[100px] animate-pulse" style={{ animationDelay: '1s' }} />
+    <div className="absolute top-[40%] right-[20%] w-[200px] h-[200px] rounded-full bg-primary/10 blur-[80px] animate-pulse" style={{ animationDelay: '2s' }} />
+    
+    {/* Content */}
+    <div className="relative z-10 min-h-screen flex flex-col">
+      {children}
+    </div>
+  </div>
+);
+
 export default function Auth() {
   const navigate = useNavigate();
   const { t } = useTranslation();
@@ -233,20 +248,6 @@ export default function Auth() {
     }
   };
 
-  // Background component with gradient
-  const AuthBackground = ({ children }: { children: React.ReactNode }) => (
-    <div className="min-h-screen relative overflow-hidden bg-background">
-      {/* Gradient orbs */}
-      <div className="absolute top-[-20%] left-[-10%] w-[500px] h-[500px] rounded-full bg-primary/20 blur-[120px] animate-pulse" />
-      <div className="absolute bottom-[-20%] right-[-10%] w-[400px] h-[400px] rounded-full bg-secondary/20 blur-[100px] animate-pulse" style={{ animationDelay: '1s' }} />
-      <div className="absolute top-[40%] right-[20%] w-[200px] h-[200px] rounded-full bg-primary/10 blur-[80px] animate-pulse" style={{ animationDelay: '2s' }} />
-      
-      {/* Content */}
-      <div className="relative z-10 min-h-screen flex flex-col">
-        {children}
-      </div>
-    </div>
-  );
 
   // Email Confirmation Pending Screen
   if (confirmationPending) {
