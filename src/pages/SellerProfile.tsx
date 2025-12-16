@@ -126,47 +126,58 @@ export default function SellerProfile() {
         setSeller(transformedSeller);
       }
 
-      // Fetch seller's listings
+      // Fetch seller's listings with public vehicle attributes (excludes VIN)
       const { data: listingsData } = await supabase
         .from('listings')
-        .select(`
-          *,
-          vehicle_attributes (*)
-        `)
+        .select('*')
         .eq('owner_id', id)
         .eq('status', 'active');
 
       if (listingsData) {
-        const transformedListings: Listing[] = listingsData.map(data => ({
-          id: data.id,
-          ownerId: data.owner_id,
-          type: data.type,
-          status: data.status || 'active',
-          title: data.title,
-          description: data.description || '',
-          price: Number(data.price) || 0,
-          location: {
-            lat: Number(data.location_lat) || 0,
-            lng: Number(data.location_lng) || 0,
-            city: data.location_city || '',
-            state: data.location_state || ''
-          },
-          images: data.images || ['/placeholder.svg'],
-          isPremium: data.is_premium || false,
-          isNegotiable: data.is_negotiable || false,
-          createdAt: data.created_at || '',
-          updatedAt: data.updated_at || '',
-          vehicleAttributes: data.vehicle_attributes ? {
-            make: data.vehicle_attributes.make || '',
-            model: data.vehicle_attributes.model || '',
-            year: data.vehicle_attributes.year || 0,
-            mileage: data.vehicle_attributes.mileage || 0,
-            fuelType: data.vehicle_attributes.fuel_type as any || 'gasoline',
-            transmission: data.vehicle_attributes.transmission as any || 'automatic',
-            color: data.vehicle_attributes.color || undefined,
-            vin: data.vehicle_attributes.vin || undefined
-          } : undefined
-        }));
+        // Fetch public vehicle attributes separately (excludes VIN)
+        const vehicleListingIds = listingsData.filter(l => l.type === 'vehicle').map(l => l.id);
+        const { data: vehicleAttrs } = vehicleListingIds.length > 0 
+          ? await supabase
+              .from('public_vehicle_attributes')
+              .select('*')
+              .in('listing_id', vehicleListingIds)
+          : { data: [] as any[] };
+
+        const vehicleAttrsMap = new Map<string, any>((vehicleAttrs || []).map(v => [v.listing_id, v] as [string, any]));
+
+        const transformedListings: Listing[] = listingsData.map(data => {
+          const vehicleAttr = vehicleAttrsMap.get(data.id);
+          return {
+            id: data.id,
+            ownerId: data.owner_id,
+            type: data.type,
+            status: data.status || 'active',
+            title: data.title,
+            description: data.description || '',
+            price: Number(data.price) || 0,
+            location: {
+              lat: Number(data.location_lat) || 0,
+              lng: Number(data.location_lng) || 0,
+              city: data.location_city || '',
+              state: data.location_state || ''
+            },
+            images: data.images || ['/placeholder.svg'],
+            isPremium: data.is_premium || false,
+            isNegotiable: data.is_negotiable || false,
+            createdAt: data.created_at || '',
+            updatedAt: data.updated_at || '',
+            vehicleAttributes: vehicleAttr ? {
+              make: vehicleAttr.make || '',
+              model: vehicleAttr.model || '',
+              year: vehicleAttr.year || 0,
+              mileage: vehicleAttr.mileage || 0,
+              fuelType: vehicleAttr.fuel_type as any || 'gasoline',
+              transmission: vehicleAttr.transmission as any || 'automatic',
+              color: vehicleAttr.color || undefined,
+              vin: undefined // VIN excluded from public view
+            } : undefined
+          };
+        });
         setListings(transformedListings);
       }
 

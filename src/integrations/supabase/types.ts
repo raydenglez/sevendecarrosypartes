@@ -607,6 +607,53 @@ export type Database = {
         }
         Relationships: []
       }
+      public_vehicle_attributes: {
+        Row: {
+          color: string | null
+          condition: Database["public"]["Enums"]["vehicle_condition"] | null
+          fuel_type: string | null
+          id: string | null
+          listing_id: string | null
+          make: string | null
+          mileage: number | null
+          model: string | null
+          transmission: string | null
+          year: number | null
+        }
+        Insert: {
+          color?: string | null
+          condition?: Database["public"]["Enums"]["vehicle_condition"] | null
+          fuel_type?: string | null
+          id?: string | null
+          listing_id?: string | null
+          make?: string | null
+          mileage?: number | null
+          model?: string | null
+          transmission?: string | null
+          year?: number | null
+        }
+        Update: {
+          color?: string | null
+          condition?: Database["public"]["Enums"]["vehicle_condition"] | null
+          fuel_type?: string | null
+          id?: string | null
+          listing_id?: string | null
+          make?: string | null
+          mileage?: number | null
+          model?: string | null
+          transmission?: string | null
+          year?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "vehicle_attributes_listing_id_fkey"
+            columns: ["listing_id"]
+            isOneToOne: true
+            referencedRelation: "listings"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
     }
     Functions: {
       get_user_roles: {
