@@ -69,7 +69,7 @@ export default function Chat() {
         setConversation({
           id: conv.id,
           listing: conv.listing as any,
-          other_user: otherUser || { id: otherId, full_name: 'Unknown', avatar_url: null },
+          other_user: otherUser || { id: otherId, full_name: '', avatar_url: null },
         });
       }
       setLoadingConvo(false);
@@ -153,7 +153,7 @@ export default function Chat() {
             )}
             <div className="min-w-0">
               <h1 className="font-semibold text-foreground truncate">
-                {conversation.other_user.full_name}
+                {conversation.other_user.full_name || t('chat.user', 'User')}
               </h1>
               <p className="text-xs text-muted-foreground truncate">
                 {conversation.listing.title}
