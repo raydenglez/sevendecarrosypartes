@@ -322,7 +322,7 @@ export default function Profile() {
               <DropdownMenuSeparator />
               <DropdownMenuItem onClick={handleSignOut} className="text-destructive focus:text-destructive">
                 <LogOut className="w-4 h-4 mr-2" />
-                {t('profile.signOut')}
+                {t('auth.signOut')}
               </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
