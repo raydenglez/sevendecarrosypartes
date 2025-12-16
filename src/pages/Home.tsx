@@ -13,7 +13,7 @@ import { NotificationsPanel } from '@/components/NotificationsPanel';
 import { FilterSheet, FilterOptions } from '@/components/FilterSheet';
 import { PullToRefresh } from '@/components/PullToRefresh';
 import { Button } from '@/components/ui/button';
-import CarNexoLogo from '@/components/CarNexoLogo';
+
 import { useAuth } from '@/hooks/useAuth';
 import { useInfiniteScroll } from '@/hooks/useInfiniteScroll';
 import { useNearbyListings, SearchFilters } from '@/hooks/useNearbyListings';
@@ -119,7 +119,7 @@ export default function Home() {
         <header className="sticky top-0 z-40 bg-background/95 backdrop-blur-xl safe-top">
         <div className="px-4 pt-4 pb-3 space-y-4">
           <div className="flex items-center justify-between">
-            <CarNexoLogo size="sm" />
+            <h1 className="text-2xl font-bold text-primary">CarNexo</h1>
             {user ? (
               <button 
                 onClick={() => setIsNotificationsOpen(true)}
