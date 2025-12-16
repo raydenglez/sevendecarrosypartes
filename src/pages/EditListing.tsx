@@ -2,6 +2,7 @@ import { useState, useRef, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
+import { useTranslation } from 'react-i18next';
 import { z } from 'zod';
 import { 
   X, 
@@ -101,11 +102,11 @@ const serviceCategoryOptions = [
 
 type ListingStatus = 'active' | 'sold' | 'expired' | 'draft';
 
-const statusOptions = [
-  { value: 'active', label: 'Active', description: 'Visible to everyone', color: 'text-green-500' },
-  { value: 'sold', label: 'Sold', description: 'Marked as sold', color: 'text-primary' },
-  { value: 'expired', label: 'Expired', description: 'No longer available', color: 'text-muted-foreground' },
-  { value: 'draft', label: 'Draft', description: 'Only visible to you', color: 'text-yellow-500' },
+const getStatusOptions = (t: any) => [
+  { value: 'active', label: t('editListing.status.active'), description: t('editListing.status.activeDesc'), color: 'text-green-500' },
+  { value: 'sold', label: t('editListing.status.sold'), description: t('editListing.status.soldDesc'), color: 'text-primary' },
+  { value: 'expired', label: t('editListing.status.expired'), description: t('editListing.status.expiredDesc'), color: 'text-muted-foreground' },
+  { value: 'draft', label: t('editListing.status.draft'), description: t('editListing.status.draftDesc'), color: 'text-yellow-500' },
 ];
 
 function parseVehicleFromTitle(title: string): { year?: number; make?: string; model?: string } {
@@ -125,6 +126,7 @@ function parseVehicleFromTitle(title: string): { year?: number; make?: string; m
 }
 
 export default function EditListing() {
+  const { t } = useTranslation();
   const { id } = useParams();
   const navigate = useNavigate();
   const { user, loading: authLoading } = useAuth();
@@ -549,11 +551,11 @@ export default function EditListing() {
         if (attrError) throw attrError;
       }
 
-      toast.success('Listing updated successfully!');
+      toast.success(t('toast.listingUpdated'));
       navigate(`/listing/${id}`);
     } catch (error: any) {
       console.error('Error updating listing:', error);
-      toast.error(error.message || 'Failed to update listing');
+      toast.error(error.message || t('publish.toast.publishFailed'));
     } finally {
       setIsSubmitting(false);
     }
@@ -582,7 +584,7 @@ export default function EditListing() {
           <Button variant="ghost" size="icon" onClick={() => navigate(-1)}>
             <X className="w-5 h-5" />
           </Button>
-          <h1 className="text-lg font-bold text-foreground">Edit Listing</h1>
+          <h1 className="text-lg font-bold text-foreground">{t('editListing.title')}</h1>
           <AlertDialog>
             <AlertDialogTrigger asChild>
               <Button variant="ghost" size="icon" className="text-destructive hover:text-destructive">
@@ -591,13 +593,13 @@ export default function EditListing() {
             </AlertDialogTrigger>
             <AlertDialogContent>
               <AlertDialogHeader>
-                <AlertDialogTitle>Delete Listing</AlertDialogTitle>
+                <AlertDialogTitle>{t('editListing.deleteListing')}</AlertDialogTitle>
                 <AlertDialogDescription>
-                  Are you sure you want to delete this listing? This action cannot be undone.
+                  {t('editListing.deleteConfirm')}
                 </AlertDialogDescription>
               </AlertDialogHeader>
               <AlertDialogFooter>
-                <AlertDialogCancel>Cancel</AlertDialogCancel>
+                <AlertDialogCancel>{t('common.cancel')}</AlertDialogCancel>
                 <AlertDialogAction
                   onClick={handleDelete}
                   className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
@@ -606,10 +608,10 @@ export default function EditListing() {
                   {isDeleting ? (
                     <>
                       <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                      Deleting...
+                      {t('editListing.deleting')}
                     </>
                   ) : (
-                    'Delete'
+                    t('common.delete')
                   )}
                 </AlertDialogAction>
               </AlertDialogFooter>
@@ -632,13 +634,13 @@ export default function EditListing() {
         <section>
           <div className="flex items-center justify-between mb-3">
             <div>
-              <h2 className="text-lg font-bold text-foreground">Visual Gallery</h2>
+              <h2 className="text-lg font-bold text-foreground">{t('publish.visualGallery')}</h2>
               {images.length > 1 && (
-                <p className="text-xs text-muted-foreground mt-0.5">Drag to reorder • First image is cover</p>
+                <p className="text-xs text-muted-foreground mt-0.5">{t('publish.dragReorderHint')}</p>
               )}
             </div>
             <span className="text-xs text-muted-foreground bg-muted px-2 py-1 rounded">
-              {images.length}/10 photos
+              {t('publish.photosCount', { count: images.length })}
             </span>
           </div>
           
@@ -668,7 +670,7 @@ export default function EditListing() {
                 
                 {idx === 0 && (
                   <span className="absolute bottom-2 left-2 text-[10px] font-semibold px-2 py-1 rounded bg-primary text-primary-foreground">
-                    COVER
+                    {t('publish.cover')}
                   </span>
                 )}
                 
@@ -706,7 +708,7 @@ export default function EditListing() {
                 ) : (
                   <>
                     <Camera className="w-8 h-8" />
-                    <span className="text-sm font-medium">Add Photo</span>
+                    <span className="text-sm font-medium">{t('publish.addPhoto')}</span>
                   </>
                 )}
               </button>
@@ -716,21 +718,21 @@ export default function EditListing() {
 
         {/* Listing Type (read-only for edit) */}
         <section>
-          <h2 className="text-lg font-bold text-foreground mb-3">Listing Type</h2>
+          <h2 className="text-lg font-bold text-foreground mb-3">{t('publish.listingType')}</h2>
           <div className="flex items-center gap-3 p-4 rounded-xl bg-muted">
             {listingType === 'vehicle' && <Car className="w-6 h-6 text-primary" />}
             {listingType === 'part' && <Settings className="w-6 h-6 text-primary" />}
             {listingType === 'service' && <Wrench className="w-6 h-6 text-primary" />}
-            <span className="font-medium text-foreground capitalize">{listingType}</span>
-            <span className="text-xs text-muted-foreground ml-auto">Cannot be changed</span>
+            <span className="font-medium text-foreground capitalize">{t(`publish.${listingType}`)}</span>
+            <span className="text-xs text-muted-foreground ml-auto">{t('editListing.cannotBeChanged')}</span>
           </div>
         </section>
 
         {/* Listing Status */}
         <section>
-          <h2 className="text-lg font-bold text-foreground mb-3">Listing Status</h2>
+          <h2 className="text-lg font-bold text-foreground mb-3">{t('editListing.listingStatus')}</h2>
           <div className="grid grid-cols-2 gap-3">
-            {statusOptions.map((option) => {
+            {getStatusOptions(t).map((option) => {
               const isSelected = listingStatus === option.value;
               return (
                 <button

@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { ArrowLeft, Send, Loader2 } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { ChatBubble } from '@/components/ChatBubble';
@@ -24,6 +25,7 @@ interface ConversationDetails {
 }
 
 export default function Chat() {
+  const { t } = useTranslation();
   const { conversationId } = useParams();
   const navigate = useNavigate();
   const { user, loading: authLoading } = useAuth();
@@ -113,7 +115,7 @@ export default function Chat() {
   if (!conversation) {
     return (
       <div className="min-h-screen bg-background flex items-center justify-center">
-        <p className="text-muted-foreground">Conversation not found</p>
+        <p className="text-muted-foreground">{t('chat.conversationNotFound')}</p>
       </div>
     );
   }
@@ -183,7 +185,7 @@ export default function Chat() {
         ) : messages.length === 0 ? (
           <div className="flex flex-col items-center justify-center h-full text-center">
             <p className="text-muted-foreground text-sm">
-              Start the conversation by sending a message
+              {t('chat.startConversation')}
             </p>
           </div>
         ) : (
@@ -209,7 +211,7 @@ export default function Chat() {
             value={inputValue}
             onChange={(e) => setInputValue(e.target.value)}
             onKeyPress={handleKeyPress}
-            placeholder="Type a message..."
+            placeholder={t('messages.typeMessage')}
             className="flex-1"
             disabled={sending}
           />

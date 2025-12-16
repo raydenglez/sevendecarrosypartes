@@ -16,6 +16,7 @@ import { Switch } from '@/components/ui/switch';
 import { KeyRound, Eye, EyeOff, Shield, Smartphone, Clock, AlertTriangle, Loader2 } from 'lucide-react';
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import { useAuth } from '@/hooks/useAuth';
 import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
@@ -41,6 +42,7 @@ interface SecurityPrivacySheetProps {
 }
 
 export function SecurityPrivacySheet({ open, onClose }: SecurityPrivacySheetProps) {
+  const { t } = useTranslation();
   const navigate = useNavigate();
   const { user, updatePassword, signOut } = useAuth();
   const { toast } = useToast();
@@ -103,7 +105,7 @@ export function SecurityPrivacySheet({ open, onClose }: SecurityPrivacySheetProp
       // Revert on error
       setPrivacySettings(prev => ({ ...prev, [key]: !value }));
       toast({
-        title: "Failed to update setting",
+        title: t('settings.failedUpdateSetting'),
         description: error.message,
         variant: "destructive",
       });
@@ -131,14 +133,14 @@ export function SecurityPrivacySheet({ open, onClose }: SecurityPrivacySheetProp
 
     if (error) {
       toast({
-        title: "Failed to update password",
+        title: t('settings.failedUpdatePassword'),
         description: error.message,
         variant: "destructive",
       });
     } else {
       toast({
-        title: "Password updated",
-        description: "Your password has been changed successfully.",
+        title: t('settings.passwordUpdated'),
+        description: t('settings.passwordChangedSuccess'),
       });
       setShowChangePassword(false);
       setFormData({ newPassword: '', confirmPassword: '' });
@@ -158,8 +160,8 @@ export function SecurityPrivacySheet({ open, onClose }: SecurityPrivacySheetProp
   const handleDeleteAccount = async () => {
     if (deleteConfirmText !== 'DELETE') {
       toast({
-        title: "Confirmation required",
-        description: "Please type DELETE to confirm account deletion.",
+        title: t('settings.confirmationRequired'),
+        description: t('settings.pleaseTypeDelete'),
         variant: "destructive",
       });
       return;
@@ -187,8 +189,8 @@ export function SecurityPrivacySheet({ open, onClose }: SecurityPrivacySheetProp
       }
 
       toast({
-        title: "Account deleted",
-        description: "Your account has been permanently deleted.",
+        title: t('settings.accountDeleted'),
+        description: t('settings.accountDeletedDesc'),
       });
 
       // Sign out and redirect
@@ -198,8 +200,8 @@ export function SecurityPrivacySheet({ open, onClose }: SecurityPrivacySheetProp
     } catch (error) {
       console.error("Delete account error:", error);
       toast({
-        title: "Deletion failed",
-        description: error instanceof Error ? error.message : "Failed to delete account. Please try again.",
+        title: t('settings.deletionFailed'),
+        description: error instanceof Error ? error.message : t('settings.failedDeleteAccount'),
         variant: "destructive",
       });
     } finally {
@@ -213,8 +215,8 @@ export function SecurityPrivacySheet({ open, onClose }: SecurityPrivacySheetProp
     <Sheet open={open} onOpenChange={onClose}>
       <SheetContent side="bottom" className="h-[85vh] rounded-t-3xl flex flex-col">
         <SheetHeader className="pb-4 flex-shrink-0">
-          <SheetTitle className="text-xl">Security & Privacy</SheetTitle>
-          <p className="text-sm text-muted-foreground">Password and privacy settings, Delete your account</p>
+          <SheetTitle className="text-xl">{t('settings.securityPrivacy')}</SheetTitle>
+          <p className="text-sm text-muted-foreground">{t('settings.securityPrivacyDesc')}</p>
         </SheetHeader>
 
         <div className="space-y-4 overflow-y-auto flex-1 pb-6">
@@ -228,15 +230,15 @@ export function SecurityPrivacySheet({ open, onClose }: SecurityPrivacySheetProp
                 <KeyRound className="w-5 h-5 text-primary" />
               </div>
               <div className="flex-1 text-left">
-                <p className="text-foreground font-medium">Change Password</p>
-                <p className="text-sm text-muted-foreground">Update your account password</p>
+                <p className="text-foreground font-medium">{t('settings.changePassword')}</p>
+                <p className="text-sm text-muted-foreground">{t('settings.updateAccountPassword')}</p>
               </div>
             </button>
 
             {showChangePassword && (
               <div className="mt-4 pt-4 border-t border-border space-y-3">
                 <div className="space-y-2">
-                  <Label htmlFor="newPassword">New Password</Label>
+                  <Label htmlFor="newPassword">{t('settings.newPassword')}</Label>
                   <div className="relative">
                     <Input
                       id="newPassword"
@@ -260,7 +262,7 @@ export function SecurityPrivacySheet({ open, onClose }: SecurityPrivacySheetProp
                 </div>
 
                 <div className="space-y-2">
-                  <Label htmlFor="confirmPassword">Confirm New Password</Label>
+                  <Label htmlFor="confirmPassword">{t('settings.confirmNewPassword')}</Label>
                   <Input
                     id="confirmPassword"
                     type={showPassword ? 'text' : 'password'}
@@ -279,7 +281,7 @@ export function SecurityPrivacySheet({ open, onClose }: SecurityPrivacySheetProp
                   onClick={handlePasswordChange}
                   disabled={loading}
                 >
-                  {loading ? 'Updating...' : 'Update Password'}
+                  {loading ? t('auth.updating') : t('auth.updatePassword')}
                 </Button>
               </div>
             )}
@@ -292,13 +294,13 @@ export function SecurityPrivacySheet({ open, onClose }: SecurityPrivacySheetProp
                 <Smartphone className="w-5 h-5 text-success" />
               </div>
               <div className="flex-1">
-                <p className="text-foreground font-medium">Two-Factor Authentication</p>
-                <p className="text-sm text-muted-foreground">Add an extra layer of security</p>
+                <p className="text-foreground font-medium">{t('settings.twoFactorAuth')}</p>
+                <p className="text-sm text-muted-foreground">{t('settings.twoFactorAuthDesc')}</p>
               </div>
               <Switch disabled />
             </div>
             <p className="text-xs text-muted-foreground mt-2 ml-13">
-              Coming soon
+              {t('settings.comingSoon')}
             </p>
           </div>
 
@@ -309,7 +311,7 @@ export function SecurityPrivacySheet({ open, onClose }: SecurityPrivacySheetProp
                 <Clock className="w-5 h-5 text-secondary" />
               </div>
               <div className="flex-1">
-                <p className="text-foreground font-medium">Last Login</p>
+                <p className="text-foreground font-medium">{t('settings.lastLogin')}</p>
                 <p className="text-sm text-muted-foreground">{lastLogin}</p>
               </div>
             </div>
@@ -322,14 +324,14 @@ export function SecurityPrivacySheet({ open, onClose }: SecurityPrivacySheetProp
                 <Shield className="w-5 h-5 text-warning" />
               </div>
               <div className="flex-1">
-                <p className="text-foreground font-medium">Privacy Settings</p>
+                <p className="text-foreground font-medium">{t('settings.privacySettings')}</p>
               </div>
             </div>
 
             <div className="space-y-3 pl-13">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm text-foreground">Show phone number on listings</p>
+                  <p className="text-sm text-foreground">{t('settings.showPhoneOnListings')}</p>
                 </div>
                 <Switch 
                   checked={privacySettings.show_phone_on_listings}
@@ -339,7 +341,7 @@ export function SecurityPrivacySheet({ open, onClose }: SecurityPrivacySheetProp
               </div>
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm text-foreground">Allow messages from anyone</p>
+                  <p className="text-sm text-foreground">{t('settings.allowMessagesFromAnyone')}</p>
                 </div>
                 <Switch 
                   checked={privacySettings.allow_messages_from_anyone}
@@ -349,7 +351,7 @@ export function SecurityPrivacySheet({ open, onClose }: SecurityPrivacySheetProp
               </div>
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm text-foreground">Show online status</p>
+                  <p className="text-sm text-foreground">{t('settings.showOnlineStatus')}</p>
                 </div>
                 <Switch 
                   checked={privacySettings.show_online_status}
@@ -367,8 +369,8 @@ export function SecurityPrivacySheet({ open, onClose }: SecurityPrivacySheetProp
                 <AlertTriangle className="w-5 h-5 text-destructive" />
               </div>
               <div className="flex-1">
-                <p className="text-foreground font-medium">Delete Account</p>
-                <p className="text-sm text-muted-foreground">Permanently delete your account and data</p>
+                <p className="text-foreground font-medium">{t('settings.deleteAccount')}</p>
+                <p className="text-sm text-muted-foreground">{t('settings.deleteAccountDesc')}</p>
               </div>
             </div>
             <Button 
@@ -376,7 +378,7 @@ export function SecurityPrivacySheet({ open, onClose }: SecurityPrivacySheetProp
               className="w-full mt-3 text-destructive hover:text-destructive hover:bg-destructive/10"
               onClick={() => setDeleteDialogOpen(true)}
             >
-              Delete My Account
+              {t('settings.deleteMyAccount')}
             </Button>
           </div>
         </div>
@@ -388,22 +390,22 @@ export function SecurityPrivacySheet({ open, onClose }: SecurityPrivacySheetProp
           <AlertDialogHeader>
             <AlertDialogTitle className="flex items-center gap-2 text-destructive">
               <AlertTriangle className="w-5 h-5" />
-              Delete Account Permanently?
+              {t('settings.deleteAccountPermanently')}
             </AlertDialogTitle>
             <AlertDialogDescription className="text-muted-foreground">
-              This action cannot be undone. This will permanently delete your account and remove all your data including:
+              {t('settings.deleteAccountWarningFull')}
               <ul className="list-disc list-inside mt-2 space-y-1">
-                <li>Your profile and settings</li>
-                <li>All your listings and images</li>
-                <li>Your messages and conversations</li>
-                <li>Your reviews and favorites</li>
+                <li>{t('settings.deleteWarningProfile')}</li>
+                <li>{t('settings.deleteWarningListings')}</li>
+                <li>{t('settings.deleteWarningMessages')}</li>
+                <li>{t('settings.deleteWarningReviews')}</li>
               </ul>
             </AlertDialogDescription>
           </AlertDialogHeader>
           
           <div className="py-4">
             <Label htmlFor="deleteConfirm" className="text-sm text-muted-foreground">
-              Type <span className="font-bold text-foreground">DELETE</span> to confirm
+              {t('settings.typeDeleteConfirm')}
             </Label>
             <Input
               id="deleteConfirm"
@@ -419,7 +421,7 @@ export function SecurityPrivacySheet({ open, onClose }: SecurityPrivacySheetProp
               disabled={deleteLoading}
               onClick={() => setDeleteConfirmText('')}
             >
-              Cancel
+              {t('common.cancel')}
             </AlertDialogCancel>
             <AlertDialogAction
               className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
@@ -429,10 +431,10 @@ export function SecurityPrivacySheet({ open, onClose }: SecurityPrivacySheetProp
               {deleteLoading ? (
                 <>
                   <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                  Deleting...
+                  {t('settings.deleting')}
                 </>
               ) : (
-                'Delete Account'
+                t('settings.deleteAccount')
               )}
             </AlertDialogAction>
           </AlertDialogFooter>

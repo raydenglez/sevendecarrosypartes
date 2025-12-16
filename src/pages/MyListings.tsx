@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { ArrowLeft, Car, Settings, Wrench, Loader2 } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 import { Button } from '@/components/ui/button';
 import { BottomNav } from '@/components/BottomNav';
 import { ListingCard } from '@/components/ListingCard';
@@ -14,6 +15,7 @@ type FilterType = 'all' | 'vehicle' | 'part' | 'service';
 type StatusFilter = 'all' | 'active' | 'sold' | 'expired' | 'draft';
 
 export default function MyListings() {
+  const { t } = useTranslation();
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const { user, loading: authLoading } = useAuth();
@@ -97,18 +99,18 @@ export default function MyListings() {
   });
 
   const typeFilters: { value: FilterType; label: string; icon: React.ReactNode }[] = [
-    { value: 'all', label: 'All', icon: null },
-    { value: 'vehicle', label: 'Vehicles', icon: <Car className="w-4 h-4" /> },
-    { value: 'part', label: 'Parts', icon: <Settings className="w-4 h-4" /> },
-    { value: 'service', label: 'Services', icon: <Wrench className="w-4 h-4" /> },
+    { value: 'all', label: t('myListings.typeFilters.all'), icon: null },
+    { value: 'vehicle', label: t('myListings.typeFilters.vehicles'), icon: <Car className="w-4 h-4" /> },
+    { value: 'part', label: t('myListings.typeFilters.parts'), icon: <Settings className="w-4 h-4" /> },
+    { value: 'service', label: t('myListings.typeFilters.services'), icon: <Wrench className="w-4 h-4" /> },
   ];
 
   const statusFilters: { value: StatusFilter; label: string; color: string }[] = [
-    { value: 'all', label: 'All', color: 'text-foreground' },
-    { value: 'active', label: 'Active', color: 'text-success' },
-    { value: 'sold', label: 'Sold', color: 'text-primary' },
-    { value: 'expired', label: 'Expired', color: 'text-destructive' },
-    { value: 'draft', label: 'Draft', color: 'text-warning' },
+    { value: 'all', label: t('myListings.statusFilters.all'), color: 'text-foreground' },
+    { value: 'active', label: t('myListings.statusFilters.active'), color: 'text-success' },
+    { value: 'sold', label: t('myListings.statusFilters.sold'), color: 'text-primary' },
+    { value: 'expired', label: t('myListings.statusFilters.expired'), color: 'text-destructive' },
+    { value: 'draft', label: t('myListings.statusFilters.draft'), color: 'text-warning' },
   ];
 
   if (authLoading) {
@@ -132,7 +134,7 @@ export default function MyListings() {
           <Button variant="ghost" size="icon" onClick={() => navigate(-1)}>
             <ArrowLeft className="w-5 h-5" />
           </Button>
-          <h1 className="text-lg font-bold text-foreground">My Listings</h1>
+          <h1 className="text-lg font-bold text-foreground">{t('myListings.title')}</h1>
         </div>
       </header>
 
@@ -187,13 +189,13 @@ export default function MyListings() {
           </div>
         ) : filteredListings.length === 0 ? (
           <div className="text-center py-12">
-            <p className="text-muted-foreground">No listings found</p>
+            <p className="text-muted-foreground">{t('myListings.noListingsFound')}</p>
             <Button
               variant="carnexo"
               className="mt-4"
               onClick={() => navigate('/publish')}
             >
-              Create Listing
+              {t('myListings.createListing')}
             </Button>
           </div>
         ) : (

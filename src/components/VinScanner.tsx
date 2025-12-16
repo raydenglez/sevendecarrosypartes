@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef } from 'react';
 import { Html5Qrcode } from 'html5-qrcode';
 import { X, Camera, Loader2, AlertCircle, Keyboard } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { toast } from 'sonner';
@@ -27,6 +28,7 @@ interface NHTSAResult {
 }
 
 export function VinScanner({ open, onClose, onVehicleDetected }: VinScannerProps) {
+  const { t } = useTranslation();
   const [isScanning, setIsScanning] = useState(false);
   const [isDecoding, setIsDecoding] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -71,7 +73,7 @@ export function VinScanner({ open, onClose, onVehicleDetected }: VinScannerProps
       );
     } catch (err: any) {
       console.error('Scanner error:', err);
-      setError('Camera access denied or unavailable. Try manual entry.');
+      setError(t('vinScanner.cameraError'));
       setIsScanning(false);
       setShowManualInput(true);
     }
@@ -100,7 +102,7 @@ export function VinScanner({ open, onClose, onVehicleDetected }: VinScannerProps
       );
       
       if (!response.ok) {
-        throw new Error('Failed to decode VIN');
+        throw new Error(t('vinScanner.decodeError'));
       }
 
       const data = await response.json();
@@ -118,7 +120,7 @@ export function VinScanner({ open, onClose, onVehicleDetected }: VinScannerProps
       const transmission = getValue('Transmission Style');
 
       if (!make || !model || !year) {
-        throw new Error('Could not retrieve vehicle details from VIN');
+        throw new Error(t('vinScanner.vehicleError'));
       }
 
       const vehicleDetails: VehicleDetails = {
@@ -130,12 +132,12 @@ export function VinScanner({ open, onClose, onVehicleDetected }: VinScannerProps
         transmission: mapTransmission(transmission),
       };
 
-      toast.success('Vehicle details retrieved!');
+      toast.success(t('vinScanner.vehicleDetected'));
       onVehicleDetected(vehicleDetails);
       onClose();
     } catch (err: any) {
       console.error('VIN decode error:', err);
-      setError(err.message || 'Failed to decode VIN. Please try again.');
+      setError(err.message || t('vinScanner.decodeError'));
       setIsDecoding(false);
       // Restart scanner for another attempt
       if (!showManualInput) {
@@ -166,7 +168,7 @@ export function VinScanner({ open, onClose, onVehicleDetected }: VinScannerProps
   const handleManualSubmit = () => {
     const vinRegex = /^[A-HJ-NPR-Z0-9]{17}$/i;
     if (!vinRegex.test(manualVin)) {
-      setError('Invalid VIN. Must be 17 characters (letters A-H, J-N, P, R-Z and numbers).');
+      setError(t('vinScanner.invalidVin'));
       return;
     }
     decodeVin(manualVin.toUpperCase());
@@ -190,7 +192,7 @@ export function VinScanner({ open, onClose, onVehicleDetected }: VinScannerProps
           <Button variant="ghost" size="icon" onClick={handleClose}>
             <X className="w-5 h-5" />
           </Button>
-          <h1 className="text-lg font-bold text-foreground">Scan VIN</h1>
+          <h1 className="text-lg font-bold text-foreground">{t('vinScanner.title')}</h1>
           <Button
             variant="ghost"
             size="icon"
@@ -213,9 +215,9 @@ export function VinScanner({ open, onClose, onVehicleDetected }: VinScannerProps
         {showManualInput ? (
           <div className="w-full max-w-md space-y-6">
             <div className="text-center space-y-2">
-              <h2 className="text-xl font-bold text-foreground">Enter VIN Manually</h2>
+              <h2 className="text-xl font-bold text-foreground">{t('vinScanner.enterManually')}</h2>
               <p className="text-sm text-muted-foreground">
-                Type the 17-character VIN from your vehicle
+                {t('vinScanner.manualDescription')}
               </p>
             </div>
 
@@ -231,7 +233,7 @@ export function VinScanner({ open, onClose, onVehicleDetected }: VinScannerProps
                 maxLength={17}
               />
               <p className="text-xs text-muted-foreground text-center">
-                {manualVin.length}/17 characters
+                {manualVin.length}/17 {t('vinScanner.characters')}
               </p>
             </div>
 
@@ -252,19 +254,19 @@ export function VinScanner({ open, onClose, onVehicleDetected }: VinScannerProps
               {isDecoding ? (
                 <>
                   <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                  Decoding VIN...
+                  {t('vinScanner.decodingVin')}
                 </>
               ) : (
-                'Decode VIN'
+                t('vinScanner.decodeVin')
               )}
             </Button>
           </div>
         ) : (
           <div className="w-full max-w-md space-y-6">
             <div className="text-center space-y-2">
-              <h2 className="text-xl font-bold text-foreground">Point at VIN Barcode</h2>
+              <h2 className="text-xl font-bold text-foreground">{t('vinScanner.pointAtBarcode')}</h2>
               <p className="text-sm text-muted-foreground">
-                Align the barcode within the frame to scan automatically
+                {t('vinScanner.alignBarcode')}
               </p>
             </div>
 
@@ -290,7 +292,7 @@ export function VinScanner({ open, onClose, onVehicleDetected }: VinScannerProps
                 <div className="absolute inset-0 bg-background/80 flex items-center justify-center">
                   <div className="text-center space-y-3">
                     <Loader2 className="w-10 h-10 text-primary animate-spin mx-auto" />
-                    <p className="text-sm text-foreground font-medium">Decoding VIN...</p>
+                    <p className="text-sm text-foreground font-medium">{t('vinScanner.decodingVin')}</p>
                   </div>
                 </div>
               )}
@@ -304,7 +306,7 @@ export function VinScanner({ open, onClose, onVehicleDetected }: VinScannerProps
             )}
 
             <p className="text-xs text-muted-foreground text-center">
-              VIN is typically found on the dashboard near the windshield or on the driver's door jamb
+              {t('vinScanner.vinLocation')}
             </p>
           </div>
         )}

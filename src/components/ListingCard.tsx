@@ -1,4 +1,5 @@
 import { Heart, MapPin, Gauge, Star } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 import { Listing } from '@/types';
 import { cn } from '@/lib/utils';
 import { Link } from 'react-router-dom';
@@ -13,6 +14,7 @@ interface ListingCardProps {
 }
 
 export function ListingCard({ listing, variant = 'featured', className, style }: ListingCardProps) {
+  const { t } = useTranslation();
   const { isFavorite, toggleFavorite } = useFavoritesContext();
   const favorited = isFavorite(listing.id);
 
@@ -41,27 +43,27 @@ export function ListingCard({ listing, variant = 'featured', className, style }:
           />
           {listing.status === 'sold' && (
             <div className="absolute inset-0 bg-background/60 flex items-center justify-center">
-              <span className="bg-primary text-primary-foreground font-bold px-4 py-2 rounded-lg text-sm">SOLD</span>
+              <span className="bg-primary text-primary-foreground font-bold px-4 py-2 rounded-lg text-sm">{t('listing.sold')}</span>
             </div>
           )}
           {listing.status === 'draft' && (
             <span className="absolute top-2 left-2 bg-yellow-500 text-yellow-950 text-[10px] font-bold px-1.5 py-0.5 rounded">
-              DRAFT
+              {t('listing.draft')}
             </span>
           )}
           {listing.status === 'expired' && (
             <span className="absolute top-2 left-2 bg-muted text-muted-foreground text-[10px] font-bold px-1.5 py-0.5 rounded">
-              EXPIRED
+              {t('listing.expired')}
             </span>
           )}
           {listing.status === 'active' && listing.isPremium && (
             <span className="absolute top-2 left-2 carnexo-badge-premium text-[10px] px-1.5 py-0.5">
-              PREMIUM
+              {t('listing.premium')}
             </span>
           )}
           {listing.status === 'active' && listing.type === 'service' && !listing.isPremium && (
             <span className="absolute top-2 left-2 carnexo-badge-service text-[10px] px-1.5 py-0.5">
-              SERVICE
+              {t('listing.service')}
             </span>
           )}
           <button 
@@ -82,7 +84,7 @@ export function ListingCard({ listing, variant = 'featured', className, style }:
           <h3 className="font-medium text-foreground text-sm truncate mt-0.5">{listing.title}</h3>
           <div className="flex items-center gap-1 text-muted-foreground text-xs mt-1">
             <MapPin className="w-3 h-3" />
-            <span>{listing.location.city} • {listing.distance} mi</span>
+            <span>{listing.location.city} • {listing.distance} {t('common.mi')}</span>
           </div>
         </div>
       </Link>
@@ -107,12 +109,12 @@ export function ListingCard({ listing, variant = 'featured', className, style }:
           />
           {listing.status === 'sold' && (
             <div className="absolute inset-0 bg-background/60 flex items-center justify-center">
-              <span className="bg-primary text-primary-foreground font-bold px-2 py-1 rounded text-xs">SOLD</span>
+              <span className="bg-primary text-primary-foreground font-bold px-2 py-1 rounded text-xs">{t('listing.sold')}</span>
             </div>
           )}
           {listing.status === 'draft' && (
             <span className="absolute top-1 left-1 bg-yellow-500 text-yellow-950 text-[9px] font-bold px-1 py-0.5 rounded">
-              DRAFT
+              {t('listing.draft')}
             </span>
           )}
         </div>
@@ -144,7 +146,7 @@ export function ListingCard({ listing, variant = 'featured', className, style }:
           </p>
           <div className="flex items-center gap-1 text-muted-foreground text-xs mt-1">
             <MapPin className="w-3 h-3" />
-            <span>{listing.location.city} • {listing.distance} mi away</span>
+            <span>{listing.location.city} • {listing.distance} {t('common.miAway')}</span>
           </div>
         </div>
       </Link>
@@ -168,27 +170,27 @@ export function ListingCard({ listing, variant = 'featured', className, style }:
         />
         {listing.status === 'sold' && (
           <div className="absolute inset-0 bg-background/60 flex items-center justify-center">
-            <span className="bg-primary text-primary-foreground font-bold px-4 py-2 rounded-lg">SOLD</span>
+            <span className="bg-primary text-primary-foreground font-bold px-4 py-2 rounded-lg">{t('listing.sold')}</span>
           </div>
         )}
         {listing.status === 'draft' && (
           <span className="absolute top-3 left-3 bg-yellow-500 text-yellow-950 text-xs font-bold px-2 py-1 rounded">
-            DRAFT
+            {t('listing.draft')}
           </span>
         )}
         {listing.status === 'expired' && (
           <span className="absolute top-3 left-3 bg-muted text-muted-foreground text-xs font-bold px-2 py-1 rounded">
-            EXPIRED
+            {t('listing.expired')}
           </span>
         )}
         {listing.status === 'active' && listing.isPremium && (
           <span className="absolute top-3 left-3 carnexo-badge-premium">
-            PREMIUM
+            {t('listing.premium')}
           </span>
         )}
         {listing.status === 'active' && listing.type === 'service' && !listing.isPremium && (
           <span className="absolute top-3 left-3 carnexo-badge-service">
-            SERVICE
+            {t('listing.service')}
           </span>
         )}
         <button 
@@ -211,7 +213,7 @@ export function ListingCard({ listing, variant = 'featured', className, style }:
           {listing.vehicleAttributes && (
             <div className="flex items-center gap-1">
               <Gauge className="w-4 h-4" />
-              <span>{Math.round(listing.vehicleAttributes.mileage / 1000)}k mi</span>
+              <span>{Math.round(listing.vehicleAttributes.mileage / 1000)}k {t('common.mi')}</span>
             </div>
           )}
           {listing.type === 'service' && listing.owner && (
@@ -222,7 +224,7 @@ export function ListingCard({ listing, variant = 'featured', className, style }:
           )}
           <div className="flex items-center gap-1">
             <MapPin className="w-4 h-4" />
-            <span>{listing.distance} mi</span>
+            <span>{listing.distance} {t('common.mi')}</span>
           </div>
         </div>
       </div>

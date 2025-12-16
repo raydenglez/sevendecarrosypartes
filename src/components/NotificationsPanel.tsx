@@ -1,4 +1,5 @@
 import { X, MessageSquare, ChevronRight } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { formatDistanceToNow } from 'date-fns';
 import { ConversationWithDetails } from '@/hooks/useConversations';
@@ -12,6 +13,7 @@ interface NotificationsPanelProps {
 }
 
 export function NotificationsPanel({ isOpen, onClose, conversations, onViewAll }: NotificationsPanelProps) {
+  const { t } = useTranslation();
   const navigate = useNavigate();
   
   if (!isOpen) return null;
@@ -39,7 +41,7 @@ export function NotificationsPanel({ isOpen, onClose, conversations, onViewAll }
         <div className="flex items-center justify-between p-4 border-b border-border">
           <div className="flex items-center gap-2">
             <MessageSquare className="w-5 h-5 text-primary" />
-            <h2 className="text-lg font-semibold text-foreground">Messages</h2>
+            <h2 className="text-lg font-semibold text-foreground">{t('notifications.title')}</h2>
           </div>
           <button 
             onClick={onClose}
@@ -53,7 +55,7 @@ export function NotificationsPanel({ isOpen, onClose, conversations, onViewAll }
           {unreadConversations.length === 0 ? (
             <div className="flex flex-col items-center justify-center h-40 text-muted-foreground gap-2">
               <MessageSquare className="w-10 h-10 text-muted-foreground/50" />
-              <p>No new messages</p>
+              <p>{t('notifications.noNewMessages')}</p>
             </div>
           ) : (
             <div className="divide-y divide-border">
@@ -85,7 +87,7 @@ export function NotificationsPanel({ isOpen, onClose, conversations, onViewAll }
                         {conversation.listing.title}
                       </p>
                       <p className="text-sm text-foreground line-clamp-1 mt-1">
-                        {conversation.last_message?.content || 'No messages yet'}
+                        {conversation.last_message?.content || t('notifications.noNewMessages')}
                       </p>
                     </div>
                     {conversation.unread_count > 0 && (
@@ -106,7 +108,7 @@ export function NotificationsPanel({ isOpen, onClose, conversations, onViewAll }
             onClick={onViewAll}
             className="w-full flex items-center justify-center gap-2 py-3 px-4 rounded-xl bg-primary/10 hover:bg-primary/20 text-primary font-medium transition-colors"
           >
-            View All Messages
+            {t('notifications.viewAllMessages')}
             <ChevronRight className="w-4 h-4" />
           </button>
         </div>
