@@ -249,6 +249,7 @@ export type Database = {
       }
       profiles: {
         Row: {
+          allow_messages_from_anyone: boolean | null
           avatar_url: string | null
           created_at: string | null
           email: string | null
@@ -262,10 +263,13 @@ export type Database = {
           phone: string | null
           rating_avg: number | null
           rating_count: number | null
+          show_online_status: boolean | null
+          show_phone_on_listings: boolean | null
           updated_at: string | null
           user_type: Database["public"]["Enums"]["user_type"] | null
         }
         Insert: {
+          allow_messages_from_anyone?: boolean | null
           avatar_url?: string | null
           created_at?: string | null
           email?: string | null
@@ -279,10 +283,13 @@ export type Database = {
           phone?: string | null
           rating_avg?: number | null
           rating_count?: number | null
+          show_online_status?: boolean | null
+          show_phone_on_listings?: boolean | null
           updated_at?: string | null
           user_type?: Database["public"]["Enums"]["user_type"] | null
         }
         Update: {
+          allow_messages_from_anyone?: boolean | null
           avatar_url?: string | null
           created_at?: string | null
           email?: string | null
@@ -296,6 +303,8 @@ export type Database = {
           phone?: string | null
           rating_avg?: number | null
           rating_count?: number | null
+          show_online_status?: boolean | null
+          show_phone_on_listings?: boolean | null
           updated_at?: string | null
           user_type?: Database["public"]["Enums"]["user_type"] | null
         }
