@@ -1,6 +1,7 @@
 import { useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { ArrowLeft, Flame } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 import { BottomNav } from '@/components/BottomNav';
 import { ListingCard } from '@/components/ListingCard';
 import { ListingCardSkeleton } from '@/components/ListingCardSkeleton';
@@ -8,6 +9,7 @@ import { useNearbyListings } from '@/hooks/useNearbyListings';
 import { Listing } from '@/types';
 
 export default function Featured() {
+  const { t } = useTranslation();
   const navigate = useNavigate();
   
   const { listings: nearbyListings, loading } = useNearbyListings('vehicles', {
@@ -57,7 +59,7 @@ export default function Featured() {
             <ArrowLeft className="w-6 h-6" />
           </button>
           <div className="flex items-center gap-2">
-            <h1 className="text-xl font-bold text-foreground">Featured Near You</h1>
+            <h1 className="text-xl font-bold text-foreground">{t('featured.title')}</h1>
             <Flame className="w-5 h-5 text-primary" />
           </div>
         </div>
@@ -84,7 +86,7 @@ export default function Featured() {
             ))
           ) : (
             <p className="text-muted-foreground text-sm py-8 col-span-2 text-center">
-              No featured listings nearby
+              {t('featured.noFeatured')}
             </p>
           )}
         </div>

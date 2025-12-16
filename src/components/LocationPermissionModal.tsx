@@ -1,4 +1,5 @@
 import { MapPin } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 import {
   Dialog,
   DialogContent,
@@ -16,6 +17,8 @@ interface LocationPermissionModalProps {
 }
 
 export function LocationPermissionModal({ isOpen, onClose, onRetry }: LocationPermissionModalProps) {
+  const { t } = useTranslation();
+
   const handleRetry = () => {
     onRetry();
     onClose();
@@ -28,17 +31,17 @@ export function LocationPermissionModal({ isOpen, onClose, onRetry }: LocationPe
           <div className="mx-auto mb-4 w-16 h-16 rounded-full bg-primary/10 flex items-center justify-center">
             <MapPin className="w-8 h-8 text-primary" />
           </div>
-          <DialogTitle className="text-xl">Enable Location</DialogTitle>
+          <DialogTitle className="text-xl">{t('locationPermission.title')}</DialogTitle>
           <DialogDescription className="text-center pt-2">
-            The app improves its results with your location. Enable GPS to discover vehicles, parts, and services near you.
+            {t('locationPermission.description')}
           </DialogDescription>
         </DialogHeader>
         <DialogFooter className="flex-col gap-2 sm:flex-col">
           <Button variant="carnexo" className="w-full" onClick={handleRetry}>
-            Enable Location
+            {t('locationPermission.enable')}
           </Button>
           <Button variant="ghost" className="w-full" onClick={onClose}>
-            Maybe Later
+            {t('locationPermission.maybeLater')}
           </Button>
         </DialogFooter>
       </DialogContent>

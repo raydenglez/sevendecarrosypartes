@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import { 
   ArrowLeft, 
   Star, 
@@ -41,6 +42,7 @@ interface Review {
 }
 
 export default function SellerProfile() {
+  const { t } = useTranslation();
   const { id } = useParams();
   const navigate = useNavigate();
   const [seller, setSeller] = useState<User | null>(null);
@@ -64,14 +66,14 @@ export default function SellerProfile() {
       } else {
         await navigator.clipboard.writeText(shareUrl);
         setCopied(true);
-        toast.success('Profile link copied to clipboard!');
+        toast.success(t('sellerProfile.linkCopied'));
         setTimeout(() => setCopied(false), 2000);
       }
     } catch (error) {
       if ((error as Error).name !== 'AbortError') {
         await navigator.clipboard.writeText(shareUrl);
         setCopied(true);
-        toast.success('Profile link copied to clipboard!');
+        toast.success(t('sellerProfile.linkCopied'));
         setTimeout(() => setCopied(false), 2000);
       }
     }
@@ -210,9 +212,9 @@ export default function SellerProfile() {
   if (!seller) {
     return (
       <div className="min-h-screen bg-background flex flex-col items-center justify-center p-6">
-        <h1 className="text-xl font-bold text-foreground mb-2">Seller not found</h1>
-        <p className="text-muted-foreground mb-6">This profile doesn't exist or has been removed.</p>
-        <Button onClick={() => navigate(-1)}>Go Back</Button>
+        <h1 className="text-xl font-bold text-foreground mb-2">{t('sellerProfile.notFound')}</h1>
+        <p className="text-muted-foreground mb-6">{t('sellerProfile.notFoundDesc')}</p>
+        <Button onClick={() => navigate(-1)}>{t('common.goBack')}</Button>
       </div>
     );
   }
@@ -232,7 +234,7 @@ export default function SellerProfile() {
           >
             <ArrowLeft className="w-5 h-5 text-foreground" />
           </button>
-          <h1 className="font-semibold text-foreground">Seller Profile</h1>
+          <h1 className="font-semibold text-foreground">{t('sellerProfile.title')}</h1>
           <button 
             onClick={handleShare}
             className="w-10 h-10 rounded-full bg-card flex items-center justify-center"
