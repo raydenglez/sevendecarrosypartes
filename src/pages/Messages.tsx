@@ -1,6 +1,6 @@
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import { MessageSquare, Loader2 } from 'lucide-react';
+import { MessageSquare, Loader2, User } from 'lucide-react';
 import SEO from '@/components/SEO';
 import { BottomNav } from '@/components/BottomNav';
 import { Button } from '@/components/ui/button';
@@ -87,11 +87,17 @@ export default function Messages() {
                 style={{ animationDelay: `${index * 50}ms` } as React.CSSProperties}
               >
                 <div className="relative shrink-0">
-                  <img
-                    src={conv.other_user.avatar_url || '/placeholder.svg'}
-                    alt={conv.other_user.full_name}
-                    className="w-14 h-14 rounded-full object-cover"
-                  />
+                  {conv.other_user.avatar_url ? (
+                    <img
+                      src={conv.other_user.avatar_url}
+                      alt={conv.other_user.full_name}
+                      className="w-14 h-14 rounded-full object-cover"
+                    />
+                  ) : (
+                    <div className="w-14 h-14 rounded-full bg-muted flex items-center justify-center">
+                      <User className="w-6 h-6 text-muted-foreground" />
+                    </div>
+                  )}
                   {conv.unread_count > 0 && (
                     <span className="absolute -top-1 -right-1 w-5 h-5 rounded-full bg-primary text-primary-foreground text-xs font-bold flex items-center justify-center">
                       {conv.unread_count}

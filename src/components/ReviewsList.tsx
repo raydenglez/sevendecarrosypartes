@@ -1,4 +1,5 @@
 import { useTranslation } from 'react-i18next';
+import { User } from 'lucide-react';
 import { StarRating } from '@/components/StarRating';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { formatDistanceToNow } from 'date-fns';
@@ -88,8 +89,8 @@ export function ReviewsList({ reviews, averageRating, totalReviews }: ReviewsLis
             <div className="flex items-start gap-3">
               <Avatar className="w-10 h-10">
                 <AvatarImage src={review.reviewer?.avatar_url || undefined} />
-                <AvatarFallback>
-                  {review.reviewer?.full_name?.charAt(0) || 'U'}
+                <AvatarFallback className="bg-muted">
+                  <User className="w-5 h-5 text-muted-foreground" />
                 </AvatarFallback>
               </Avatar>
               <div className="flex-1 min-w-0">
