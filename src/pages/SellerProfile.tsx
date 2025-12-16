@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
+import SEO from '@/components/SEO';
 import { 
   ArrowLeft, 
   Star, 

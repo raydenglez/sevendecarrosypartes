@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { Heart } from 'lucide-react';
+import SEO from '@/components/SEO';
 import { BottomNav } from '@/components/BottomNav';
 import { ListingCard } from '@/components/ListingCard';
 import { ListingCardSkeleton } from '@/components/ListingCardSkeleton';
@@ -120,7 +121,9 @@ export default function Favorites() {
   }
 
   return (
-    <div className="min-h-screen bg-background pb-24">
+    <>
+      <SEO titleKey="seo.favorites.title" descriptionKey="seo.favorites.description" path="/favorites" />
+      <div className="min-h-screen bg-background pb-24">
       <header className="sticky top-0 z-40 bg-background/95 backdrop-blur-xl safe-top">
         <div className="px-4 py-4">
           <h1 className="text-xl font-bold text-foreground">{t('favorites.title')}</h1>
@@ -162,6 +165,7 @@ export default function Favorites() {
       </main>
 
       <BottomNav />
-    </div>
+      </div>
+    </>
   );
 }
