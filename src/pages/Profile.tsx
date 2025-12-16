@@ -31,6 +31,7 @@ import { EditProfileModal } from '@/components/EditProfileModal';
 import { NotificationToggle } from '@/components/NotificationToggle';
 import { PersonalInfoSheet } from '@/components/PersonalInfoSheet';
 import { SecurityPrivacySheet } from '@/components/SecurityPrivacySheet';
+import { LanguageSheet } from '@/components/LanguageSheet';
 
 interface ProfileData {
   name: string;
@@ -70,6 +71,7 @@ export default function Profile() {
   const [editModalOpen, setEditModalOpen] = useState(false);
   const [personalInfoOpen, setPersonalInfoOpen] = useState(false);
   const [securityOpen, setSecurityOpen] = useState(false);
+  const [languageOpen, setLanguageOpen] = useState(false);
 
   const handleFileSelect = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
@@ -452,6 +454,7 @@ export default function Profile() {
             label="Language"
             description="English, Spanish, Portuguese"
             value="English"
+            onClick={() => setLanguageOpen(true)}
           />
           <div className="px-4">
             <NotificationToggle />
@@ -550,6 +553,11 @@ export default function Profile() {
           onClose={() => setSecurityOpen(false)}
         />
       )}
+
+      <LanguageSheet
+        open={languageOpen}
+        onOpenChange={setLanguageOpen}
+      />
     </div>
   );
 }
