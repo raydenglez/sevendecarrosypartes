@@ -151,13 +151,13 @@ export function SecurityPrivacySheet({ open, onClose }: SecurityPrivacySheetProp
 
   return (
     <Sheet open={open} onOpenChange={onClose}>
-      <SheetContent side="bottom" className="h-[85vh] rounded-t-3xl">
-        <SheetHeader className="pb-4">
+      <SheetContent side="bottom" className="h-[85vh] rounded-t-3xl flex flex-col">
+        <SheetHeader className="pb-4 flex-shrink-0">
           <SheetTitle className="text-xl">Security & Privacy</SheetTitle>
           <p className="text-sm text-muted-foreground">Password, privacy settings and delete your account</p>
         </SheetHeader>
 
-        <div className="space-y-4 overflow-y-auto">
+        <div className="space-y-4 overflow-y-auto flex-1 pb-6">
           {/* Change Password */}
           <div className="bg-muted/50 rounded-xl p-4">
             <button 
