@@ -6,19 +6,22 @@ import SEO from '@/components/SEO';
 import { BottomNav } from '@/components/BottomNav';
 import { ListingCard } from '@/components/ListingCard';
 import { ListingCardSkeleton } from '@/components/ListingCardSkeleton';
+import { SwipeableItem } from '@/components/SwipeableItem';
 import { Button } from '@/components/ui/button';
 import { useAuth } from '@/hooks/useAuth';
 import { useFavoritesContext } from '@/contexts/FavoritesContext';
+import { useHaptics } from '@/hooks/useHaptics';
 import { supabase } from '@/integrations/supabase/client';
 import { Listing } from '@/types';
 
 export default function Favorites() {
   const navigate = useNavigate();
   const { user, loading: authLoading } = useAuth();
-  const { favoriteIds, loading: favoritesLoading } = useFavoritesContext();
+  const { favoriteIds, toggleFavorite, loading: favoritesLoading } = useFavoritesContext();
   const [listings, setListings] = useState<Listing[]>([]);
   const [listingsLoading, setListingsLoading] = useState(false);
   const { t } = useTranslation();
+  const { trigger } = useHaptics();
 
   // Fetch listings for favorite IDs
   useEffect(() => {
@@ -143,12 +146,20 @@ export default function Favorites() {
         ) : listings.length > 0 ? (
           <div className="space-y-3">
             {listings.map((listing, index) => (
-              <ListingCard
+              <SwipeableItem
                 key={listing.id}
-                listing={listing}
-                variant="list"
-                style={{ animationDelay: `${index * 50}ms` } as React.CSSProperties}
-              />
+                onDelete={() => {
+                  trigger('warning');
+                  toggleFavorite(listing.id);
+                  setListings(prev => prev.filter(l => l.id !== listing.id));
+                }}
+              >
+                <ListingCard
+                  listing={listing}
+                  variant="list"
+                  style={{ animationDelay: `${index * 50}ms` } as React.CSSProperties}
+                />
+              </SwipeableItem>
             ))}
           </div>
         ) : (
