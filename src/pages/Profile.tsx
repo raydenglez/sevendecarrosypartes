@@ -1,6 +1,7 @@
 import { useNavigate } from 'react-router-dom';
 import { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
+import SEO from '@/components/SEO';
 import { 
   Settings,
   MapPin,
@@ -297,7 +298,9 @@ export default function Profile() {
   }
 
   return (
-    <div className="min-h-screen bg-background pb-24">
+    <>
+      <SEO titleKey="seo.profile.title" descriptionKey="seo.profile.description" path="/profile" />
+      <div className="min-h-screen bg-background pb-24">
       {/* Header */}
       <header className="relative px-4 pt-4 pb-6 safe-top">
         <div className="flex justify-between items-start">
@@ -644,6 +647,7 @@ export default function Profile() {
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
-    </div>
+      </div>
+    </>
   );
 }

@@ -2,6 +2,7 @@ import { useState, useEffect, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { Flame, ChevronRight, Bell, Loader2 } from 'lucide-react';
+import SEO from '@/components/SEO';
 import { BottomNav } from '@/components/BottomNav';
 import { SearchBar } from '@/components/SearchBar';
 import { SegmentedControl } from '@/components/SegmentedControl';
@@ -113,7 +114,9 @@ export default function Home() {
   };
 
   return (
-    <div className="min-h-screen bg-background pb-24">
+    <>
+      <SEO titleKey="seo.home.title" descriptionKey="seo.home.description" path="/" />
+      <div className="min-h-screen bg-background pb-24">
       <PullToRefresh onRefresh={refresh} className="min-h-full">
         {/* Header */}
         <header className="sticky top-0 z-40 bg-background/95 backdrop-blur-xl safe-top">
@@ -268,6 +271,7 @@ export default function Home() {
         onClose={() => setShowLocationModal(false)}
         onRetry={requestLocation}
       />
-    </div>
+      </div>
+    </>
   );
 }

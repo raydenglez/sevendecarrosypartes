@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { ArrowLeft, Car, Settings, Wrench, Loader2 } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
+import SEO from '@/components/SEO';
 import { Button } from '@/components/ui/button';
 import { BottomNav } from '@/components/BottomNav';
 import { ListingCard } from '@/components/ListingCard';

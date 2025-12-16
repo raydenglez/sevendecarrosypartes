@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { z } from 'zod';
 import { Eye, EyeOff, Mail, Lock, User, ArrowLeft, MailCheck, RefreshCw } from 'lucide-react';
+import SEO from '@/components/SEO';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -438,7 +439,9 @@ export default function Auth() {
   }
 
   return (
-    <AuthBackground>
+    <>
+      <SEO titleKey="seo.auth.title" descriptionKey="seo.auth.description" path="/auth" />
+      <AuthBackground>
       {/* Header */}
       <header className="px-4 pt-4 safe-top">
         <button 
@@ -637,6 +640,7 @@ export default function Auth() {
           </div>
         </div>
       </div>
-    </AuthBackground>
+      </AuthBackground>
+    </>
   );
 }

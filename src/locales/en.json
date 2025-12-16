@@ -582,5 +582,59 @@
         "answer": "Meet in public places, bring someone with you, inspect items before paying, use secure payment methods, and trust your instincts. Report suspicious listings."
       }
     }
+  },
+  "seo": {
+    "home": {
+      "title": "CarNexo - Buy & Sell Vehicles, Parts & Services Near You",
+      "description": "Find vehicles, auto parts, and automotive services near you. Browse listings, contact sellers, and discover trusted mechanics and car washes in your area."
+    },
+    "auth": {
+      "title": "Sign In or Create Account | CarNexo",
+      "description": "Sign in or create a CarNexo account to publish listings, save favorites, and message sellers directly."
+    },
+    "favorites": {
+      "title": "My Favorites | CarNexo",
+      "description": "View your saved vehicles, parts, and services. Keep track of listings you're interested in."
+    },
+    "messages": {
+      "title": "Messages | CarNexo",
+      "description": "Chat with sellers and buyers. Negotiate deals and ask questions about listings."
+    },
+    "profile": {
+      "title": "My Profile | CarNexo",
+      "description": "Manage your CarNexo profile, view your listings, and update your account settings."
+    },
+    "publish": {
+      "title": "Publish a Listing | CarNexo",
+      "description": "List your vehicle, auto parts, or automotive services for sale. Reach buyers near you."
+    },
+    "map": {
+      "title": "Map View - Nearby Listings | CarNexo",
+      "description": "Explore vehicles, parts, and services on an interactive map. Find listings closest to you."
+    },
+    "featured": {
+      "title": "Featured Listings | CarNexo",
+      "description": "Browse premium and featured vehicles and services from top-rated sellers near you."
+    },
+    "myListings": {
+      "title": "My Listings | CarNexo",
+      "description": "Manage your published vehicles, parts, and services. Edit, update, or remove your listings."
+    },
+    "listing": {
+      "title": "{{title}} | CarNexo",
+      "description": "View details, photos, and contact the seller for {{title}}."
+    },
+    "seller": {
+      "title": "{{name}} - Seller Profile | CarNexo",
+      "description": "View {{name}}'s listings, ratings, and reviews on CarNexo."
+    },
+    "resetPassword": {
+      "title": "Reset Password | CarNexo",
+      "description": "Reset your CarNexo account password securely."
+    },
+    "notFound": {
+      "title": "Page Not Found | CarNexo",
+      "description": "The page you're looking for doesn't exist. Return to CarNexo homepage."
+    }
   }
 }

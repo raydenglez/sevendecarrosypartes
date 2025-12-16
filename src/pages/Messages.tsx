@@ -1,6 +1,7 @@
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { MessageSquare, Loader2 } from 'lucide-react';
+import SEO from '@/components/SEO';
 import { BottomNav } from '@/components/BottomNav';
 import { Button } from '@/components/ui/button';
 import { useAuth } from '@/hooks/useAuth';
@@ -57,7 +58,9 @@ export default function Messages() {
   }
 
   return (
-    <div className="min-h-screen bg-background pb-24">
+    <>
+      <SEO titleKey="seo.messages.title" descriptionKey="seo.messages.description" path="/messages" />
+      <div className="min-h-screen bg-background pb-24">
       <header className="sticky top-0 z-40 bg-background/95 backdrop-blur-xl safe-top">
         <div className="px-4 py-4">
           <h1 className="text-xl font-bold text-foreground">{t('messages.title')}</h1>
@@ -138,6 +141,7 @@ export default function Messages() {
       </main>
 
       <BottomNav />
-    </div>
+      </div>
+    </>
   );
 }
