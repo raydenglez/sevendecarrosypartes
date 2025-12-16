@@ -35,6 +35,13 @@ import { SecurityPrivacySheet } from '@/components/SecurityPrivacySheet';
 import { LanguageSheet } from '@/components/LanguageSheet';
 import { NotificationSettingsSheet } from '@/components/NotificationSettingsSheet';
 import { HelpCenterSheet } from '@/components/HelpCenterSheet';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
 
 interface ProfileData {
   name: string;
@@ -284,9 +291,41 @@ export default function Profile() {
       <header className="relative px-4 pt-4 pb-6 safe-top">
         <div className="flex justify-between items-start">
           <h1 className="text-xl font-bold text-foreground">{t('profile.myProfile')}</h1>
-          <Button variant="ghost" size="icon">
-            <Settings className="w-5 h-5" />
-          </Button>
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button variant="ghost" size="icon">
+                <Settings className="w-5 h-5" />
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end" className="w-56">
+              <DropdownMenuItem onClick={() => setPersonalInfoOpen(true)}>
+                <User className="w-4 h-4 mr-2 text-secondary" />
+                {t('settings.personalInfo')}
+              </DropdownMenuItem>
+              <DropdownMenuItem onClick={() => setSecurityOpen(true)}>
+                <Shield className="w-4 h-4 mr-2 text-primary" />
+                {t('settings.securityPrivacy')}
+              </DropdownMenuItem>
+              <DropdownMenuSeparator />
+              <DropdownMenuItem onClick={() => setLanguageOpen(true)}>
+                <Globe className="w-4 h-4 mr-2 text-success" />
+                {t('settings.language')}
+              </DropdownMenuItem>
+              <DropdownMenuItem onClick={() => setNotificationSettingsOpen(true)}>
+                <Bell className="w-4 h-4 mr-2 text-warning" />
+                {t('settings.notificationSettings')}
+              </DropdownMenuItem>
+              <DropdownMenuItem onClick={() => setHelpCenterOpen(true)}>
+                <HelpCircle className="w-4 h-4 mr-2 text-muted-foreground" />
+                {t('settings.helpCenter')}
+              </DropdownMenuItem>
+              <DropdownMenuSeparator />
+              <DropdownMenuItem onClick={handleSignOut} className="text-destructive focus:text-destructive">
+                <LogOut className="w-4 h-4 mr-2" />
+                {t('profile.signOut')}
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
         </div>
 
         {/* Profile Info */}
