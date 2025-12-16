@@ -534,5 +534,50 @@
     "description": "O app melhora seus resultados com sua localização. Ative o GPS para descobrir veículos, peças e serviços perto de você.",
     "enable": "Ativar Localização",
     "maybeLater": "Talvez Depois"
+  },
+  "notificationSettings": {
+    "title": "Configurações de Notificação",
+    "description": "Escolha quais notificações você deseja receber",
+    "newMessages": "Novas Mensagens",
+    "newMessagesDesc": "Receba alertas quando chegar uma nova mensagem",
+    "priceDrops": "Quedas de Preço",
+    "priceDropsDesc": "Alertas quando seus favoritos baixarem de preço",
+    "searchAlerts": "Alertas de Busca",
+    "searchAlertsDesc": "Novos anúncios que correspondam às suas buscas",
+    "nearbyListings": "Anúncios Próximos",
+    "nearbyListingsDesc": "Novos veículos e serviços perto de você"
+  },
+  "helpCenter": {
+    "title": "Central de Ajuda",
+    "description": "Encontre respostas para perguntas frequentes",
+    "faqTitle": "Perguntas Frequentes",
+    "needMoreHelp": "Precisa de Mais Ajuda?",
+    "emailSupport": "Suporte por Email",
+    "faq": {
+      "howToPublish": {
+        "question": "Como publico um anúncio?",
+        "answer": "Toque no botão '+' na navegação inferior, selecione o tipo de anúncio (veículo, peça ou serviço), preencha os detalhes, adicione fotos e toque em 'Publicar Anúncio'."
+      },
+      "howToContact": {
+        "question": "Como entro em contato com um vendedor?",
+        "answer": "Abra qualquer anúncio e toque no botão 'Mensagem' para iniciar uma conversa com o vendedor. Você precisa estar logado para enviar mensagens."
+      },
+      "howToFavorite": {
+        "question": "Como salvo anúncios nos favoritos?",
+        "answer": "Toque no ícone de coração em qualquer cartão de anúncio para salvá-lo nos favoritos. Acesse seus anúncios salvos na aba 'Favoritos'."
+      },
+      "howToEditListing": {
+        "question": "Como edito ou excluo meu anúncio?",
+        "answer": "Vá para a página de detalhes do seu anúncio, toque no ícone de editar no cabeçalho. De lá você pode atualizar detalhes ou excluir o anúncio."
+      },
+      "howToDeleteAccount": {
+        "question": "Como excluo minha conta?",
+        "answer": "Vá para Perfil → Segurança e Privacidade → Excluir Conta. Você precisará digitar 'DELETE' para confirmar. Esta ação é permanente."
+      },
+      "safetyTips": {
+        "question": "Quais são as dicas de segurança para comprar/vender?",
+        "answer": "Encontre-se em lugares públicos, leve alguém com você, inspecione os itens antes de pagar, use métodos de pagamento seguros e confie em seus instintos."
+      }
+    }
   }
 }

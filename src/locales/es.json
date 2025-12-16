@@ -534,5 +534,50 @@
     "description": "La app mejora sus resultados con tu ubicación. Activa el GPS para descubrir vehículos, partes y servicios cerca de ti.",
     "enable": "Activar Ubicación",
     "maybeLater": "Quizás Después"
+  },
+  "notificationSettings": {
+    "title": "Configuración de Notificaciones",
+    "description": "Elige qué notificaciones deseas recibir",
+    "newMessages": "Nuevos Mensajes",
+    "newMessagesDesc": "Recibe alertas cuando llegue un mensaje nuevo",
+    "priceDrops": "Bajadas de Precio",
+    "priceDropsDesc": "Alertas cuando tus favoritos bajen de precio",
+    "searchAlerts": "Alertas de Búsqueda",
+    "searchAlertsDesc": "Nuevos anuncios que coincidan con tus búsquedas",
+    "nearbyListings": "Anuncios Cercanos",
+    "nearbyListingsDesc": "Nuevos vehículos y servicios cerca de ti"
+  },
+  "helpCenter": {
+    "title": "Centro de Ayuda",
+    "description": "Encuentra respuestas a preguntas frecuentes",
+    "faqTitle": "Preguntas Frecuentes",
+    "needMoreHelp": "¿Necesitas Más Ayuda?",
+    "emailSupport": "Soporte por Email",
+    "faq": {
+      "howToPublish": {
+        "question": "¿Cómo publico un anuncio?",
+        "answer": "Toca el botón '+' en la navegación inferior, selecciona el tipo de anuncio (vehículo, parte o servicio), completa los detalles, agrega fotos y toca 'Publicar Anuncio'."
+      },
+      "howToContact": {
+        "question": "¿Cómo contacto a un vendedor?",
+        "answer": "Abre cualquier anuncio y toca el botón 'Mensaje' para iniciar una conversación con el vendedor. Necesitas iniciar sesión para enviar mensajes."
+      },
+      "howToFavorite": {
+        "question": "¿Cómo guardo anuncios en favoritos?",
+        "answer": "Toca el ícono de corazón en cualquier tarjeta de anuncio para guardarlo en favoritos. Accede a tus anuncios guardados desde la pestaña 'Favoritos'."
+      },
+      "howToEditListing": {
+        "question": "¿Cómo edito o elimino mi anuncio?",
+        "answer": "Ve a la página de detalle de tu anuncio, toca el ícono de editar en el encabezado. Desde ahí puedes actualizar detalles o eliminar el anuncio."
+      },
+      "howToDeleteAccount": {
+        "question": "¿Cómo elimino mi cuenta?",
+        "answer": "Ve a Perfil → Seguridad y Privacidad → Eliminar Cuenta. Deberás escribir 'DELETE' para confirmar. Esta acción es permanente."
+      },
+      "safetyTips": {
+        "question": "¿Cuáles son los consejos de seguridad para comprar/vender?",
+        "answer": "Reúnete en lugares públicos, lleva a alguien contigo, inspecciona los artículos antes de pagar, usa métodos de pago seguros y confía en tus instintos."
+      }
+    }
   }
 }

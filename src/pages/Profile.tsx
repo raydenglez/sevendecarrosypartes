@@ -33,6 +33,8 @@ import { NotificationToggle } from '@/components/NotificationToggle';
 import { PersonalInfoSheet } from '@/components/PersonalInfoSheet';
 import { SecurityPrivacySheet } from '@/components/SecurityPrivacySheet';
 import { LanguageSheet } from '@/components/LanguageSheet';
+import { NotificationSettingsSheet } from '@/components/NotificationSettingsSheet';
+import { HelpCenterSheet } from '@/components/HelpCenterSheet';
 
 interface ProfileData {
   name: string;
@@ -74,6 +76,8 @@ export default function Profile() {
   const [personalInfoOpen, setPersonalInfoOpen] = useState(false);
   const [securityOpen, setSecurityOpen] = useState(false);
   const [languageOpen, setLanguageOpen] = useState(false);
+  const [notificationSettingsOpen, setNotificationSettingsOpen] = useState(false);
+  const [helpCenterOpen, setHelpCenterOpen] = useState(false);
 
   const handleFileSelect = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
@@ -465,11 +469,13 @@ export default function Profile() {
             iconBg="bg-warning/20"
             label={t('settings.notificationSettings')}
             description={t('settings.notificationSettingsDesc')}
+            onClick={() => setNotificationSettingsOpen(true)}
           />
           <SettingsItem
             icon={<HelpCircle className="w-5 h-5 text-muted-foreground" />}
             iconBg="bg-muted"
             label={t('settings.helpCenter')}
+            onClick={() => setHelpCenterOpen(true)}
           />
         </div>
       </section>
@@ -558,6 +564,18 @@ export default function Profile() {
       <LanguageSheet
         open={languageOpen}
         onOpenChange={setLanguageOpen}
+      />
+
+      {user && (
+        <NotificationSettingsSheet
+          open={notificationSettingsOpen}
+          onClose={() => setNotificationSettingsOpen(false)}
+        />
+      )}
+
+      <HelpCenterSheet
+        open={helpCenterOpen}
+        onClose={() => setHelpCenterOpen(false)}
       />
     </div>
   );
