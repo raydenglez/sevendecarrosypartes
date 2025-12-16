@@ -14,11 +14,17 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Switch } from '@/components/ui/switch';
 import { KeyRound, Eye, EyeOff, Shield, Smartphone, Clock, AlertTriangle, Loader2 } from 'lucide-react';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@/hooks/useAuth';
 import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
+
+interface PrivacySettings {
+  show_phone_on_listings: boolean;
+  allow_messages_from_anyone: boolean;
+  show_online_status: boolean;
+}
 import { z } from 'zod';
 
 const passwordSchema = z.object({
@@ -49,6 +55,60 @@ export function SecurityPrivacySheet({ open, onClose }: SecurityPrivacySheetProp
     newPassword: '',
     confirmPassword: '',
   });
+  const [privacySettings, setPrivacySettings] = useState<PrivacySettings>({
+    show_phone_on_listings: true,
+    allow_messages_from_anyone: true,
+    show_online_status: false,
+  });
+  const [privacyLoading, setPrivacyLoading] = useState(true);
+
+  // Fetch privacy settings on mount
+  useEffect(() => {
+    const fetchPrivacySettings = async () => {
+      if (!user?.id) return;
+      
+      const { data, error } = await supabase
+        .from('profiles')
+        .select('show_phone_on_listings, allow_messages_from_anyone, show_online_status')
+        .eq('id', user.id)
+        .maybeSingle();
+      
+      if (data && !error) {
+        setPrivacySettings({
+          show_phone_on_listings: data.show_phone_on_listings ?? true,
+          allow_messages_from_anyone: data.allow_messages_from_anyone ?? true,
+          show_online_status: data.show_online_status ?? false,
+        });
+      }
+      setPrivacyLoading(false);
+    };
+
+    if (open) {
+      fetchPrivacySettings();
+    }
+  }, [user?.id, open]);
+
+  const updatePrivacySetting = async (key: keyof PrivacySettings, value: boolean) => {
+    if (!user?.id) return;
+    
+    // Optimistic update
+    setPrivacySettings(prev => ({ ...prev, [key]: value }));
+    
+    const { error } = await supabase
+      .from('profiles')
+      .update({ [key]: value })
+      .eq('id', user.id);
+    
+    if (error) {
+      // Revert on error
+      setPrivacySettings(prev => ({ ...prev, [key]: !value }));
+      toast({
+        title: "Failed to update setting",
+        description: error.message,
+        variant: "destructive",
+      });
+    }
+  };
 
   const handlePasswordChange = async () => {
     setErrors({});
@@ -271,19 +331,31 @@ export function SecurityPrivacySheet({ open, onClose }: SecurityPrivacySheetProp
                 <div>
                   <p className="text-sm text-foreground">Show phone number on listings</p>
                 </div>
-                <Switch defaultChecked />
+                <Switch 
+                  checked={privacySettings.show_phone_on_listings}
+                  onCheckedChange={(checked) => updatePrivacySetting('show_phone_on_listings', checked)}
+                  disabled={privacyLoading}
+                />
               </div>
               <div className="flex items-center justify-between">
                 <div>
                   <p className="text-sm text-foreground">Allow messages from anyone</p>
                 </div>
-                <Switch defaultChecked />
+                <Switch 
+                  checked={privacySettings.allow_messages_from_anyone}
+                  onCheckedChange={(checked) => updatePrivacySetting('allow_messages_from_anyone', checked)}
+                  disabled={privacyLoading}
+                />
               </div>
               <div className="flex items-center justify-between">
                 <div>
                   <p className="text-sm text-foreground">Show online status</p>
                 </div>
-                <Switch />
+                <Switch 
+                  checked={privacySettings.show_online_status}
+                  onCheckedChange={(checked) => updatePrivacySetting('show_online_status', checked)}
+                  disabled={privacyLoading}
+                />
               </div>
             </div>
           </div>
