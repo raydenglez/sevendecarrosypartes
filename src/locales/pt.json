@@ -33,6 +33,8 @@
     "signIn": "Entrar",
     "signUp": "Cadastrar",
     "signOut": "Sair",
+    "signOutConfirmTitle": "Sair da sua conta?",
+    "signOutConfirmDesc": "Você precisará entrar novamente para acessar seu perfil, anúncios e mensagens.",
     "createAccount": "Criar Conta",
     "welcomeBack": "Bem-vindo de Volta",
     "signInToContinue": "Entre para continuar",
