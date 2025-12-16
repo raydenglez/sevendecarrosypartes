@@ -47,14 +47,26 @@
     "continueWithApple": "Continuar com Apple"
   },
   "home": {
-    "search": "Buscar veículos, peças, serviços...",
-    "featuredVehicles": "Veículos em Destaque",
-    "featuredServices": "Serviços em Destaque",
+    "searchPlaceholder": "Buscar Mustang, pneus, motos...",
+    "featuredNearYou": "Destaques Perto de Você",
     "justArrived": "Recém Chegados",
-    "nearYou": "Perto de Você",
+    "noFeaturedListings": "Nenhum destaque por perto",
+    "noListingsNearby": "Nenhum anúncio encontrado por perto",
+    "seenAllListings": "Você viu todos os anúncios",
+    "segments": {
+      "vehiclesParts": "Veículos e Peças",
+      "serviceProviders": "Prestadores de Serviços"
+    }
+  },
+  "categories": {
+    "all": "Todos",
     "vehicles": "Veículos",
     "parts": "Peças",
-    "services": "Serviços"
+    "maintenance": "Manutenção",
+    "bodywork": "Funilaria",
+    "carWash": "Lavagem",
+    "tires": "Pneus",
+    "electrical": "Elétrica"
   },
   "profile": {
     "myProfile": "Meu Perfil",

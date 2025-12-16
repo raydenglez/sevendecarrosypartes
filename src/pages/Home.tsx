@@ -1,5 +1,6 @@
 import { useState, useEffect, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import { Flame, ChevronRight, Bell, Loader2 } from 'lucide-react';
 import { BottomNav } from '@/components/BottomNav';
 import { SearchBar } from '@/components/SearchBar';
@@ -22,11 +23,6 @@ import { Listing } from '@/types';
 import { LocationPermissionModal } from '@/components/LocationPermissionModal';
 import logo from '@/assets/logo.png';
 
-const segments = [
-  { id: 'vehicles', label: 'Vehicles & Parts' },
-  { id: 'services', label: 'Service Providers' },
-];
-
 const defaultFilters: FilterOptions = {
   priceRange: [0, 1000000],
   maxDistance: 50,
@@ -36,6 +32,7 @@ const defaultFilters: FilterOptions = {
 
 export default function Home() {
   const navigate = useNavigate();
+  const { t } = useTranslation();
   const { user } = useAuth();
   const [segment, setSegment] = useState<'vehicles' | 'services'>('vehicles');
   const [category, setCategory] = useState('all');
@@ -45,6 +42,11 @@ export default function Home() {
   const [filters, setFilters] = useState<FilterOptions>(defaultFilters);
   const { unreadCount } = useUnreadMessages();
   const { conversations } = useConversations();
+
+  const segments = useMemo(() => [
+    { id: 'vehicles', label: t('home.segments.vehiclesParts') },
+    { id: 'services', label: t('home.segments.serviceProviders') },
+  ], [t]);
 
   const searchFilters: SearchFilters = useMemo(() => ({
     query: searchQuery,
@@ -137,7 +139,7 @@ export default function Home() {
                 size="sm"
                 onClick={() => navigate('/auth')}
               >
-                Sign In
+                {t('auth.signIn')}
               </Button>
             )}
           </div>
@@ -166,14 +168,14 @@ export default function Home() {
         <section>
           <div className="flex items-center justify-between mb-4">
             <div className="flex items-center gap-2">
-              <h2 className="text-lg font-bold text-foreground">Featured Near You</h2>
+              <h2 className="text-lg font-bold text-foreground">{t('home.featuredNearYou')}</h2>
               <Flame className="w-5 h-5 text-primary" />
             </div>
             <button 
               onClick={() => navigate('/featured')}
               className="text-sm font-medium text-primary flex items-center gap-1"
             >
-              See all
+              {t('common.seeAll')}
               <ChevronRight className="w-4 h-4" />
             </button>
           </div>
@@ -195,7 +197,7 @@ export default function Home() {
                 />
               ))
             ) : (
-              <p className="text-muted-foreground text-sm py-4">No featured listings nearby</p>
+              <p className="text-muted-foreground text-sm py-4">{t('home.noFeaturedListings')}</p>
             )}
           </div>
         </section>
@@ -205,7 +207,7 @@ export default function Home() {
 
         {/* Just Arrived */}
         <section>
-          <h2 className="text-lg font-bold text-foreground mb-4">Just Arrived</h2>
+          <h2 className="text-lg font-bold text-foreground mb-4">{t('home.justArrived')}</h2>
           <div className="grid grid-cols-2 gap-2">
             {listingsLoading ? (
               <>
@@ -225,7 +227,7 @@ export default function Home() {
               ))
             ) : (
               <p className="text-muted-foreground text-sm py-4 col-span-2 text-center">
-                No listings found nearby
+                {t('home.noListingsNearby')}
               </p>
             )}
           </div>
@@ -236,7 +238,7 @@ export default function Home() {
           )}
           {!listingsLoading && !hasMore && displayedItems.length > 0 && (
             <p className="text-center text-muted-foreground text-sm py-6">
-              You've seen all listings
+              {t('home.seenAllListings')}
             </p>
           )}
         </section>
