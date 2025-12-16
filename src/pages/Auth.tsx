@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { z } from 'zod';
-import { Eye, EyeOff, Mail, Lock, User, ArrowLeft, CheckCircle, RefreshCw } from 'lucide-react';
+import { Eye, EyeOff, Mail, Lock, User, ArrowLeft, MailCheck, RefreshCw } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -197,8 +197,8 @@ export default function Auth() {
         </header>
 
         <div className="flex-1 px-6 py-8 flex flex-col items-center justify-center">
-          <div className="w-20 h-20 rounded-full bg-primary/10 flex items-center justify-center mb-6">
-            <CheckCircle className="w-10 h-10 text-primary" />
+          <div className="w-20 h-20 rounded-full bg-secondary/15 flex items-center justify-center mb-6">
+            <MailCheck className="w-10 h-10 text-secondary" />
           </div>
           
           <h1 className="text-2xl font-bold text-foreground text-center mb-2">
