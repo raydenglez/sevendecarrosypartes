@@ -29,6 +29,8 @@ import { supabase } from '@/integrations/supabase/client';
 import { ImageCropModal } from '@/components/ImageCropModal';
 import { EditProfileModal } from '@/components/EditProfileModal';
 import { NotificationToggle } from '@/components/NotificationToggle';
+import { PersonalInfoSheet } from '@/components/PersonalInfoSheet';
+import { SecurityPrivacySheet } from '@/components/SecurityPrivacySheet';
 
 interface ProfileData {
   name: string;
@@ -66,6 +68,8 @@ export default function Profile() {
   const [cropModalOpen, setCropModalOpen] = useState(false);
   const [selectedImageSrc, setSelectedImageSrc] = useState<string | null>(null);
   const [editModalOpen, setEditModalOpen] = useState(false);
+  const [personalInfoOpen, setPersonalInfoOpen] = useState(false);
+  const [securityOpen, setSecurityOpen] = useState(false);
 
   const handleFileSelect = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
@@ -426,11 +430,14 @@ export default function Profile() {
             iconBg="bg-secondary/20"
             label="Personal Information"
             description="Email, phone and address"
+            onClick={() => setPersonalInfoOpen(true)}
           />
           <SettingsItem
             icon={<Shield className="w-5 h-5 text-primary" />}
             iconBg="bg-primary/20"
             label="Security & Privacy"
+            description="Password and privacy settings"
+            onClick={() => setSecurityOpen(true)}
           />
         </div>
       </section>
@@ -511,6 +518,36 @@ export default function Profile() {
               },
             } : null);
           }}
+        />
+      )}
+
+      {user && profileData && (
+        <PersonalInfoSheet
+          open={personalInfoOpen}
+          onClose={() => setPersonalInfoOpen(false)}
+          profileData={{
+            email: user.email || '',
+            phone: profileData.phone,
+            city: profileData.location.city === 'Unknown' ? '' : profileData.location.city,
+            state: profileData.location.state,
+          }}
+          onUpdate={(data) => {
+            setProfileData(prev => prev ? {
+              ...prev,
+              phone: data.phone,
+              location: {
+                city: data.city || 'Unknown',
+                state: data.state || '',
+              },
+            } : null);
+          }}
+        />
+      )}
+
+      {user && (
+        <SecurityPrivacySheet
+          open={securityOpen}
+          onClose={() => setSecurityOpen(false)}
         />
       )}
     </div>
