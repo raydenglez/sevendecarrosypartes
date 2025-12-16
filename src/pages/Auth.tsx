@@ -2,11 +2,12 @@ import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { z } from 'zod';
-import { Eye, EyeOff, Mail, Lock, User, ArrowLeft, MailCheck, RefreshCw, Sparkles } from 'lucide-react';
+import { Eye, EyeOff, Mail, Lock, User, ArrowLeft, MailCheck, RefreshCw } from 'lucide-react';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import CarNexoLogo from '@/components/CarNexoLogo';
 import { useAuth } from '@/hooks/useAuth';
 import { useToast } from '@/hooks/use-toast';
 
@@ -452,13 +453,8 @@ export default function Auth() {
         <div className="w-full max-w-sm">
           {/* Logo & Title */}
           <div className="flex flex-col items-center mb-10">
-            <div className="relative mb-6">
-              <div className="w-20 h-20 rounded-2xl bg-gradient-to-br from-primary to-primary/70 flex items-center justify-center shadow-orange">
-                <span className="text-3xl font-bold text-primary-foreground">C</span>
-              </div>
-              <div className="absolute -bottom-1 -right-1 w-7 h-7 rounded-lg bg-secondary flex items-center justify-center shadow-blue">
-                <Sparkles className="w-4 h-4 text-secondary-foreground" />
-              </div>
+            <div className="mb-6">
+              <CarNexoLogo size="lg" animate={true} />
             </div>
             <h1 className="text-3xl font-bold text-foreground">
               {isLogin ? t('auth.welcomeBack') : t('auth.createAccount')}
