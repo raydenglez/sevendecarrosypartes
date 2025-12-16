@@ -109,7 +109,7 @@ export default function Messages() {
                 <div className="flex-1 min-w-0 text-left">
                   <div className="flex items-center justify-between gap-2">
                     <h3 className="font-semibold text-foreground truncate">
-                      {conv.other_user.full_name}
+                      {conv.other_user.full_name || t('messages.unknownUser', 'User')}
                     </h3>
                     {conv.last_message && (
                       <span className="text-xs text-muted-foreground shrink-0">
