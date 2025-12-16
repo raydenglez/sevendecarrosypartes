@@ -170,14 +170,22 @@
   "messages": {
     "title": "Mensajes",
     "noMessages": "Sin mensajes aún",
-    "noMessagesDesc": "Inicia una conversación contactando a un vendedor",
+    "noMessagesDesc": "Inicia una conversación contactando vendedores desde sus anuncios",
     "typeMessage": "Escribe un mensaje...",
-    "send": "Enviar"
+    "send": "Enviar",
+    "signInPrompt": "Inicia sesión para enviar mensajes",
+    "signInPromptDesc": "Crea una cuenta para contactar vendedores y negociar",
+    "conversationCount": "{{count}} conversación",
+    "conversationCount_other": "{{count}} conversaciones"
   },
   "favorites": {
     "title": "Favoritos",
     "noFavorites": "Sin favoritos aún",
-    "noFavoritesDesc": "Guarda anuncios que te interesen tocando el ícono de corazón"
+    "noFavoritesDesc": "Guarda anuncios que te interesen tocando el ícono de corazón",
+    "signInPrompt": "Guarda tus favoritos",
+    "signInPromptDesc": "Inicia sesión para guardar anuncios y acceder desde cualquier dispositivo",
+    "savedCount": "{{count}} anuncio guardado",
+    "savedCount_other": "{{count}} anuncios guardados"
   },
   "map": {
     "title": "Vista de Mapa",
