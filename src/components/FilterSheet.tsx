@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { X } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 import {
   Sheet,
   SheetContent,
@@ -25,13 +26,14 @@ interface FilterSheetProps {
 }
 
 const conditionOptions = [
-  { id: 'new', label: 'New' },
-  { id: 'like_new', label: 'Like New' },
-  { id: 'good', label: 'Good' },
-  { id: 'fair', label: 'Fair' },
+  { id: 'new', labelKey: 'filters.conditions.new' },
+  { id: 'like_new', labelKey: 'filters.conditions.likeNew' },
+  { id: 'good', labelKey: 'filters.conditions.good' },
+  { id: 'fair', labelKey: 'filters.conditions.fair' },
 ];
 
 export function FilterSheet({ isOpen, onClose, filters, onApply }: FilterSheetProps) {
+  const { t } = useTranslation();
   const [localFilters, setLocalFilters] = useState<FilterOptions>(filters);
 
   const handleReset = () => {
@@ -62,7 +64,7 @@ export function FilterSheet({ isOpen, onClose, filters, onApply }: FilterSheetPr
     <Sheet open={isOpen} onOpenChange={onClose}>
       <SheetContent side="bottom" className="h-[85vh] rounded-t-3xl">
         <SheetHeader className="flex flex-row items-center justify-between pb-4 border-b border-border">
-          <SheetTitle className="text-lg font-bold">Filters</SheetTitle>
+          <SheetTitle className="text-lg font-bold">{t('filters.title')}</SheetTitle>
           <button onClick={onClose} className="p-2 -mr-2">
             <X className="w-5 h-5 text-muted-foreground" />
           </button>
@@ -71,7 +73,7 @@ export function FilterSheet({ isOpen, onClose, filters, onApply }: FilterSheetPr
         <div className="py-6 space-y-8 overflow-y-auto max-h-[calc(85vh-180px)]">
           {/* Price Range */}
           <div className="space-y-4">
-            <Label className="text-base font-semibold">Price Range</Label>
+            <Label className="text-base font-semibold">{t('filters.priceRange')}</Label>
             <Slider
               value={localFilters.priceRange}
               onValueChange={(value) => setLocalFilters(prev => ({ ...prev, priceRange: value as [number, number] }))}
@@ -87,7 +89,7 @@ export function FilterSheet({ isOpen, onClose, filters, onApply }: FilterSheetPr
 
           {/* Max Distance */}
           <div className="space-y-4">
-            <Label className="text-base font-semibold">Maximum Distance</Label>
+            <Label className="text-base font-semibold">{t('filters.maxDistance')}</Label>
             <Slider
               value={[localFilters.maxDistance]}
               onValueChange={(value) => setLocalFilters(prev => ({ ...prev, maxDistance: value[0] }))}
@@ -102,7 +104,7 @@ export function FilterSheet({ isOpen, onClose, filters, onApply }: FilterSheetPr
 
           {/* Minimum Rating */}
           <div className="space-y-4">
-            <Label className="text-base font-semibold">Minimum Rating</Label>
+            <Label className="text-base font-semibold">{t('filters.minRating')}</Label>
             <div className="flex gap-2">
               {[0, 3, 3.5, 4, 4.5].map((rating) => (
                 <button
@@ -114,7 +116,7 @@ export function FilterSheet({ isOpen, onClose, filters, onApply }: FilterSheetPr
                       : 'bg-muted text-muted-foreground hover:bg-muted/80'
                   }`}
                 >
-                  {rating === 0 ? 'Any' : `${rating}+`}
+                  {rating === 0 ? t('filters.any') : `${rating}+`}
                 </button>
               ))}
             </div>
@@ -122,7 +124,7 @@ export function FilterSheet({ isOpen, onClose, filters, onApply }: FilterSheetPr
 
           {/* Condition */}
           <div className="space-y-4">
-            <Label className="text-base font-semibold">Condition</Label>
+            <Label className="text-base font-semibold">{t('filters.condition')}</Label>
             <div className="flex flex-wrap gap-2">
               {conditionOptions.map((option) => (
                 <button
@@ -134,7 +136,7 @@ export function FilterSheet({ isOpen, onClose, filters, onApply }: FilterSheetPr
                       : 'bg-muted text-muted-foreground hover:bg-muted/80'
                   }`}
                 >
-                  {option.label}
+                  {t(option.labelKey)}
                 </button>
               ))}
             </div>
@@ -144,10 +146,10 @@ export function FilterSheet({ isOpen, onClose, filters, onApply }: FilterSheetPr
         {/* Actions */}
         <div className="absolute bottom-0 left-0 right-0 p-4 bg-background border-t border-border flex gap-3 safe-bottom">
           <Button variant="outline" className="flex-1" onClick={handleReset}>
-            Reset
+            {t('filters.reset')}
           </Button>
           <Button variant="carnexo" className="flex-1" onClick={handleApply}>
-            Apply Filters
+            {t('filters.applyFilters')}
           </Button>
         </div>
       </SheetContent>

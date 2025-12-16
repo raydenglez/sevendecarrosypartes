@@ -371,5 +371,21 @@
     "signedOut": "Has cerrado sesión correctamente.",
     "invalidFileType": "Por favor sube un archivo de imagen.",
     "fileTooLarge": "Por favor sube una imagen menor a 5MB."
+  },
+  "filters": {
+    "title": "Filtros",
+    "priceRange": "Rango de Precio",
+    "maxDistance": "Distancia Máxima",
+    "minRating": "Calificación Mínima",
+    "condition": "Condición",
+    "any": "Cualquiera",
+    "reset": "Restablecer",
+    "applyFilters": "Aplicar Filtros",
+    "conditions": {
+      "new": "Nuevo",
+      "likeNew": "Como Nuevo",
+      "good": "Bueno",
+      "fair": "Regular"
+    }
   }
 }

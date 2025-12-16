@@ -371,5 +371,21 @@
     "signedOut": "You have been signed out successfully.",
     "invalidFileType": "Please upload an image file.",
     "fileTooLarge": "Please upload an image smaller than 5MB."
+  },
+  "filters": {
+    "title": "Filters",
+    "priceRange": "Price Range",
+    "maxDistance": "Maximum Distance",
+    "minRating": "Minimum Rating",
+    "condition": "Condition",
+    "any": "Any",
+    "reset": "Reset",
+    "applyFilters": "Apply Filters",
+    "conditions": {
+      "new": "New",
+      "likeNew": "Like New",
+      "good": "Good",
+      "fair": "Fair"
+    }
   }
 }
