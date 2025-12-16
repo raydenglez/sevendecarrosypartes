@@ -387,5 +387,31 @@
       "good": "Bueno",
       "fair": "Regular"
     }
+  },
+  "map": {
+    "searchLocations": "Buscar ubicaciones...",
+    "gettingLocation": "Obteniendo ubicación...",
+    "viewListings": "Ver {{count}} Anuncios",
+    "nearbyListings": "Anuncios Cercanos",
+    "exploreOnMap": "Explorar en Mapa",
+    "discoverListings": "Descubre {{count}}+ anuncios cerca de ti",
+    "directions": "Direcciones",
+    "viewDetails": "Ver Detalles",
+    "drive": "en auto",
+    "open": "Abierto",
+    "verified": "Verificado",
+    "memberSince": "Miembro desde {{date}}",
+    "reviews": "{{count}} reseñas",
+    "filterTypes": {
+      "all": "Todos",
+      "vehicle": "Vehículos",
+      "service": "Servicios",
+      "part": "Repuestos"
+    },
+    "listingTypes": {
+      "vehicle": "Vehículo",
+      "part": "Repuesto",
+      "service": "Proveedor de Servicios"
+    }
   }
 }

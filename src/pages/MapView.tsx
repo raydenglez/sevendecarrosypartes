@@ -1,5 +1,6 @@
 import { useState, useEffect, useCallback, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import { ArrowLeft, Filter, List, Layers, Search, X, Navigation, Loader2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -12,6 +13,7 @@ import { Badge } from '@/components/ui/badge';
 import { supabase } from '@/integrations/supabase/client';
 
 export default function MapView() {
+  const { t } = useTranslation();
   const navigate = useNavigate();
   const [showListings, setShowListings] = useState(false);
   const [selectedListing, setSelectedListing] = useState<Listing | null>(null);
@@ -160,7 +162,7 @@ export default function MapView() {
             <Input
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              placeholder="Search locations..."
+              placeholder={t('map.searchLocations')}
               className="pl-10 bg-card/90 backdrop-blur-sm border-0 shadow-card"
             />
             {searchQuery && (
@@ -191,7 +193,7 @@ export default function MapView() {
               className={`cursor-pointer shrink-0 ${filterType === type ? 'bg-primary text-primary-foreground' : 'bg-card/90 backdrop-blur-sm'}`}
               onClick={() => setFilterType(type)}
             >
-              {type === 'all' ? 'All' : type === 'vehicle' ? 'Vehicles' : type === 'service' ? 'Services' : 'Parts'}
+              {t(`map.filterTypes.${type}`)}
             </Badge>
           ))}
         </div>
@@ -214,7 +216,7 @@ export default function MapView() {
         <div className="absolute top-32 left-1/2 -translate-x-1/2 z-10">
           <div className="flex items-center gap-2 bg-card/90 backdrop-blur-sm px-4 py-2 rounded-full shadow-card">
             <Loader2 className="w-4 h-4 animate-spin text-primary" />
-            <span className="text-sm">Getting location...</span>
+            <span className="text-sm">{t('map.gettingLocation')}</span>
           </div>
         </div>
       )}
@@ -240,12 +242,12 @@ export default function MapView() {
               className="absolute bottom-6 left-1/2 -translate-x-1/2 z-10 rounded-full shadow-orange safe-bottom"
             >
               <List className="w-4 h-4 mr-2" />
-              View {filteredListings.length} Listings
+              {t('map.viewListings', { count: filteredListings.length })}
             </Button>
           </SheetTrigger>
           <SheetContent side="bottom" className="h-[70vh] rounded-t-3xl">
             <SheetHeader>
-              <SheetTitle>Nearby Listings</SheetTitle>
+              <SheetTitle>{t('map.nearbyListings')}</SheetTitle>
             </SheetHeader>
             <div className="mt-4 space-y-4 overflow-y-auto h-[calc(100%-4rem)] hide-scrollbar pb-6">
               {filteredListings.map((listing) => (

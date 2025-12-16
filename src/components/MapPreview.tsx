@@ -1,4 +1,5 @@
 import { MapPin, ArrowRight } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 import { cn } from '@/lib/utils';
 import mapPreviewImage from '@/assets/map-preview.jpg';
 
@@ -13,6 +14,8 @@ export function MapPreview({
   className,
   onClick 
 }: MapPreviewProps) {
+  const { t } = useTranslation();
+  
   return (
     <button 
       onClick={onClick}
@@ -56,9 +59,9 @@ export function MapPreview({
             <MapPin className="w-6 h-6 text-primary" />
           </div>
           <div>
-            <h3 className="text-xl font-bold text-foreground">Explore on Map</h3>
+            <h3 className="text-xl font-bold text-foreground">{t('map.exploreOnMap')}</h3>
             <p className="text-sm text-muted-foreground">
-              Discover <span className="text-primary font-semibold">{listingCount}+</span> listings near you
+              {t('map.discoverListings', { count: listingCount })}
             </p>
           </div>
         </div>
