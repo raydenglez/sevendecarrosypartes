@@ -126,17 +126,27 @@ export function useConversations() {
           .neq('sender_id', user.id)
           .neq('status', 'read');
 
+        // Count total messages to check if conversation has any messages
+        const { count: totalMessages } = await supabase
+          .from('messages')
+          .select('*', { count: 'exact', head: true })
+          .eq('conversation_id', conv.id);
+
         return {
           ...conv,
           listing: conv.listing,
           other_user: otherUser || { id: otherId, full_name: 'Unknown', avatar_url: null },
           last_message: lastMsg || undefined,
           unread_count: count || 0,
-        } as ConversationWithDetails;
+          has_messages: (totalMessages || 0) > 0,
+        } as ConversationWithDetails & { has_messages: boolean };
       })
     );
 
-    setConversations(enrichedConvos);
+    // Filter out conversations without any messages
+    const conversationsWithMessages = enrichedConvos.filter(c => c.has_messages);
+
+    setConversations(conversationsWithMessages);
     setLoading(false);
   }
 
