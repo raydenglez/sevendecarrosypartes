@@ -21,7 +21,6 @@ import { useConversations } from '@/hooks/useConversations';
 import { vehicleCategories, serviceCategories } from '@/data/mockData';
 import { Listing } from '@/types';
 import { LocationPermissionModal } from '@/components/LocationPermissionModal';
-import CarNexoLogo from '@/assets/carnexo-wordmark.svg';
 
 const defaultFilters: FilterOptions = {
   priceRange: [0, 1000000],
@@ -119,7 +118,7 @@ export default function Home() {
         <header className="sticky top-0 z-40 bg-background/95 backdrop-blur-xl safe-top">
         <div className="px-4 pt-4 pb-3 space-y-4">
           <div className="flex items-center justify-between">
-            <img src={CarNexoLogo} alt="CarNexo" className="h-8 text-foreground" />
+            <h1 className="text-2xl font-bold text-primary">CarNexo</h1>
             {user ? (
               <button 
                 onClick={() => setIsNotificationsOpen(true)}
