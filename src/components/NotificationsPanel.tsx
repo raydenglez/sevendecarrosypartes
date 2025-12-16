@@ -75,7 +75,7 @@ export function NotificationsPanel({ isOpen, onClose, conversations, onViewAll }
                     <div className="flex-1 min-w-0">
                       <div className="flex items-center justify-between gap-2">
                         <p className="font-medium text-foreground truncate">
-                          {conversation.other_user.full_name || 'Unknown'}
+                          {conversation.other_user.full_name || 'User'}
                         </p>
                         <span className="text-xs text-muted-foreground flex-shrink-0">
                           {conversation.last_message?.created_at 
