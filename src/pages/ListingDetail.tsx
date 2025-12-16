@@ -52,7 +52,8 @@ export default function ListingDetail() {
     if (!id) return;
     setReviewsLoading(true);
     
-    const { data, error } = await supabase
+    // Fetch reviews without profile join (RLS blocks profiles access)
+    const { data: reviewsData, error } = await supabase
       .from('reviews')
       .select(`
         id,
@@ -62,17 +63,33 @@ export default function ListingDetail() {
         service_rating,
         comment,
         created_at,
-        profiles:reviewer_id (
-          id,
-          full_name,
-          avatar_url
-        )
+        reviewer_id
       `)
       .eq('listing_id', id)
       .order('created_at', { ascending: false });
 
-    if (!error && data) {
-      const transformedReviews: Review[] = data.map((r: any) => ({
+    if (error || !reviewsData) {
+      console.error('Error fetching reviews:', error);
+      setReviewsLoading(false);
+      return;
+    }
+
+    // Get unique reviewer IDs and fetch from public_profiles view
+    const reviewerIds = [...new Set(reviewsData.map(r => r.reviewer_id))];
+    
+    const { data: reviewerProfiles } = await supabase
+      .from('public_profiles')
+      .select('id, full_name, avatar_url')
+      .in('id', reviewerIds);
+
+    // Create a map for quick lookup
+    const reviewerMap = new Map(
+      reviewerProfiles?.map(p => [p.id, p]) || []
+    );
+
+    const transformedReviews: Review[] = reviewsData.map((r) => {
+      const reviewer = reviewerMap.get(r.reviewer_id);
+      return {
         id: r.id,
         rating: r.rating,
         communication_rating: r.communication_rating,
@@ -80,14 +97,14 @@ export default function ListingDetail() {
         service_rating: r.service_rating,
         comment: r.comment,
         created_at: r.created_at,
-        reviewer: r.profiles ? {
-          id: r.profiles.id,
-          full_name: r.profiles.full_name,
-          avatar_url: r.profiles.avatar_url
+        reviewer: reviewer ? {
+          id: reviewer.id || '',
+          full_name: reviewer.full_name,
+          avatar_url: reviewer.avatar_url
         } : null
-      }));
-      setReviews(transformedReviews);
-    }
+      };
+    });
+    setReviews(transformedReviews);
     setReviewsLoading(false);
   }, [id]);
 
