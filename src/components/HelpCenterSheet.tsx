@@ -1,7 +1,7 @@
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from '@/components/ui/sheet';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
 import { Button } from '@/components/ui/button';
-import { HelpCircle, Mail, MessageSquare, ExternalLink } from 'lucide-react';
+import { HelpCircle, Mail } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 
 interface HelpCenterSheetProps {
