@@ -15,9 +15,9 @@ import { useToast } from '@/hooks/use-toast';
 const AuthBackground = ({ children }: { children: React.ReactNode }) => (
   <div className="min-h-screen relative overflow-hidden bg-background">
     {/* Gradient orbs */}
-    <div className="absolute top-[-20%] left-[-10%] w-[500px] h-[500px] rounded-full bg-primary/20 blur-[120px] animate-pulse" />
-    <div className="absolute bottom-[-20%] right-[-10%] w-[400px] h-[400px] rounded-full bg-secondary/20 blur-[100px] animate-pulse" style={{ animationDelay: '1s' }} />
-    <div className="absolute top-[40%] right-[20%] w-[200px] h-[200px] rounded-full bg-primary/10 blur-[80px] animate-pulse" style={{ animationDelay: '2s' }} />
+    <div className="absolute top-[-20%] left-[-10%] w-[500px] h-[500px] rounded-full bg-primary/20 blur-[120px]" />
+    <div className="absolute bottom-[-20%] right-[-10%] w-[400px] h-[400px] rounded-full bg-secondary/20 blur-[100px]" />
+    <div className="absolute top-[40%] right-[20%] w-[200px] h-[200px] rounded-full bg-primary/10 blur-[80px]" />
     
     {/* Content */}
     <div className="relative z-10 min-h-screen flex flex-col">
@@ -455,7 +455,7 @@ export default function Auth() {
           {/* Logo & Title */}
           <div className="flex flex-col items-center mb-10">
             <div className="mb-6">
-              <CarNexoLogo size="lg" animate={true} />
+              <CarNexoLogo size="lg" animate={false} />
             </div>
             <h1 className="text-3xl font-bold text-foreground">
               {isLogin ? t('auth.welcomeBack') : t('auth.createAccount')}
@@ -466,7 +466,7 @@ export default function Auth() {
           </div>
 
           {/* Form Card */}
-          <div className="bg-card/40 backdrop-blur-xl rounded-3xl p-6 border border-border/50 shadow-elevated">
+          <div className="bg-card/85 rounded-3xl p-6 border border-border/50 shadow-elevated">
             <form onSubmit={handleSubmit} className="space-y-4">
               {!isLogin && (
                 <div className="space-y-2">
