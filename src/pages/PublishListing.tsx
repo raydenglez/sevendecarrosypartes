@@ -1,5 +1,6 @@
 import { useState, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
@@ -38,66 +39,98 @@ import { cn } from '@/lib/utils';
 
 type ListingType = 'vehicle' | 'part' | 'service';
 
-const baseSchema = z.object({
-  title: z.string().min(5, 'Title must be at least 5 characters').max(100),
-  description: z.string().max(1000, 'Description cannot exceed 1000 characters').optional(),
-  price: z.coerce.number().min(0, 'Price must be positive'),
-  isNegotiable: z.boolean().default(false),
-});
+type VehicleFormData = {
+  title: string;
+  description?: string;
+  price: number;
+  isNegotiable: boolean;
+  make: string;
+  model: string;
+  year: number;
+  mileage?: number;
+  vin?: string;
+  fuelType?: string;
+  transmission?: string;
+  color?: string;
+  condition?: 'new' | 'like_new' | 'good' | 'fair' | 'poor';
+};
 
-const vehicleSchema = baseSchema.extend({
-  make: z.string().min(1, 'Make is required'),
-  model: z.string().min(1, 'Model is required'),
-  year: z.coerce.number().min(1900).max(new Date().getFullYear() + 1),
-  mileage: z.coerce.number().min(0).optional(),
-  vin: z.string().optional(),
-  fuelType: z.string().optional(),
-  transmission: z.string().optional(),
-  color: z.string().optional(),
-  condition: z.enum(['new', 'like_new', 'good', 'fair', 'poor']).optional(),
-});
+type PartFormData = {
+  title: string;
+  description?: string;
+  price: number;
+  isNegotiable: boolean;
+  partCategory: string;
+  brand?: string;
+  condition?: 'new' | 'like_new' | 'good' | 'fair' | 'poor';
+};
 
-const partSchema = baseSchema.extend({
-  partCategory: z.string().min(1, 'Category is required'),
-  brand: z.string().optional(),
-  condition: z.enum(['new', 'like_new', 'good', 'fair', 'poor']).optional(),
-});
-
-const serviceSchema = baseSchema.extend({
-  serviceCategory: z.enum(['maintenance', 'bodywork', 'car_wash', 'tires', 'electrical', 'other']),
-  priceStructure: z.string().optional(),
-});
-
-type VehicleFormData = z.infer<typeof vehicleSchema>;
-type PartFormData = z.infer<typeof partSchema>;
-type ServiceFormData = z.infer<typeof serviceSchema>;
-
-const typeOptions = [
-  { id: 'vehicle' as const, label: 'Vehicle', icon: Car },
-  { id: 'part' as const, label: 'Part', icon: Settings },
-  { id: 'service' as const, label: 'Service', icon: Wrench },
-];
-
-const conditionOptions = [
-  { value: 'new', label: 'New' },
-  { value: 'like_new', label: 'Like New' },
-  { value: 'good', label: 'Good' },
-  { value: 'fair', label: 'Fair' },
-  { value: 'poor', label: 'Poor' },
-];
-
-const serviceCategoryOptions = [
-  { value: 'maintenance', label: 'Maintenance' },
-  { value: 'bodywork', label: 'Bodywork' },
-  { value: 'car_wash', label: 'Car Wash' },
-  { value: 'tires', label: 'Tires' },
-  { value: 'electrical', label: 'Electrical' },
-  { value: 'other', label: 'Other' },
-];
+type ServiceFormData = {
+  title: string;
+  description?: string;
+  price: number;
+  isNegotiable: boolean;
+  serviceCategory: 'maintenance' | 'bodywork' | 'car_wash' | 'tires' | 'electrical' | 'other';
+  priceStructure?: string;
+};
 
 export default function PublishListing() {
   const navigate = useNavigate();
+  const { t } = useTranslation();
   const { user, loading } = useAuth();
+
+  const baseSchema = z.object({
+    title: z.string().min(5, t('publish.validation.titleMin')).max(100),
+    description: z.string().max(1000, t('publish.validation.descriptionMax')).optional(),
+    price: z.coerce.number().min(0, t('publish.validation.pricePositive')),
+    isNegotiable: z.boolean().default(false),
+  });
+
+  const vehicleSchema = baseSchema.extend({
+    make: z.string().min(1, t('publish.validation.makeRequired')),
+    model: z.string().min(1, t('publish.validation.modelRequired')),
+    year: z.coerce.number().min(1900).max(new Date().getFullYear() + 1),
+    mileage: z.coerce.number().min(0).optional(),
+    vin: z.string().optional(),
+    fuelType: z.string().optional(),
+    transmission: z.string().optional(),
+    color: z.string().optional(),
+    condition: z.enum(['new', 'like_new', 'good', 'fair', 'poor']).optional(),
+  });
+
+  const partSchema = baseSchema.extend({
+    partCategory: z.string().min(1, t('publish.validation.categoryRequired')),
+    brand: z.string().optional(),
+    condition: z.enum(['new', 'like_new', 'good', 'fair', 'poor']).optional(),
+  });
+
+  const serviceSchema = baseSchema.extend({
+    serviceCategory: z.enum(['maintenance', 'bodywork', 'car_wash', 'tires', 'electrical', 'other']),
+    priceStructure: z.string().optional(),
+  });
+
+  const typeOptions = [
+    { id: 'vehicle' as const, labelKey: 'publish.vehicle', icon: Car },
+    { id: 'part' as const, labelKey: 'publish.part', icon: Settings },
+    { id: 'service' as const, labelKey: 'publish.service', icon: Wrench },
+  ];
+
+  const conditionOptions = [
+    { value: 'new', labelKey: 'vehicle.new' },
+    { value: 'like_new', labelKey: 'vehicle.likeNew' },
+    { value: 'good', labelKey: 'vehicle.good' },
+    { value: 'fair', labelKey: 'vehicle.fair' },
+    { value: 'poor', labelKey: 'vehicle.poor' },
+  ];
+
+  const serviceCategoryOptions = [
+    { value: 'maintenance', labelKey: 'categories.maintenance' },
+    { value: 'bodywork', labelKey: 'categories.bodywork' },
+    { value: 'car_wash', labelKey: 'categories.carWash' },
+    { value: 'tires', labelKey: 'categories.tires' },
+    { value: 'electrical', labelKey: 'categories.electrical' },
+    { value: 'other', labelKey: 'vehicle.other' },
+  ];
   const [listingType, setListingType] = useState<ListingType>('vehicle');
   const [images, setImages] = useState<string[]>([]);
   const [coverIndex, setCoverIndex] = useState(0);
@@ -181,13 +214,13 @@ export default function PublishListing() {
 
     // Validate file type
     if (!file.type.startsWith('image/')) {
-      toast.error('Please select an image file');
+      toast.error(t('publish.toast.imageError'));
       return;
     }
 
     // Validate file size (max 5MB)
     if (file.size > 5 * 1024 * 1024) {
-      toast.error('Image must be less than 5MB');
+      toast.error(t('publish.toast.imageSizeError'));
       return;
     }
 
@@ -227,10 +260,10 @@ export default function PublishListing() {
         .getPublicUrl(fileName);
 
       setImages(prev => [...prev, publicUrl]);
-      toast.success('Image uploaded successfully');
+      toast.success(t('publish.toast.imageUploaded'));
     } catch (error: any) {
       console.error('Upload error:', error);
-      toast.error(error.message || 'Failed to upload image');
+      toast.error(error.message || t('publish.toast.uploadFailed'));
     } finally {
       setIsUploading(false);
       setSelectedImageSrc('');
@@ -334,7 +367,7 @@ export default function PublishListing() {
 
   const onSubmit = async (data: VehicleFormData | PartFormData | ServiceFormData) => {
     if (!user) {
-      toast.error('Please sign in to publish a listing');
+      toast.error(t('publish.toast.signInRequired'));
       return;
     }
 
@@ -404,11 +437,11 @@ export default function PublishListing() {
         if (attrError) throw attrError;
       }
 
-      toast.success('Listing published successfully!');
+      toast.success(t('publish.toast.publishSuccess'));
       navigate(`/listing/${listing.id}`);
     } catch (error: any) {
       console.error('Error publishing listing:', error);
-      toast.error(error.message || 'Failed to publish listing');
+      toast.error(error.message || t('publish.toast.publishFailed'));
     } finally {
       setIsSubmitting(false);
     }
@@ -430,7 +463,7 @@ export default function PublishListing() {
             <Button variant="ghost" size="icon" onClick={() => navigate(-1)}>
               <X className="w-5 h-5" />
             </Button>
-            <h1 className="text-lg font-bold text-foreground">Publish Listing</h1>
+            <h1 className="text-lg font-bold text-foreground">{t('publish.title')}</h1>
             <div className="w-10" />
           </div>
         </header>
@@ -438,12 +471,12 @@ export default function PublishListing() {
           <div className="w-20 h-20 rounded-full bg-muted flex items-center justify-center mb-4">
             <Plus className="w-10 h-10 text-muted-foreground" />
           </div>
-          <h2 className="text-xl font-bold text-foreground mb-2">Sign in to publish</h2>
+          <h2 className="text-xl font-bold text-foreground mb-2">{t('publish.signInToPublish')}</h2>
           <p className="text-muted-foreground mb-6 max-w-[280px]">
-            Create an account to list vehicles, parts, or services for sale
+            {t('publish.signInToPublishDesc')}
           </p>
           <Button variant="carnexo" size="lg" onClick={() => navigate('/auth')}>
-            Sign In or Create Account
+            {t('publish.signInOrCreate')}
           </Button>
         </div>
       </div>
@@ -458,9 +491,9 @@ export default function PublishListing() {
           <Button variant="ghost" size="icon" onClick={() => navigate(-1)}>
             <X className="w-5 h-5" />
           </Button>
-          <h1 className="text-lg font-bold text-foreground">Publish Listing</h1>
+          <h1 className="text-lg font-bold text-foreground">{t('publish.title')}</h1>
           <Button variant="ghost" className="text-muted-foreground" onClick={handleClearForm}>
-            Clear
+            {t('publish.clear')}
           </Button>
         </div>
       </header>
@@ -479,13 +512,13 @@ export default function PublishListing() {
         <section>
           <div className="flex items-center justify-between mb-3">
             <div>
-              <h2 className="text-lg font-bold text-foreground">Visual Gallery</h2>
+              <h2 className="text-lg font-bold text-foreground">{t('publish.visualGallery')}</h2>
               {images.length > 1 && (
-                <p className="text-xs text-muted-foreground mt-0.5">Drag to reorder • First image is cover</p>
+                <p className="text-xs text-muted-foreground mt-0.5">{t('publish.dragReorderHint')}</p>
               )}
             </div>
             <span className="text-xs text-muted-foreground bg-muted px-2 py-1 rounded">
-              {images.length}/10 photos
+              {t('publish.photosCount', { count: images.length })}
             </span>
           </div>
           
@@ -517,7 +550,7 @@ export default function PublishListing() {
                 {/* Cover badge */}
                 {idx === 0 && (
                   <span className="absolute bottom-2 left-2 text-[10px] font-semibold px-2 py-1 rounded bg-primary text-primary-foreground">
-                    COVER
+                    {t('publish.cover')}
                   </span>
                 )}
                 
@@ -559,7 +592,7 @@ export default function PublishListing() {
                 ) : (
                   <>
                     <Camera className="w-8 h-8" />
-                    <span className="text-sm font-medium">Add Photo</span>
+                    <span className="text-sm font-medium">{t('publish.addPhoto')}</span>
                   </>
                 )}
               </button>
@@ -569,7 +602,7 @@ export default function PublishListing() {
 
         {/* Listing Type */}
         <section>
-          <h2 className="text-lg font-bold text-foreground mb-3">Listing Type</h2>
+          <h2 className="text-lg font-bold text-foreground mb-3">{t('publish.listingType')}</h2>
           <div className="grid grid-cols-3 gap-3">
             {typeOptions.map((option) => {
               const Icon = option.icon;
@@ -587,7 +620,7 @@ export default function PublishListing() {
                   )}
                 >
                   <Icon className="w-6 h-6" />
-                  <span className="text-sm font-medium">{option.label}</span>
+                  <span className="text-sm font-medium">{t(option.labelKey)}</span>
                 </button>
               );
             })}
@@ -798,7 +831,7 @@ export default function PublishListing() {
                           </FormControl>
                           <SelectContent>
                             {conditionOptions.map((opt) => (
-                              <SelectItem key={opt.value} value={opt.value}>{opt.label}</SelectItem>
+                              <SelectItem key={opt.value} value={opt.value}>{t(opt.labelKey)}</SelectItem>
                             ))}
                           </SelectContent>
                         </Select>
@@ -981,7 +1014,7 @@ export default function PublishListing() {
                           </FormControl>
                           <SelectContent>
                             {conditionOptions.map((opt) => (
-                              <SelectItem key={opt.value} value={opt.value}>{opt.label}</SelectItem>
+                              <SelectItem key={opt.value} value={opt.value}>{t(opt.labelKey)}</SelectItem>
                             ))}
                           </SelectContent>
                         </Select>
@@ -1133,7 +1166,7 @@ export default function PublishListing() {
                           </FormControl>
                           <SelectContent>
                             {serviceCategoryOptions.map((opt) => (
-                              <SelectItem key={opt.value} value={opt.value}>{opt.label}</SelectItem>
+                              <SelectItem key={opt.value} value={opt.value}>{t(opt.labelKey)}</SelectItem>
                             ))}
                           </SelectContent>
                         </Select>
