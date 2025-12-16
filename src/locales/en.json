@@ -96,7 +96,10 @@
       "welcomeToCarNexo": "Welcome to CarNexo! You can now browse and create listings.",
       "failedResetEmail": "Failed to send reset email",
       "failedUpdatePassword": "Failed to update password",
-      "somethingWrong": "Something went wrong. Please try again."
+      "somethingWrong": "Something went wrong. Please try again.",
+      "oauthNotConfigured": "Sign-in not available",
+      "googleNotConfiguredDesc": "Google sign-in is not set up yet. Please use email and password to create an account.",
+      "appleNotConfiguredDesc": "Apple sign-in is not set up yet. Please use email and password to create an account."
     }
   },
   "home": {

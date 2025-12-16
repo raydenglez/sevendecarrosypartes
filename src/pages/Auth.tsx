@@ -593,9 +593,11 @@ export default function Auth() {
                   setOauthLoading('google');
                   const { error } = await signInWithOAuth('google');
                   if (error) {
+                    const isProviderNotEnabled = error.message.toLowerCase().includes('provider is not enabled') || 
+                                                  error.message.toLowerCase().includes('oauth provider');
                     toast({
-                      title: t('auth.toast.loginFailed'),
-                      description: error.message,
+                      title: isProviderNotEnabled ? t('auth.toast.oauthNotConfigured') : t('auth.toast.loginFailed'),
+                      description: isProviderNotEnabled ? t('auth.toast.googleNotConfiguredDesc') : error.message,
                       variant: "destructive",
                     });
                     setOauthLoading(null);
@@ -625,9 +627,11 @@ export default function Auth() {
                   setOauthLoading('apple');
                   const { error } = await signInWithOAuth('apple');
                   if (error) {
+                    const isProviderNotEnabled = error.message.toLowerCase().includes('provider is not enabled') || 
+                                                  error.message.toLowerCase().includes('oauth provider');
                     toast({
-                      title: t('auth.toast.loginFailed'),
-                      description: error.message,
+                      title: isProviderNotEnabled ? t('auth.toast.oauthNotConfigured') : t('auth.toast.loginFailed'),
+                      description: isProviderNotEnabled ? t('auth.toast.appleNotConfiguredDesc') : error.message,
                       variant: "destructive",
                     });
                     setOauthLoading(null);
