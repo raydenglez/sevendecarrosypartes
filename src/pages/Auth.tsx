@@ -26,14 +26,16 @@ const signupSchema = z.object({
 
 export default function Auth() {
   const navigate = useNavigate();
-  const { user, signUp, signIn, resendConfirmationEmail } = useAuth();
+  const { user, signUp, signIn, resendConfirmationEmail, resetPassword } = useAuth();
   const { toast } = useToast();
   
   const [isLogin, setIsLogin] = useState(true);
+  const [showForgotPassword, setShowForgotPassword] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [confirmationPending, setConfirmationPending] = useState(false);
+  const [resetEmailSent, setResetEmailSent] = useState(false);
   const [pendingEmail, setPendingEmail] = useState('');
   const [resendLoading, setResendLoading] = useState(false);
   
@@ -81,7 +83,35 @@ export default function Auth() {
 
   const handleBackToSignup = () => {
     setConfirmationPending(false);
+    setResetEmailSent(false);
+    setShowForgotPassword(false);
     setPendingEmail('');
+  };
+
+  const handleForgotPassword = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setErrors({});
+    
+    const emailValidation = z.string().trim().email({ message: "Invalid email address" }).safeParse(formData.email);
+    if (!emailValidation.success) {
+      setErrors({ email: emailValidation.error.errors[0].message });
+      return;
+    }
+    
+    setLoading(true);
+    const { error } = await resetPassword(formData.email);
+    setLoading(false);
+    
+    if (error) {
+      toast({
+        title: "Failed to send reset email",
+        description: error.message,
+        variant: "destructive",
+      });
+    } else {
+      setPendingEmail(formData.email);
+      setResetEmailSent(true);
+    }
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -250,6 +280,125 @@ export default function Auth() {
     );
   }
 
+  // Password Reset Email Sent Screen
+  if (resetEmailSent) {
+    return (
+      <div className="min-h-screen bg-background flex flex-col">
+        <header className="px-4 pt-4 safe-top">
+          <button 
+            onClick={handleBackToSignup}
+            className="w-10 h-10 flex items-center justify-center text-foreground"
+          >
+            <ArrowLeft className="w-6 h-6" />
+          </button>
+        </header>
+
+        <div className="flex-1 px-6 py-8 flex flex-col items-center justify-center">
+          <div className="w-20 h-20 rounded-full bg-secondary/15 flex items-center justify-center mb-6">
+            <MailCheck className="w-10 h-10 text-secondary" />
+          </div>
+          
+          <h1 className="text-2xl font-bold text-foreground text-center mb-2">
+            Check your inbox
+          </h1>
+          
+          <p className="text-muted-foreground text-center mb-2">
+            We've sent a password reset link to:
+          </p>
+          
+          <p className="text-foreground font-medium text-center mb-6">
+            {pendingEmail}
+          </p>
+          
+          <div className="bg-muted/50 rounded-xl p-4 mb-6 w-full max-w-sm">
+            <p className="text-sm text-muted-foreground text-center">
+              Click the link in the email to reset your password. If you don't see it, check your spam folder.
+            </p>
+          </div>
+
+          <Button
+            variant="outline"
+            onClick={handleBackToSignup}
+            className="w-full max-w-sm"
+          >
+            Back to Sign In
+          </Button>
+        </div>
+      </div>
+    );
+  }
+
+  // Forgot Password Form
+  if (showForgotPassword) {
+    return (
+      <div className="min-h-screen bg-background flex flex-col">
+        <header className="px-4 pt-4 safe-top">
+          <button 
+            onClick={() => setShowForgotPassword(false)}
+            className="w-10 h-10 flex items-center justify-center text-foreground"
+          >
+            <ArrowLeft className="w-6 h-6" />
+          </button>
+        </header>
+
+        <div className="flex-1 px-6 py-8 flex flex-col">
+          <div className="flex flex-col items-center mb-8">
+            <div className="w-16 h-16 rounded-full bg-secondary/15 flex items-center justify-center mb-4">
+              <Mail className="w-8 h-8 text-secondary" />
+            </div>
+            <h1 className="text-2xl font-bold text-foreground">
+              Forgot password?
+            </h1>
+            <p className="text-muted-foreground text-sm mt-1 text-center">
+              Enter your email and we'll send you a reset link
+            </p>
+          </div>
+
+          <form onSubmit={handleForgotPassword} className="space-y-4 animate-fade-in">
+            <div className="space-y-2">
+              <Label htmlFor="email">Email</Label>
+              <div className="relative">
+                <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
+                <Input
+                  id="email"
+                  name="email"
+                  type="email"
+                  placeholder="you@example.com"
+                  value={formData.email}
+                  onChange={handleChange}
+                  className="pl-10"
+                />
+              </div>
+              {errors.email && (
+                <p className="text-sm text-destructive">{errors.email}</p>
+              )}
+            </div>
+
+            <Button
+              type="submit"
+              variant="carnexo"
+              size="lg"
+              className="w-full mt-6"
+              disabled={loading}
+            >
+              {loading ? 'Sending...' : 'Send Reset Link'}
+            </Button>
+          </form>
+
+          <div className="mt-6 text-center">
+            <button
+              type="button"
+              onClick={() => setShowForgotPassword(false)}
+              className="text-muted-foreground text-sm"
+            >
+              Back to <span className="text-primary font-semibold">Sign in</span>
+            </button>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="min-h-screen bg-background flex flex-col">
       {/* Header */}
@@ -340,6 +489,15 @@ export default function Auth() {
             </div>
             {errors.password && (
               <p className="text-sm text-destructive">{errors.password}</p>
+            )}
+            {isLogin && (
+              <button
+                type="button"
+                onClick={() => setShowForgotPassword(true)}
+                className="text-sm text-primary hover:underline mt-1"
+              >
+                Forgot password?
+              </button>
             )}
           </div>
 
