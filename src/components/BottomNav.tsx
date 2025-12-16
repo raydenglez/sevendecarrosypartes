@@ -1,19 +1,21 @@
 import { NavLink, useLocation } from 'react-router-dom';
 import { Home, Heart, Plus, MessageSquare, User } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 import { cn } from '@/lib/utils';
 import { useUnreadMessages } from '@/hooks/useUnreadMessages';
-
-const navItems = [
-  { path: '/', icon: Home, label: 'Home' },
-  { path: '/favorites', icon: Heart, label: 'Favorites' },
-  { path: '/publish', icon: Plus, label: 'Add', isAction: true },
-  { path: '/messages', icon: MessageSquare, label: 'Messages' },
-  { path: '/profile', icon: User, label: 'Profile' },
-];
 
 export function BottomNav() {
   const location = useLocation();
   const { unreadCount } = useUnreadMessages();
+  const { t } = useTranslation();
+
+  const navItems = [
+    { path: '/', icon: Home, label: t('nav.home') },
+    { path: '/favorites', icon: Heart, label: t('nav.favorites') },
+    { path: '/publish', icon: Plus, label: t('nav.publish'), isAction: true },
+    { path: '/messages', icon: MessageSquare, label: t('nav.messages') },
+    { path: '/profile', icon: User, label: t('nav.profile') },
+  ];
 
   return (
     <nav className="fixed bottom-0 left-0 right-0 z-50 bg-card/95 backdrop-blur-xl border-t border-border safe-bottom">
