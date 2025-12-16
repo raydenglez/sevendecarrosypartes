@@ -102,9 +102,9 @@ export function useConversations() {
       convos.map(async (conv) => {
         const otherId = conv.seller_id === user.id ? conv.buyer_id : conv.seller_id;
         
-        // Get other user's profile
+        // Get other user's profile from public view (excludes sensitive data)
         const { data: otherUser } = await supabase
-          .from('profiles')
+          .from('public_profiles')
           .select('id, full_name, avatar_url')
           .eq('id', otherId)
           .single();
