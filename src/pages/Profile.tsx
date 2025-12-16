@@ -42,6 +42,16 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from '@/components/ui/alert-dialog';
 
 interface ProfileData {
   name: string;
@@ -85,6 +95,7 @@ export default function Profile() {
   const [languageOpen, setLanguageOpen] = useState(false);
   const [notificationSettingsOpen, setNotificationSettingsOpen] = useState(false);
   const [helpCenterOpen, setHelpCenterOpen] = useState(false);
+  const [signOutDialogOpen, setSignOutDialogOpen] = useState(false);
 
   const handleFileSelect = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
@@ -320,7 +331,7 @@ export default function Profile() {
                 {t('settings.helpCenter')}
               </DropdownMenuItem>
               <DropdownMenuSeparator />
-              <DropdownMenuItem onClick={handleSignOut} className="text-destructive focus:text-destructive">
+              <DropdownMenuItem onClick={() => setSignOutDialogOpen(true)} className="text-destructive focus:text-destructive">
                 <LogOut className="w-4 h-4 mr-2" />
                 {t('auth.signOut')}
               </DropdownMenuItem>
@@ -524,7 +535,7 @@ export default function Profile() {
         <Button 
           variant="ghost" 
           className="w-full text-primary hover:text-primary hover:bg-primary/10"
-          onClick={handleSignOut}
+          onClick={() => setSignOutDialogOpen(true)}
         >
           <LogOut className="w-5 h-5 mr-2" />
           {t('auth.signOut')}
@@ -616,6 +627,23 @@ export default function Profile() {
         open={helpCenterOpen}
         onClose={() => setHelpCenterOpen(false)}
       />
+
+      <AlertDialog open={signOutDialogOpen} onOpenChange={setSignOutDialogOpen}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>{t('auth.signOutConfirmTitle')}</AlertDialogTitle>
+            <AlertDialogDescription>
+              {t('auth.signOutConfirmDesc')}
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>{t('common.cancel')}</AlertDialogCancel>
+            <AlertDialogAction onClick={handleSignOut} className="bg-destructive text-destructive-foreground hover:bg-destructive/90">
+              {t('auth.signOut')}
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 }

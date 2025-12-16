@@ -33,6 +33,8 @@
     "signIn": "Sign In",
     "signUp": "Sign Up",
     "signOut": "Log Out",
+    "signOutConfirmTitle": "Sign out of your account?",
+    "signOutConfirmDesc": "You will need to sign in again to access your profile, listings, and messages.",
     "createAccount": "Create Account",
     "welcomeBack": "Welcome Back",
     "signInToContinue": "Sign in to continue",

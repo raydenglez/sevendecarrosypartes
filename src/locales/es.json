@@ -33,6 +33,8 @@
     "signIn": "Iniciar Sesión",
     "signUp": "Registrarse",
     "signOut": "Cerrar Sesión",
+    "signOutConfirmTitle": "¿Cerrar sesión de tu cuenta?",
+    "signOutConfirmDesc": "Necesitarás iniciar sesión nuevamente para acceder a tu perfil, anuncios y mensajes.",
     "createAccount": "Crear Cuenta",
     "welcomeBack": "Bienvenido de Nuevo",
     "signInToContinue": "Inicia sesión para continuar",
