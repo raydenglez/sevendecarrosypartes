@@ -8,8 +8,6 @@ import {
   MapPin, 
   Calendar,
   MessageSquare,
-  Phone,
-  Mail,
   Loader2,
   Car,
   Wrench,
@@ -85,9 +83,9 @@ export default function SellerProfile() {
       
       setLoading(true);
       
-      // Fetch seller profile
+      // Fetch seller profile from public_profiles view (excludes sensitive data like email/phone)
       const { data: profileData } = await supabase
-        .from('profiles')
+        .from('public_profiles')
         .select('*')
         .eq('id', id)
         .maybeSingle();
@@ -96,11 +94,11 @@ export default function SellerProfile() {
         const transformedSeller: User = {
           id: profileData.id,
           name: profileData.full_name || 'Unknown',
-          email: profileData.email || '',
-          phone: profileData.phone || undefined,
+          email: '', // Not exposed in public view
+          phone: undefined, // Not exposed in public view
           location: {
-            lat: Number(profileData.location_lat) || 0,
-            lng: Number(profileData.location_lng) || 0,
+            lat: 0,
+            lng: 0,
             city: profileData.location_city || '',
             state: profileData.location_state || ''
           },
@@ -183,16 +181,27 @@ export default function SellerProfile() {
           service_rating,
           comment,
           created_at,
-          reviewer:reviewer_id (
-            full_name,
-            avatar_url
-          )
+          reviewer_id
         `)
         .in('listing_id', listingsData?.map(l => l.id) || [])
         .order('created_at', { ascending: false });
 
-      if (reviewsData) {
-        setReviews(reviewsData as any);
+      if (reviewsData && reviewsData.length > 0) {
+        // Fetch reviewer profiles separately from public_profiles view
+        const reviewerIds = [...new Set(reviewsData.map(r => r.reviewer_id))];
+        const { data: reviewerProfiles } = await supabase
+          .from('public_profiles')
+          .select('id, full_name, avatar_url')
+          .in('id', reviewerIds);
+
+        const reviewerMap = new Map(reviewerProfiles?.map(p => [p.id, p]) || []);
+        
+        const reviewsWithReviewers = reviewsData.map(r => ({
+          ...r,
+          reviewer: reviewerMap.get(r.reviewer_id) || { full_name: 'Unknown', avatar_url: null }
+        }));
+        
+        setReviews(reviewsWithReviewers as any);
       }
 
       setLoading(false);
@@ -333,16 +342,6 @@ export default function SellerProfile() {
             <MessageSquare className="w-4 h-4" />
             Message
           </Button>
-          {seller.phone && (
-            <Button variant="outline" size="icon">
-              <Phone className="w-4 h-4" />
-            </Button>
-          )}
-          {seller.email && (
-            <Button variant="outline" size="icon">
-              <Mail className="w-4 h-4" />
-            </Button>
-          )}
         </div>
       </div>
 
