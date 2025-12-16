@@ -57,9 +57,23 @@ export function useNearbyListings(segment: 'vehicles' | 'services', filters?: Se
   const [refreshKey, setRefreshKey] = useState(0);
 
   const requestLocation = useCallback(() => {
+    const fallback = () => {
+      // Default to San Luis, Argentina if location is unavailable or delayed
+      setUserLocation({ lat: -33.3, lng: -66.35 });
+      setLocationDenied(true);
+      setShowLocationModal(true);
+    };
+
     if (navigator.geolocation) {
+      let finished = false;
+      const timeoutId = window.setTimeout(() => {
+        if (!finished) fallback();
+      }, 8000);
+
       navigator.geolocation.getCurrentPosition(
         (position) => {
+          finished = true;
+          window.clearTimeout(timeoutId);
           setUserLocation({
             lat: position.coords.latitude,
             lng: position.coords.longitude,
@@ -68,14 +82,18 @@ export function useNearbyListings(segment: 'vehicles' | 'services', filters?: Se
           setShowLocationModal(false);
         },
         () => {
-          // Default to San Luis, Argentina if location denied
-          setUserLocation({ lat: -33.3, lng: -66.35 });
-          setLocationDenied(true);
-          setShowLocationModal(true);
+          finished = true;
+          window.clearTimeout(timeoutId);
+          fallback();
+        },
+        {
+          enableHighAccuracy: false,
+          timeout: 7000,
+          maximumAge: 5 * 60 * 1000,
         }
       );
     } else {
-      setUserLocation({ lat: -33.3, lng: -66.35 });
+      fallback();
     }
   }, []);
 

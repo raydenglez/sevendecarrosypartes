@@ -4,8 +4,6 @@ import { Bell, MessageSquare, Tag, Search, MapPin, Loader2 } from 'lucide-react'
 import { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useAuth } from '@/hooks/useAuth';
-import { useToast } from '@/hooks/use-toast';
-import { supabase } from '@/integrations/supabase/client';
 
 interface NotificationPreferences {
   new_messages: boolean;
@@ -22,7 +20,6 @@ interface NotificationSettingsSheetProps {
 export function NotificationSettingsSheet({ open, onClose }: NotificationSettingsSheetProps) {
   const { t } = useTranslation();
   const { user } = useAuth();
-  const { toast } = useToast();
   const [loading, setLoading] = useState(true);
   const [preferences, setPreferences] = useState<NotificationPreferences>({
     new_messages: true,
