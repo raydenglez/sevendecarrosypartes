@@ -1,16 +1,26 @@
 import { useNavigate } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import { MessageSquare, Loader2 } from 'lucide-react';
 import { BottomNav } from '@/components/BottomNav';
 import { Button } from '@/components/ui/button';
 import { useAuth } from '@/hooks/useAuth';
 import { useConversations } from '@/hooks/useConversations';
 import { cn } from '@/lib/utils';
-import { formatDistanceToNow } from 'date-fns';
+import { formatDistanceToNow, Locale } from 'date-fns';
+import { es, ptBR } from 'date-fns/locale';
+
+const locales: Record<string, Locale> = {
+  es,
+  pt: ptBR,
+};
 
 export default function Messages() {
   const navigate = useNavigate();
   const { user, loading: authLoading } = useAuth();
   const { conversations, loading: convosLoading } = useConversations();
+  const { t, i18n } = useTranslation();
+
+  const getDateLocale = () => locales[i18n.language] || undefined;
 
   if (authLoading) {
     return (
@@ -26,19 +36,19 @@ export default function Messages() {
       <div className="min-h-screen bg-background pb-24">
         <header className="sticky top-0 z-40 bg-background/95 backdrop-blur-xl safe-top">
           <div className="px-4 py-4">
-            <h1 className="text-xl font-bold text-foreground">Messages</h1>
+            <h1 className="text-xl font-bold text-foreground">{t('messages.title')}</h1>
           </div>
         </header>
         <div className="flex flex-col items-center justify-center px-6 py-20 text-center">
           <div className="w-20 h-20 rounded-full bg-muted flex items-center justify-center mb-4">
             <MessageSquare className="w-10 h-10 text-muted-foreground" />
           </div>
-          <h2 className="text-xl font-bold text-foreground mb-2">Sign in to message sellers</h2>
+          <h2 className="text-xl font-bold text-foreground mb-2">{t('messages.signInPrompt')}</h2>
           <p className="text-muted-foreground mb-6 max-w-[280px]">
-            Create an account to contact sellers and negotiate deals
+            {t('messages.signInPromptDesc')}
           </p>
           <Button variant="carnexo" size="lg" onClick={() => navigate('/auth')}>
-            Sign In or Create Account
+            {t('auth.signInOrCreate')}
           </Button>
         </div>
         <BottomNav />
@@ -50,9 +60,9 @@ export default function Messages() {
     <div className="min-h-screen bg-background pb-24">
       <header className="sticky top-0 z-40 bg-background/95 backdrop-blur-xl safe-top">
         <div className="px-4 py-4">
-          <h1 className="text-xl font-bold text-foreground">Messages</h1>
+          <h1 className="text-xl font-bold text-foreground">{t('messages.title')}</h1>
           <p className="text-sm text-muted-foreground mt-1">
-            {conversations.length} conversation{conversations.length !== 1 ? 's' : ''}
+            {t('messages.conversationCount', { count: conversations.length })}
           </p>
         </div>
       </header>
@@ -92,7 +102,10 @@ export default function Messages() {
                     </h3>
                     {conv.last_message && (
                       <span className="text-xs text-muted-foreground shrink-0">
-                        {formatDistanceToNow(new Date(conv.last_message.created_at), { addSuffix: true })}
+                        {formatDistanceToNow(new Date(conv.last_message.created_at), { 
+                          addSuffix: true,
+                          locale: getDateLocale()
+                        })}
                       </span>
                     )}
                   </div>
@@ -116,9 +129,9 @@ export default function Messages() {
             <div className="w-16 h-16 rounded-full bg-muted flex items-center justify-center mb-4">
               <MessageSquare className="w-8 h-8 text-muted-foreground" />
             </div>
-            <h2 className="text-lg font-bold text-foreground mb-2">No messages yet</h2>
+            <h2 className="text-lg font-bold text-foreground mb-2">{t('messages.noMessages')}</h2>
             <p className="text-muted-foreground max-w-[250px]">
-              Start a conversation by contacting sellers from their listings
+              {t('messages.noMessagesDesc')}
             </p>
           </div>
         )}

@@ -170,14 +170,22 @@
   "messages": {
     "title": "Messages",
     "noMessages": "No messages yet",
-    "noMessagesDesc": "Start a conversation by contacting a seller",
+    "noMessagesDesc": "Start a conversation by contacting sellers from their listings",
     "typeMessage": "Type a message...",
-    "send": "Send"
+    "send": "Send",
+    "signInPrompt": "Sign in to message sellers",
+    "signInPromptDesc": "Create an account to contact sellers and negotiate deals",
+    "conversationCount": "{{count}} conversation",
+    "conversationCount_other": "{{count}} conversations"
   },
   "favorites": {
     "title": "Favorites",
     "noFavorites": "No favorites yet",
-    "noFavoritesDesc": "Save listings you're interested in by tapping the heart icon"
+    "noFavoritesDesc": "Start saving listings you're interested in by tapping the heart icon",
+    "signInPrompt": "Save your favorites",
+    "signInPromptDesc": "Sign in to save listings and access them from any device",
+    "savedCount": "{{count}} saved listing",
+    "savedCount_other": "{{count}} saved listings"
   },
   "map": {
     "title": "Map View",

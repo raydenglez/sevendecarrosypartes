@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import { Heart } from 'lucide-react';
 import { BottomNav } from '@/components/BottomNav';
 import { ListingCard } from '@/components/ListingCard';
@@ -16,6 +17,7 @@ export default function Favorites() {
   const { favoriteIds, loading: favoritesLoading } = useFavoritesContext();
   const [listings, setListings] = useState<Listing[]>([]);
   const [listingsLoading, setListingsLoading] = useState(false);
+  const { t } = useTranslation();
 
   // Fetch listings for favorite IDs
   useEffect(() => {
@@ -76,7 +78,7 @@ export default function Favorites() {
       <div className="min-h-screen bg-background pb-24">
         <header className="sticky top-0 z-40 bg-background/95 backdrop-blur-xl safe-top">
           <div className="px-4 py-4">
-            <h1 className="text-xl font-bold text-foreground">Favorites</h1>
+            <h1 className="text-xl font-bold text-foreground">{t('favorites.title')}</h1>
           </div>
         </header>
         <main className="px-4">
@@ -97,19 +99,19 @@ export default function Favorites() {
       <div className="min-h-screen bg-background pb-24">
         <header className="sticky top-0 z-40 bg-background/95 backdrop-blur-xl safe-top">
           <div className="px-4 py-4">
-            <h1 className="text-xl font-bold text-foreground">Favorites</h1>
+            <h1 className="text-xl font-bold text-foreground">{t('favorites.title')}</h1>
           </div>
         </header>
         <div className="flex flex-col items-center justify-center px-6 py-20 text-center">
           <div className="w-20 h-20 rounded-full bg-muted flex items-center justify-center mb-4">
             <Heart className="w-10 h-10 text-muted-foreground" />
           </div>
-          <h2 className="text-xl font-bold text-foreground mb-2">Save your favorites</h2>
+          <h2 className="text-xl font-bold text-foreground mb-2">{t('favorites.signInPrompt')}</h2>
           <p className="text-muted-foreground mb-6 max-w-[280px]">
-            Sign in to save listings and access them from any device
+            {t('favorites.signInPromptDesc')}
           </p>
           <Button variant="carnexo" size="lg" onClick={() => navigate('/auth')}>
-            Sign In or Create Account
+            {t('auth.signInOrCreate')}
           </Button>
         </div>
         <BottomNav />
@@ -121,9 +123,9 @@ export default function Favorites() {
     <div className="min-h-screen bg-background pb-24">
       <header className="sticky top-0 z-40 bg-background/95 backdrop-blur-xl safe-top">
         <div className="px-4 py-4">
-          <h1 className="text-xl font-bold text-foreground">Favorites</h1>
+          <h1 className="text-xl font-bold text-foreground">{t('favorites.title')}</h1>
           <p className="text-sm text-muted-foreground mt-1">
-            {listings.length} saved listings
+            {t('favorites.savedCount', { count: listings.length })}
           </p>
         </div>
       </header>
@@ -151,9 +153,9 @@ export default function Favorites() {
             <div className="w-16 h-16 rounded-full bg-muted flex items-center justify-center mb-4">
               <Heart className="w-8 h-8 text-muted-foreground" />
             </div>
-            <h2 className="text-lg font-bold text-foreground mb-2">No favorites yet</h2>
+            <h2 className="text-lg font-bold text-foreground mb-2">{t('favorites.noFavorites')}</h2>
             <p className="text-muted-foreground max-w-[250px]">
-              Start saving listings you're interested in by tapping the heart icon
+              {t('favorites.noFavoritesDesc')}
             </p>
           </div>
         )}
