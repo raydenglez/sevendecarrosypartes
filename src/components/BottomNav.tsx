@@ -19,7 +19,7 @@ export function BottomNav() {
 
   return (
     <nav className="fixed bottom-0 left-0 right-0 z-50 bg-card/95 backdrop-blur-xl border-t border-border safe-bottom">
-      <div className="flex items-center justify-around h-16 max-w-lg mx-auto px-2">
+      <div className="flex items-center justify-around h-20 max-w-lg mx-auto px-1">
         {navItems.map((item) => {
           const isActive = location.pathname === item.path;
           const Icon = item.icon;
@@ -29,10 +29,10 @@ export function BottomNav() {
               <NavLink
                 key={item.path}
                 to={item.path}
-                className="flex items-center justify-center -mt-6"
+                className="flex items-center justify-center -mt-6 touch-manipulation"
               >
-                <div className="w-14 h-14 rounded-full bg-gradient-orange shadow-orange flex items-center justify-center transition-transform hover:scale-105 active:scale-95">
-                  <Icon className="w-6 h-6 text-primary-foreground" />
+                <div className="w-16 h-16 rounded-full bg-gradient-orange shadow-orange flex items-center justify-center transition-transform hover:scale-105 active:scale-95">
+                  <Icon className="w-7 h-7 text-primary-foreground" />
                 </div>
               </NavLink>
             );
@@ -42,7 +42,7 @@ export function BottomNav() {
             <NavLink
               key={item.path}
               to={item.path}
-              className="flex flex-col items-center justify-center py-2 px-4 relative group"
+              className="flex flex-col items-center justify-center min-w-[56px] min-h-[56px] py-2 px-3 relative group touch-manipulation"
             >
               <div
                 className={cn(
@@ -51,14 +51,14 @@ export function BottomNav() {
                 )}
               >
                 <div className="relative">
-                  <Icon className={cn('w-5 h-5', isActive && 'text-primary')} />
+                  <Icon className={cn('w-6 h-6', isActive && 'text-primary')} />
                   {item.path === '/messages' && unreadCount > 0 && (
                     <span className="absolute -top-1 -right-1 min-w-[16px] h-4 px-1 rounded-full bg-primary text-[10px] font-bold text-primary-foreground flex items-center justify-center animate-pulse">
                       {unreadCount > 99 ? '99+' : unreadCount}
                     </span>
                   )}
                 </div>
-                <span className="text-[10px] font-medium">{item.label}</span>
+                <span className="text-[11px] font-medium mt-0.5">{item.label}</span>
               </div>
             </NavLink>
           );

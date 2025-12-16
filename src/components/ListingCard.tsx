@@ -68,12 +68,12 @@ export function ListingCard({ listing, variant = 'featured', className, style }:
           )}
           <button 
             className={cn(
-              "absolute top-2 right-2 p-1.5 rounded-full bg-background/30 backdrop-blur-sm transition-all",
+              "absolute top-2 right-2 p-2.5 rounded-full bg-background/30 backdrop-blur-sm transition-all touch-manipulation min-w-[44px] min-h-[44px] flex items-center justify-center",
               favorited ? "text-primary" : "text-foreground hover:bg-background/50"
             )}
             onClick={handleFavoriteClick}
           >
-            <Heart className={cn("w-4 h-4", favorited && "fill-current")} />
+            <Heart className={cn("w-5 h-5", favorited && "fill-current")} />
           </button>
         </div>
         <div className="p-2.5">
@@ -123,7 +123,7 @@ export function ListingCard({ listing, variant = 'featured', className, style }:
             <h3 className="font-semibold text-foreground truncate">{listing.title}</h3>
             <button 
               className={cn(
-                "p-1 transition-colors",
+                "p-2 transition-colors touch-manipulation min-w-[44px] min-h-[44px] flex items-center justify-center -mr-2",
                 favorited ? "text-primary" : "text-muted-foreground hover:text-primary"
               )}
               onClick={handleFavoriteClick}
@@ -195,7 +195,7 @@ export function ListingCard({ listing, variant = 'featured', className, style }:
         )}
         <button 
           className={cn(
-            "absolute top-3 right-3 p-2 rounded-full bg-background/20 backdrop-blur-sm transition-all",
+            "absolute top-3 right-3 p-2.5 rounded-full bg-background/20 backdrop-blur-sm transition-all touch-manipulation min-w-[44px] min-h-[44px] flex items-center justify-center",
             favorited ? "text-primary" : "text-foreground hover:bg-background/40"
           )}
           onClick={handleFavoriteClick}
