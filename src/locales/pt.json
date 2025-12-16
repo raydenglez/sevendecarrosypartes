@@ -371,5 +371,21 @@
     "signedOut": "Você saiu com sucesso.",
     "invalidFileType": "Por favor, envie um arquivo de imagem.",
     "fileTooLarge": "Por favor, envie uma imagem menor que 5MB."
+  },
+  "filters": {
+    "title": "Filtros",
+    "priceRange": "Faixa de Preço",
+    "maxDistance": "Distância Máxima",
+    "minRating": "Avaliação Mínima",
+    "condition": "Condição",
+    "any": "Qualquer",
+    "reset": "Redefinir",
+    "applyFilters": "Aplicar Filtros",
+    "conditions": {
+      "new": "Novo",
+      "likeNew": "Seminovo",
+      "good": "Bom",
+      "fair": "Regular"
+    }
   }
 }
