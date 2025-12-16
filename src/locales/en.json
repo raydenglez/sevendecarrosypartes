@@ -531,5 +531,50 @@
     "description": "The app improves its results with your location. Enable GPS to discover vehicles, parts, and services near you.",
     "enable": "Enable Location",
     "maybeLater": "Maybe Later"
+  },
+  "notificationSettings": {
+    "title": "Notification Settings",
+    "description": "Choose which notifications you'd like to receive",
+    "newMessages": "New Messages",
+    "newMessagesDesc": "Get notified when you receive a new message",
+    "priceDrops": "Price Drops",
+    "priceDropsDesc": "Alerts when favorites drop in price",
+    "searchAlerts": "Search Alerts",
+    "searchAlertsDesc": "New listings matching your searches",
+    "nearbyListings": "Nearby Listings",
+    "nearbyListingsDesc": "New vehicles and services near you"
+  },
+  "helpCenter": {
+    "title": "Help Center",
+    "description": "Find answers to common questions",
+    "faqTitle": "Frequently Asked Questions",
+    "needMoreHelp": "Need More Help?",
+    "emailSupport": "Email Support",
+    "faq": {
+      "howToPublish": {
+        "question": "How do I publish a listing?",
+        "answer": "Tap the '+' button in the bottom navigation, select your listing type (vehicle, part, or service), fill in the details, add photos, and tap 'Publish Listing'."
+      },
+      "howToContact": {
+        "question": "How do I contact a seller?",
+        "answer": "Open any listing and tap the 'Message' button to start a conversation with the seller. You'll need to be signed in to send messages."
+      },
+      "howToFavorite": {
+        "question": "How do I save listings to favorites?",
+        "answer": "Tap the heart icon on any listing card to save it to your favorites. Access your saved listings from the 'Favorites' tab in the bottom navigation."
+      },
+      "howToEditListing": {
+        "question": "How do I edit or delete my listing?",
+        "answer": "Go to your listing detail page, tap the edit icon in the header. From there you can update details or delete the listing entirely."
+      },
+      "howToDeleteAccount": {
+        "question": "How do I delete my account?",
+        "answer": "Go to Profile → Security & Privacy → Delete Account. You'll need to type 'DELETE' to confirm. This action is permanent and cannot be undone."
+      },
+      "safetyTips": {
+        "question": "What are some safety tips for buying/selling?",
+        "answer": "Meet in public places, bring someone with you, inspect items before paying, use secure payment methods, and trust your instincts. Report suspicious listings."
+      }
+    }
   }
 }
