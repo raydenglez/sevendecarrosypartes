@@ -412,18 +412,18 @@ export const userStats = {
 };
 
 export const vehicleCategories = [
-  { id: 'all', label: 'All', icon: 'LayoutGrid' },
-  { id: 'vehicles', label: 'Vehicles', icon: 'Car' },
-  { id: 'parts', label: 'Parts', icon: 'Settings' },
+  { id: 'all', labelKey: 'categories.all', icon: 'LayoutGrid' },
+  { id: 'vehicles', labelKey: 'categories.vehicles', icon: 'Car' },
+  { id: 'parts', labelKey: 'categories.parts', icon: 'Settings' },
 ];
 
 export const serviceCategories = [
-  { id: 'all', label: 'All', icon: 'LayoutGrid' },
-  { id: 'maintenance', label: 'Maintenance', icon: 'Wrench' },
-  { id: 'bodywork', label: 'Bodywork', icon: 'Paintbrush' },
-  { id: 'car_wash', label: 'Car Wash', icon: 'Droplets' },
-  { id: 'tires', label: 'Tires', icon: 'Circle' },
-  { id: 'electrical', label: 'Electrical', icon: 'Zap' },
+  { id: 'all', labelKey: 'categories.all', icon: 'LayoutGrid' },
+  { id: 'maintenance', labelKey: 'categories.maintenance', icon: 'Wrench' },
+  { id: 'bodywork', labelKey: 'categories.bodywork', icon: 'Paintbrush' },
+  { id: 'car_wash', labelKey: 'categories.carWash', icon: 'Droplets' },
+  { id: 'tires', labelKey: 'categories.tires', icon: 'Circle' },
+  { id: 'electrical', labelKey: 'categories.electrical', icon: 'Zap' },
 ];
 
 export const mockNotifications = [

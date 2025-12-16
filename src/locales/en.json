@@ -47,14 +47,26 @@
     "continueWithApple": "Continue with Apple"
   },
   "home": {
-    "search": "Search vehicles, parts, services...",
-    "featuredVehicles": "Featured Vehicles",
-    "featuredServices": "Featured Services",
+    "searchPlaceholder": "Search Mustang, tires, bikes...",
+    "featuredNearYou": "Featured Near You",
     "justArrived": "Just Arrived",
-    "nearYou": "Near You",
+    "noFeaturedListings": "No featured listings nearby",
+    "noListingsNearby": "No listings found nearby",
+    "seenAllListings": "You've seen all listings",
+    "segments": {
+      "vehiclesParts": "Vehicles & Parts",
+      "serviceProviders": "Service Providers"
+    }
+  },
+  "categories": {
+    "all": "All",
     "vehicles": "Vehicles",
     "parts": "Parts",
-    "services": "Services"
+    "maintenance": "Maintenance",
+    "bodywork": "Bodywork",
+    "carWash": "Car Wash",
+    "tires": "Tires",
+    "electrical": "Electrical"
   },
   "profile": {
     "myProfile": "My Profile",

@@ -1,3 +1,4 @@
+import { useTranslation } from 'react-i18next';
 import { cn } from '@/lib/utils';
 import { 
   LayoutGrid, 
@@ -23,7 +24,7 @@ const iconMap: Record<string, React.ElementType> = {
 
 interface Category {
   id: string;
-  label: string;
+  labelKey: string;
   icon: string;
 }
 
@@ -40,6 +41,8 @@ export function CategoryFilter({
   onSelect,
   className 
 }: CategoryFilterProps) {
+  const { t } = useTranslation();
+  
   return (
     <div className={cn("flex gap-2 overflow-x-auto hide-scrollbar pb-1", className)}>
       {categories.map((category) => {
@@ -58,7 +61,7 @@ export function CategoryFilter({
             )}
           >
             <Icon className="w-4 h-4" />
-            <span>{category.label}</span>
+            <span>{t(category.labelKey)}</span>
           </button>
         );
       })}

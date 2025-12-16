@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Search, SlidersHorizontal } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
@@ -12,11 +13,12 @@ interface SearchBarProps {
 }
 
 export function SearchBar({ 
-  placeholder = "Search Mustang, tires, bikes...", 
+  placeholder, 
   onSearch,
   onFilter,
   className 
 }: SearchBarProps) {
+  const { t } = useTranslation();
   const [query, setQuery] = useState('');
 
   const handleSearch = (value: string) => {
@@ -30,7 +32,7 @@ export function SearchBar({
         <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
         <Input
           type="text"
-          placeholder={placeholder}
+          placeholder={placeholder || t('home.searchPlaceholder')}
           value={query}
           onChange={(e) => handleSearch(e.target.value)}
           className="pl-11 pr-4 h-12 bg-muted/50"
