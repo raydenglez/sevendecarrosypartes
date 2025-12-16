@@ -154,6 +154,7 @@ export function SecurityPrivacySheet({ open, onClose }: SecurityPrivacySheetProp
       <SheetContent side="bottom" className="h-[85vh] rounded-t-3xl">
         <SheetHeader className="pb-4">
           <SheetTitle className="text-xl">Security & Privacy</SheetTitle>
+          <p className="text-sm text-muted-foreground">Password, privacy settings and delete your account</p>
         </SheetHeader>
 
         <div className="space-y-4 overflow-y-auto">
