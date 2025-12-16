@@ -2,14 +2,13 @@ import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { z } from 'zod';
-import { Eye, EyeOff, Mail, Lock, User, ArrowLeft, MailCheck, RefreshCw } from 'lucide-react';
+import { Eye, EyeOff, Mail, Lock, User, ArrowLeft, MailCheck, RefreshCw, Sparkles } from 'lucide-react';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { useAuth } from '@/hooks/useAuth';
 import { useToast } from '@/hooks/use-toast';
-import logo from '@/assets/logo.png';
 
 export default function Auth() {
   const navigate = useNavigate();
@@ -60,43 +59,17 @@ export default function Auth() {
   // Loading skeleton while checking auth state
   if (authLoading) {
     return (
-      <div className="min-h-screen bg-background flex flex-col">
-        <header className="px-4 pt-4 safe-top">
-          <Skeleton className="w-10 h-10 rounded-full" />
-        </header>
-
-        <div className="flex-1 px-6 py-8 flex flex-col">
+      <div className="min-h-screen bg-background flex flex-col items-center justify-center">
+        <div className="w-full max-w-md px-6">
           <div className="flex flex-col items-center mb-8">
-            <Skeleton className="h-16 w-16 rounded-2xl mb-4" />
+            <Skeleton className="h-20 w-20 rounded-2xl mb-6" />
             <Skeleton className="h-8 w-48 mb-2" />
             <Skeleton className="h-4 w-32" />
           </div>
-
-          <div className="space-y-4 animate-fade-in">
-            <div className="space-y-2">
-              <Skeleton className="h-4 w-16" />
-              <Skeleton className="h-11 w-full rounded-lg" />
-            </div>
-            <div className="space-y-2">
-              <Skeleton className="h-4 w-20" />
-              <Skeleton className="h-11 w-full rounded-lg" />
-            </div>
-            <Skeleton className="h-12 w-full rounded-lg mt-6" />
-          </div>
-
-          <div className="flex items-center gap-4 my-6">
-            <Skeleton className="flex-1 h-px" />
-            <Skeleton className="h-4 w-28" />
-            <Skeleton className="flex-1 h-px" />
-          </div>
-
-          <div className="flex gap-3">
-            <Skeleton className="flex-1 h-12 rounded-lg" />
-            <Skeleton className="flex-1 h-12 rounded-lg" />
-          </div>
-
-          <div className="mt-6 flex justify-center">
-            <Skeleton className="h-4 w-48" />
+          <div className="space-y-4">
+            <Skeleton className="h-12 w-full rounded-xl" />
+            <Skeleton className="h-12 w-full rounded-xl" />
+            <Skeleton className="h-12 w-full rounded-xl mt-4" />
           </div>
         </div>
       </div>
@@ -106,7 +79,6 @@ export default function Auth() {
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setFormData(prev => ({ ...prev, [name]: value }));
-    // Clear error when user types
     if (errors[name]) {
       setErrors(prev => ({ ...prev, [name]: '' }));
     }
@@ -193,7 +165,6 @@ export default function Auth() {
               variant: "destructive",
             });
           } else if (error.message.includes('Email not confirmed')) {
-            // User exists but hasn't confirmed email
             setPendingEmail(formData.email);
             setConfirmationPending(true);
           } else {
@@ -240,11 +211,9 @@ export default function Auth() {
             });
           }
         } else if (isPending) {
-          // Email confirmation required
           setPendingEmail(formData.email);
           setConfirmationPending(true);
         } else {
-          // Auto-confirm is enabled, user is logged in
           toast({
             title: t('auth.toast.accountCreated'),
             description: t('auth.toast.welcomeToCarNexo'),
@@ -263,37 +232,52 @@ export default function Auth() {
     }
   };
 
+  // Background component with gradient
+  const AuthBackground = ({ children }: { children: React.ReactNode }) => (
+    <div className="min-h-screen relative overflow-hidden bg-background">
+      {/* Gradient orbs */}
+      <div className="absolute top-[-20%] left-[-10%] w-[500px] h-[500px] rounded-full bg-primary/20 blur-[120px] animate-pulse" />
+      <div className="absolute bottom-[-20%] right-[-10%] w-[400px] h-[400px] rounded-full bg-secondary/20 blur-[100px] animate-pulse" style={{ animationDelay: '1s' }} />
+      <div className="absolute top-[40%] right-[20%] w-[200px] h-[200px] rounded-full bg-primary/10 blur-[80px] animate-pulse" style={{ animationDelay: '2s' }} />
+      
+      {/* Content */}
+      <div className="relative z-10 min-h-screen flex flex-col">
+        {children}
+      </div>
+    </div>
+  );
+
   // Email Confirmation Pending Screen
   if (confirmationPending) {
     return (
-      <div className="min-h-screen bg-background flex flex-col">
+      <AuthBackground>
         <header className="px-4 pt-4 safe-top">
           <button 
             onClick={handleBackToSignup}
-            className="w-10 h-10 flex items-center justify-center text-foreground"
+            className="w-10 h-10 flex items-center justify-center text-foreground hover:bg-card/50 rounded-full transition-colors"
           >
             <ArrowLeft className="w-6 h-6" />
           </button>
         </header>
 
         <div className="flex-1 px-6 py-8 flex flex-col items-center justify-center">
-          <div className="w-20 h-20 rounded-full bg-secondary/15 flex items-center justify-center mb-6">
-            <MailCheck className="w-10 h-10 text-secondary" />
+          <div className="w-24 h-24 rounded-3xl bg-gradient-to-br from-secondary/30 to-secondary/10 flex items-center justify-center mb-8 shadow-blue">
+            <MailCheck className="w-12 h-12 text-secondary" />
           </div>
           
-          <h1 className="text-2xl font-bold text-foreground text-center mb-2">
+          <h1 className="text-3xl font-bold text-foreground text-center mb-3">
             {t('auth.checkInbox')}
           </h1>
           
-          <p className="text-muted-foreground text-center mb-2">
+          <p className="text-muted-foreground text-center mb-2 text-lg">
             {t('auth.confirmationSent')}
           </p>
           
-          <p className="text-foreground font-medium text-center mb-6">
+          <p className="text-primary font-semibold text-center mb-8 text-lg">
             {pendingEmail}
           </p>
           
-          <div className="bg-muted/50 rounded-xl p-4 mb-6 w-full max-w-sm">
+          <div className="bg-card/60 backdrop-blur-xl rounded-2xl p-5 mb-8 w-full max-w-sm border border-border/50">
             <p className="text-sm text-muted-foreground text-center">
               {t('auth.checkSpamFolder')}
             </p>
@@ -303,16 +287,16 @@ export default function Auth() {
             variant="outline"
             onClick={handleResendEmail}
             disabled={resendLoading}
-            className="w-full max-w-sm mb-3"
+            className="w-full max-w-sm mb-4 h-12 rounded-xl border-border/50 bg-card/30 hover:bg-card/50"
           >
             {resendLoading ? (
               <>
-                <RefreshCw className="w-4 h-4 mr-2 animate-spin" />
+                <RefreshCw className="w-5 h-5 mr-2 animate-spin" />
                 {t('auth.resending')}
               </>
             ) : (
               <>
-                <RefreshCw className="w-4 h-4 mr-2" />
+                <RefreshCw className="w-5 h-5 mr-2" />
                 {t('auth.resendEmail')}
               </>
             )}
@@ -321,46 +305,46 @@ export default function Auth() {
           <Button
             variant="ghost"
             onClick={handleBackToSignup}
-            className="text-muted-foreground"
+            className="text-muted-foreground hover:text-foreground"
           >
             {t('auth.useDifferentEmail')}
           </Button>
         </div>
-      </div>
+      </AuthBackground>
     );
   }
 
   // Password Reset Email Sent Screen
   if (resetEmailSent) {
     return (
-      <div className="min-h-screen bg-background flex flex-col">
+      <AuthBackground>
         <header className="px-4 pt-4 safe-top">
           <button 
             onClick={handleBackToSignup}
-            className="w-10 h-10 flex items-center justify-center text-foreground"
+            className="w-10 h-10 flex items-center justify-center text-foreground hover:bg-card/50 rounded-full transition-colors"
           >
             <ArrowLeft className="w-6 h-6" />
           </button>
         </header>
 
         <div className="flex-1 px-6 py-8 flex flex-col items-center justify-center">
-          <div className="w-20 h-20 rounded-full bg-secondary/15 flex items-center justify-center mb-6">
-            <MailCheck className="w-10 h-10 text-secondary" />
+          <div className="w-24 h-24 rounded-3xl bg-gradient-to-br from-secondary/30 to-secondary/10 flex items-center justify-center mb-8 shadow-blue">
+            <MailCheck className="w-12 h-12 text-secondary" />
           </div>
           
-          <h1 className="text-2xl font-bold text-foreground text-center mb-2">
+          <h1 className="text-3xl font-bold text-foreground text-center mb-3">
             {t('auth.checkInbox')}
           </h1>
           
-          <p className="text-muted-foreground text-center mb-2">
+          <p className="text-muted-foreground text-center mb-2 text-lg">
             {t('auth.resetSent')}
           </p>
           
-          <p className="text-foreground font-medium text-center mb-6">
+          <p className="text-primary font-semibold text-center mb-8 text-lg">
             {pendingEmail}
           </p>
           
-          <div className="bg-muted/50 rounded-xl p-4 mb-6 w-full max-w-sm">
+          <div className="bg-card/60 backdrop-blur-xl rounded-2xl p-5 mb-8 w-full max-w-sm border border-border/50">
             <p className="text-sm text-muted-foreground text-center">
               {t('auth.checkSpamFolderReset')}
             </p>
@@ -369,321 +353,322 @@ export default function Auth() {
           <Button
             variant="outline"
             onClick={handleBackToSignup}
-            className="w-full max-w-sm"
+            className="w-full max-w-sm h-12 rounded-xl border-border/50 bg-card/30 hover:bg-card/50"
           >
             {t('auth.backToSignIn')}
           </Button>
         </div>
-      </div>
+      </AuthBackground>
     );
   }
 
   // Forgot Password Form
   if (showForgotPassword) {
     return (
-      <div className="min-h-screen bg-background flex flex-col">
+      <AuthBackground>
         <header className="px-4 pt-4 safe-top">
           <button 
             onClick={() => setShowForgotPassword(false)}
-            className="w-10 h-10 flex items-center justify-center text-foreground"
+            className="w-10 h-10 flex items-center justify-center text-foreground hover:bg-card/50 rounded-full transition-colors"
           >
             <ArrowLeft className="w-6 h-6" />
           </button>
         </header>
 
-        <div className="flex-1 px-6 py-8 flex flex-col">
-          <div className="flex flex-col items-center mb-8">
-            <div className="w-16 h-16 rounded-full bg-secondary/15 flex items-center justify-center mb-4">
-              <Mail className="w-8 h-8 text-secondary" />
-            </div>
-            <h1 className="text-2xl font-bold text-foreground">
-              {t('auth.forgotPasswordTitle')}
-            </h1>
-            <p className="text-muted-foreground text-sm mt-1 text-center">
-              {t('auth.forgotPasswordDesc')}
-            </p>
-          </div>
-
-          <form onSubmit={handleForgotPassword} className="space-y-4 animate-fade-in">
-            <div className="space-y-2">
-              <Label htmlFor="email">{t('auth.email')}</Label>
-              <div className="relative">
-                <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
-                <Input
-                  id="email"
-                  name="email"
-                  type="email"
-                  placeholder={t('auth.emailPlaceholder')}
-                  value={formData.email}
-                  onChange={handleChange}
-                  className="pl-10"
-                />
+        <div className="flex-1 px-6 py-8 flex flex-col items-center justify-center">
+          <div className="w-full max-w-sm">
+            <div className="flex flex-col items-center mb-10">
+              <div className="w-20 h-20 rounded-2xl bg-gradient-to-br from-secondary/30 to-secondary/10 flex items-center justify-center mb-6 shadow-blue">
+                <Mail className="w-10 h-10 text-secondary" />
               </div>
-              {errors.email && (
-                <p className="text-sm text-destructive">{errors.email}</p>
-              )}
+              <h1 className="text-3xl font-bold text-foreground text-center">
+                {t('auth.forgotPasswordTitle')}
+              </h1>
+              <p className="text-muted-foreground text-center mt-2">
+                {t('auth.forgotPasswordDesc')}
+              </p>
             </div>
 
-            <Button
-              type="submit"
-              variant="carnexo"
-              size="lg"
-              className="w-full mt-6"
-              disabled={loading}
-            >
-              {loading ? t('auth.sending') : t('auth.sendResetLink')}
-            </Button>
-          </form>
+            <form onSubmit={handleForgotPassword} className="space-y-5">
+              <div className="space-y-2">
+                <Label htmlFor="email" className="text-sm font-medium">{t('auth.email')}</Label>
+                <div className="relative group">
+                  <Mail className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground group-focus-within:text-primary transition-colors" />
+                  <Input
+                    id="email"
+                    name="email"
+                    type="email"
+                    placeholder={t('auth.emailPlaceholder')}
+                    value={formData.email}
+                    onChange={handleChange}
+                    className="pl-12 h-12 rounded-xl bg-card/50 border-border/50 focus:border-primary focus:bg-card/80 transition-all"
+                  />
+                </div>
+                {errors.email && (
+                  <p className="text-sm text-destructive">{errors.email}</p>
+                )}
+              </div>
 
-          <div className="mt-6 text-center">
-            <button
-              type="button"
-              onClick={() => setShowForgotPassword(false)}
-              className="text-muted-foreground text-sm"
-            >
-              {t('auth.backToSignIn')}
-            </button>
+              <Button
+                type="submit"
+                variant="carnexo"
+                size="lg"
+                className="w-full h-12 rounded-xl shadow-orange"
+                disabled={loading}
+              >
+                {loading ? t('auth.sending') : t('auth.sendResetLink')}
+              </Button>
+            </form>
+
+            <div className="mt-8 text-center">
+              <button
+                type="button"
+                onClick={() => setShowForgotPassword(false)}
+                className="text-muted-foreground hover:text-foreground text-sm transition-colors"
+              >
+                {t('auth.backToSignIn')}
+              </button>
+            </div>
           </div>
         </div>
-      </div>
+      </AuthBackground>
     );
   }
 
   return (
-    <div className="min-h-screen bg-background flex flex-col">
+    <AuthBackground>
       {/* Header */}
       <header className="px-4 pt-4 safe-top">
         <button 
           onClick={() => navigate('/')}
-          className="w-10 h-10 flex items-center justify-center text-foreground"
+          className="w-10 h-10 flex items-center justify-center text-foreground hover:bg-card/50 rounded-full transition-colors"
         >
           <ArrowLeft className="w-6 h-6" />
         </button>
       </header>
 
       {/* Content */}
-      <div className="flex-1 px-6 py-8 flex flex-col">
-        {/* Logo & Title */}
-        <div className="flex flex-col items-center mb-8">
-          <img src={logo} alt="CarNexo" className="h-16 w-16 rounded-2xl mb-4" />
-          <h1 className="text-2xl font-bold text-foreground">
-            {isLogin ? t('auth.welcomeBack') : t('auth.createAccount')}
-          </h1>
-          <p className="text-muted-foreground text-sm mt-1">
-            {isLogin ? t('auth.signInToContinue') : t('auth.joinCarNexo')}
-          </p>
-        </div>
-
-        {/* Form */}
-        <form onSubmit={handleSubmit} className="space-y-4 animate-fade-in">
-          {!isLogin && (
-            <div className="space-y-2">
-              <Label htmlFor="fullName">{t('auth.fullName')}</Label>
-              <div className="relative">
-                <User className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
-                <Input
-                  id="fullName"
-                  name="fullName"
-                  type="text"
-                  placeholder={t('auth.fullNamePlaceholder')}
-                  value={formData.fullName}
-                  onChange={handleChange}
-                  className="pl-10"
-                />
+      <div className="flex-1 px-6 py-8 flex flex-col items-center justify-center">
+        <div className="w-full max-w-sm">
+          {/* Logo & Title */}
+          <div className="flex flex-col items-center mb-10">
+            <div className="relative mb-6">
+              <div className="w-20 h-20 rounded-2xl bg-gradient-to-br from-primary to-primary/70 flex items-center justify-center shadow-orange">
+                <span className="text-3xl font-bold text-primary-foreground">C</span>
               </div>
-              {errors.fullName && (
-                <p className="text-sm text-destructive">{errors.fullName}</p>
-              )}
+              <div className="absolute -bottom-1 -right-1 w-7 h-7 rounded-lg bg-secondary flex items-center justify-center shadow-blue">
+                <Sparkles className="w-4 h-4 text-secondary-foreground" />
+              </div>
             </div>
-          )}
-
-          <div className="space-y-2">
-            <Label htmlFor="email">{t('auth.email')}</Label>
-            <div className="relative">
-              <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
-              <Input
-                id="email"
-                name="email"
-                type="email"
-                placeholder={t('auth.emailPlaceholder')}
-                value={formData.email}
-                onChange={handleChange}
-                className="pl-10"
-              />
-            </div>
-            {errors.email && (
-              <p className="text-sm text-destructive">{errors.email}</p>
-            )}
+            <h1 className="text-3xl font-bold text-foreground">
+              {isLogin ? t('auth.welcomeBack') : t('auth.createAccount')}
+            </h1>
+            <p className="text-muted-foreground mt-2">
+              {isLogin ? t('auth.signInToContinue') : t('auth.joinCarNexo')}
+            </p>
           </div>
 
-          <div className="space-y-2">
-            <Label htmlFor="password">{t('auth.password')}</Label>
-            <div className="relative">
-              <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
-              <Input
-                id="password"
-                name="password"
-                type={showPassword ? 'text' : 'password'}
-                placeholder="••••••••"
-                value={formData.password}
-                onChange={handleChange}
-                className="pl-10 pr-10"
-              />
-              <button
-                type="button"
-                onClick={() => setShowPassword(!showPassword)}
-                className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground"
+          {/* Form Card */}
+          <div className="bg-card/40 backdrop-blur-xl rounded-3xl p-6 border border-border/50 shadow-elevated">
+            <form onSubmit={handleSubmit} className="space-y-4">
+              {!isLogin && (
+                <div className="space-y-2">
+                  <Label htmlFor="fullName" className="text-sm font-medium">{t('auth.fullName')}</Label>
+                  <div className="relative group">
+                    <User className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground group-focus-within:text-primary transition-colors" />
+                    <Input
+                      id="fullName"
+                      name="fullName"
+                      type="text"
+                      placeholder={t('auth.fullNamePlaceholder')}
+                      value={formData.fullName}
+                      onChange={handleChange}
+                      className="pl-12 h-12 rounded-xl bg-background/50 border-border/50 focus:border-primary focus:bg-background/80 transition-all"
+                    />
+                  </div>
+                  {errors.fullName && (
+                    <p className="text-sm text-destructive">{errors.fullName}</p>
+                  )}
+                </div>
+              )}
+
+              <div className="space-y-2">
+                <Label htmlFor="email" className="text-sm font-medium">{t('auth.email')}</Label>
+                <div className="relative group">
+                  <Mail className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground group-focus-within:text-primary transition-colors" />
+                  <Input
+                    id="email"
+                    name="email"
+                    type="email"
+                    placeholder={t('auth.emailPlaceholder')}
+                    value={formData.email}
+                    onChange={handleChange}
+                    className="pl-12 h-12 rounded-xl bg-background/50 border-border/50 focus:border-primary focus:bg-background/80 transition-all"
+                  />
+                </div>
+                {errors.email && (
+                  <p className="text-sm text-destructive">{errors.email}</p>
+                )}
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="password" className="text-sm font-medium">{t('auth.password')}</Label>
+                <div className="relative group">
+                  <Lock className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground group-focus-within:text-primary transition-colors" />
+                  <Input
+                    id="password"
+                    name="password"
+                    type={showPassword ? 'text' : 'password'}
+                    placeholder="••••••••"
+                    value={formData.password}
+                    onChange={handleChange}
+                    className="pl-12 pr-12 h-12 rounded-xl bg-background/50 border-border/50 focus:border-primary focus:bg-background/80 transition-all"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setShowPassword(!showPassword)}
+                    className="absolute right-4 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors"
+                  >
+                    {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
+                  </button>
+                </div>
+                {errors.password && (
+                  <p className="text-sm text-destructive">{errors.password}</p>
+                )}
+                {isLogin && (
+                  <button
+                    type="button"
+                    onClick={() => setShowForgotPassword(true)}
+                    className="text-sm text-primary hover:text-primary/80 transition-colors mt-1"
+                  >
+                    {t('auth.forgotPassword')}
+                  </button>
+                )}
+              </div>
+
+              {!isLogin && (
+                <div className="space-y-2">
+                  <Label htmlFor="confirmPassword" className="text-sm font-medium">{t('auth.confirmPassword')}</Label>
+                  <div className="relative group">
+                    <Lock className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground group-focus-within:text-primary transition-colors" />
+                    <Input
+                      id="confirmPassword"
+                      name="confirmPassword"
+                      type={showPassword ? 'text' : 'password'}
+                      placeholder="••••••••"
+                      value={formData.confirmPassword}
+                      onChange={handleChange}
+                      className="pl-12 h-12 rounded-xl bg-background/50 border-border/50 focus:border-primary focus:bg-background/80 transition-all"
+                    />
+                  </div>
+                  {errors.confirmPassword && (
+                    <p className="text-sm text-destructive">{errors.confirmPassword}</p>
+                  )}
+                </div>
+              )}
+
+              <Button
+                type="submit"
+                variant="carnexo"
+                size="lg"
+                className="w-full h-12 rounded-xl shadow-orange mt-2"
+                disabled={loading || oauthLoading !== null}
               >
-                {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
-              </button>
+                {loading ? t('auth.pleaseWait') : isLogin ? t('auth.signIn') : t('auth.createAccount')}
+              </Button>
+            </form>
+
+            {/* Divider */}
+            <div className="flex items-center gap-4 my-6">
+              <div className="flex-1 h-px bg-border/50" />
+              <span className="text-muted-foreground text-xs uppercase tracking-wider">{t('auth.orContinueWith')}</span>
+              <div className="flex-1 h-px bg-border/50" />
             </div>
-            {errors.password && (
-              <p className="text-sm text-destructive">{errors.password}</p>
-            )}
-            {isLogin && (
-              <button
+
+            {/* Social Login Buttons */}
+            <div className="flex gap-3">
+              <Button
                 type="button"
-                onClick={() => setShowForgotPassword(true)}
-                className="text-sm text-primary hover:underline mt-1"
+                variant="outline"
+                size="lg"
+                className="flex-1 h-12 rounded-xl border-border/50 bg-background/30 hover:bg-background/50 transition-all"
+                disabled={loading || oauthLoading !== null}
+                onClick={async () => {
+                  setOauthLoading('google');
+                  const { error } = await signInWithOAuth('google');
+                  if (error) {
+                    toast({
+                      title: t('auth.toast.loginFailed'),
+                      description: error.message,
+                      variant: "destructive",
+                    });
+                    setOauthLoading(null);
+                  }
+                }}
               >
-                {t('auth.forgotPassword')}
-              </button>
-            )}
+                {oauthLoading === 'google' ? (
+                  <RefreshCw className="w-5 h-5 animate-spin" />
+                ) : (
+                  <svg className="w-5 h-5" viewBox="0 0 24 24">
+                    <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" />
+                    <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" />
+                    <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" />
+                    <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" />
+                  </svg>
+                )}
+                <span className="ml-2 font-medium">Google</span>
+              </Button>
+
+              <Button
+                type="button"
+                variant="outline"
+                size="lg"
+                className="flex-1 h-12 rounded-xl border-border/50 bg-background/30 hover:bg-background/50 transition-all"
+                disabled={loading || oauthLoading !== null}
+                onClick={async () => {
+                  setOauthLoading('apple');
+                  const { error } = await signInWithOAuth('apple');
+                  if (error) {
+                    toast({
+                      title: t('auth.toast.loginFailed'),
+                      description: error.message,
+                      variant: "destructive",
+                    });
+                    setOauthLoading(null);
+                  }
+                }}
+              >
+                {oauthLoading === 'apple' ? (
+                  <RefreshCw className="w-5 h-5 animate-spin" />
+                ) : (
+                  <svg className="w-5 h-5" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M17.05 20.28c-.98.95-2.05.8-3.08.35-1.09-.46-2.09-.48-3.24 0-1.44.62-2.2.44-3.06-.35C2.79 15.25 3.51 7.59 9.05 7.31c1.35.07 2.29.74 3.08.8 1.18-.24 2.31-.93 3.57-.84 1.51.12 2.65.72 3.4 1.8-3.12 1.87-2.38 5.98.48 7.13-.57 1.5-1.31 2.99-2.54 4.09l.01-.01zM12.03 7.25c-.15-2.23 1.66-4.07 3.74-4.25.29 2.58-2.34 4.5-3.74 4.25z"/>
+                  </svg>
+                )}
+                <span className="ml-2 font-medium">Apple</span>
+              </Button>
+            </div>
           </div>
 
-          {!isLogin && (
-            <div className="space-y-2">
-              <Label htmlFor="confirmPassword">{t('auth.confirmPassword')}</Label>
-              <div className="relative">
-                <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
-                <Input
-                  id="confirmPassword"
-                  name="confirmPassword"
-                  type={showPassword ? 'text' : 'password'}
-                  placeholder="••••••••"
-                  value={formData.confirmPassword}
-                  onChange={handleChange}
-                  className="pl-10"
-                />
-              </div>
-              {errors.confirmPassword && (
-                <p className="text-sm text-destructive">{errors.confirmPassword}</p>
-              )}
-            </div>
-          )}
-
-          <Button
-            type="submit"
-            variant="carnexo"
-            size="lg"
-            className="w-full mt-6"
-            disabled={loading || oauthLoading !== null}
-          >
-            {loading ? t('auth.pleaseWait') : isLogin ? t('auth.signIn') : t('auth.createAccount')}
-          </Button>
-        </form>
-
-        {/* Divider */}
-        <div className="flex items-center gap-4 my-6">
-          <div className="flex-1 h-px bg-border" />
-          <span className="text-muted-foreground text-sm">{t('auth.orContinueWith')}</span>
-          <div className="flex-1 h-px bg-border" />
-        </div>
-
-        {/* Social Login Buttons */}
-        <div className="flex gap-3">
-          <Button
-            type="button"
-            variant="outline"
-            size="lg"
-            className="flex-1"
-            disabled={loading || oauthLoading !== null}
-            onClick={async () => {
-              setOauthLoading('google');
-              const { error } = await signInWithOAuth('google');
-              if (error) {
-                toast({
-                  title: t('auth.toast.loginFailed'),
-                  description: error.message,
-                  variant: "destructive",
-                });
-                setOauthLoading(null);
-              }
-            }}
-          >
-            {oauthLoading === 'google' ? (
-              <RefreshCw className="w-5 h-5 animate-spin" />
-            ) : (
-              <svg className="w-5 h-5" viewBox="0 0 24 24">
-                <path
-                  fill="currentColor"
-                  d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"
-                />
-                <path
-                  fill="currentColor"
-                  d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"
-                />
-                <path
-                  fill="currentColor"
-                  d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"
-                />
-                <path
-                  fill="currentColor"
-                  d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"
-                />
-              </svg>
-            )}
-            <span className="ml-2">Google</span>
-          </Button>
-
-          <Button
-            type="button"
-            variant="outline"
-            size="lg"
-            className="flex-1"
-            disabled={loading || oauthLoading !== null}
-            onClick={async () => {
-              setOauthLoading('apple');
-              const { error } = await signInWithOAuth('apple');
-              if (error) {
-                toast({
-                  title: t('auth.toast.loginFailed'),
-                  description: error.message,
-                  variant: "destructive",
-                });
-                setOauthLoading(null);
-              }
-            }}
-          >
-            {oauthLoading === 'apple' ? (
-              <RefreshCw className="w-5 h-5 animate-spin" />
-            ) : (
-              <svg className="w-5 h-5" viewBox="0 0 24 24" fill="currentColor">
-                <path d="M17.05 20.28c-.98.95-2.05.8-3.08.35-1.09-.46-2.09-.48-3.24 0-1.44.62-2.2.44-3.06-.35C2.79 15.25 3.51 7.59 9.05 7.31c1.35.07 2.29.74 3.08.8 1.18-.24 2.31-.93 3.57-.84 1.51.12 2.65.72 3.4 1.8-3.12 1.87-2.38 5.98.48 7.13-.57 1.5-1.31 2.99-2.54 4.09l.01-.01zM12.03 7.25c-.15-2.23 1.66-4.07 3.74-4.25.29 2.58-2.34 4.5-3.74 4.25z"/>
-              </svg>
-            )}
-            <span className="ml-2">Apple</span>
-          </Button>
-        </div>
-
-        {/* Toggle */}
-        <div className="mt-6 text-center">
-          <p className="text-muted-foreground text-sm">
-            {isLogin ? t('auth.dontHaveAccount') : t('auth.alreadyHaveAccount')}
-            <button
-              type="button"
-              onClick={() => {
-                setIsLogin(!isLogin);
-                setErrors({});
-                setFormData({ fullName: '', email: '', password: '', confirmPassword: '' });
-              }}
-              className="text-primary font-semibold ml-1"
-            >
-              {isLogin ? t('auth.signUp') : t('auth.signIn')}
-            </button>
-          </p>
+          {/* Toggle */}
+          <div className="mt-8 text-center">
+            <p className="text-muted-foreground">
+              {isLogin ? t('auth.dontHaveAccount') : t('auth.alreadyHaveAccount')}
+              <button
+                type="button"
+                onClick={() => {
+                  setIsLogin(!isLogin);
+                  setErrors({});
+                  setFormData({ fullName: '', email: '', password: '', confirmPassword: '' });
+                }}
+                className="text-primary font-semibold ml-1.5 hover:text-primary/80 transition-colors"
+              >
+                {isLogin ? t('auth.signUp') : t('auth.signIn')}
+              </button>
+            </p>
+          </div>
         </div>
       </div>
-    </div>
+    </AuthBackground>
   );
 }
