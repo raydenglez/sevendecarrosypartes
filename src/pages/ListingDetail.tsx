@@ -1,5 +1,6 @@
 import { useState, useEffect, useCallback } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import { 
   ArrowLeft, 
   Share2, 
@@ -33,6 +34,7 @@ import type { Listing, User } from '@/types';
 export default function ListingDetail() {
   const { id } = useParams();
   const navigate = useNavigate();
+  const { t } = useTranslation();
   const { user } = useAuth();
   const { toast } = useToast();
   const [isFavorite, setIsFavorite] = useState(false);
@@ -100,8 +102,8 @@ export default function ListingDetail() {
 
     if (!listing || listing.ownerId === user.id) {
       toast({
-        title: "Cannot message",
-        description: "You cannot message yourself",
+        title: t('listing.cannotMessage'),
+        description: t('listing.cannotMessageSelf'),
         variant: "destructive",
       });
       return;
@@ -118,8 +120,8 @@ export default function ListingDetail() {
       navigate(`/chat/${conversationId}`);
     } else {
       toast({
-        title: "Error",
-        description: "Could not start conversation. Please try again.",
+        title: t('toast.error'),
+        description: t('listing.conversationError'),
         variant: "destructive",
       });
     }
@@ -222,16 +224,16 @@ export default function ListingDetail() {
   if (!listing) {
     return (
       <div className="min-h-screen bg-background flex items-center justify-center">
-        <p className="text-muted-foreground">Listing not found</p>
+        <p className="text-muted-foreground">{t('listing.notFound')}</p>
       </div>
     );
   }
 
   const specs = listing.vehicleAttributes ? [
-    { icon: Gauge, label: `${Math.round(listing.vehicleAttributes.mileage / 1000)}k km`, value: 'Mileage' },
-    { icon: Settings, label: listing.vehicleAttributes.transmission, value: 'Transmission' },
-    { icon: Fuel, label: listing.vehicleAttributes.fuelType, value: 'Fuel' },
-    { icon: Car, label: listing.vehicleAttributes.bodyType || 'Sedan', value: 'Body' },
+    { icon: Gauge, label: `${Math.round(listing.vehicleAttributes.mileage / 1000)}k km`, value: t('listing.specs.mileage') },
+    { icon: Settings, label: listing.vehicleAttributes.transmission, value: t('listing.specs.transmission') },
+    { icon: Fuel, label: listing.vehicleAttributes.fuelType, value: t('listing.specs.fuel') },
+    { icon: Car, label: listing.vehicleAttributes.bodyType || 'Sedan', value: t('listing.specs.body') },
   ] : [];
 
   return (
@@ -319,27 +321,27 @@ export default function ListingDetail() {
             </span>
             {listing.status === 'sold' && (
               <span className="bg-primary text-primary-foreground text-xs font-bold px-2 py-1 rounded">
-                SOLD
+                {t('listing.sold')}
               </span>
             )}
             {listing.status === 'draft' && (
               <span className="bg-yellow-500 text-yellow-950 text-xs font-bold px-2 py-1 rounded">
-                DRAFT
+                {t('listing.draft')}
               </span>
             )}
             {listing.status === 'expired' && (
               <span className="bg-muted text-muted-foreground text-xs font-bold px-2 py-1 rounded">
-                EXPIRED
+                {t('listing.expired')}
               </span>
             )}
             {listing.owner?.isVerified && (
               <span className="carnexo-badge-verified flex items-center gap-1">
                 <CheckCircle className="w-3 h-3" />
-                Verified
+                {t('listing.verified')}
               </span>
             )}
             {listing.isNegotiable && (
-              <span className="carnexo-badge-negotiable">Negotiable</span>
+              <span className="carnexo-badge-negotiable">{t('listing.negotiable')}</span>
             )}
           </div>
           <h1 className="text-xl font-bold text-foreground">{listing.title}</h1>
@@ -367,17 +369,17 @@ export default function ListingDetail() {
 
         {/* Description */}
         <div>
-          <h2 className="text-lg font-bold text-foreground mb-3">Description</h2>
+          <h2 className="text-lg font-bold text-foreground mb-3">{t('listing.description')}</h2>
           <p className="text-muted-foreground leading-relaxed">
             {listing.description}
-            <button className="text-primary font-medium ml-1">Read more</button>
+            <button className="text-primary font-medium ml-1">{t('listing.readMore')}</button>
           </p>
         </div>
 
         {/* Features */}
         {listing.features && listing.features.length > 0 && (
           <div>
-            <h2 className="text-lg font-bold text-foreground mb-3">Features</h2>
+            <h2 className="text-lg font-bold text-foreground mb-3">{t('listing.features')}</h2>
             <div className="flex flex-wrap gap-2">
               {listing.features.map((feature, idx) => (
                 <span
@@ -394,9 +396,9 @@ export default function ListingDetail() {
         {/* Location */}
         <div>
           <div className="flex items-center justify-between mb-3">
-            <h2 className="text-lg font-bold text-foreground">Location</h2>
+            <h2 className="text-lg font-bold text-foreground">{t('listing.location')}</h2>
             <button className="text-sm text-primary font-medium flex items-center gap-1">
-              View on map
+              {t('listing.viewOnMap')}
               <ExternalLink className="w-4 h-4" />
             </button>
           </div>
@@ -415,7 +417,7 @@ export default function ListingDetail() {
         {/* Seller */}
         {listing.owner && (
           <div>
-            <h2 className="text-lg font-bold text-foreground mb-3">Seller</h2>
+            <h2 className="text-lg font-bold text-foreground mb-3">{t('listing.seller')}</h2>
             <SellerCard seller={listing.owner} />
           </div>
         )}
@@ -424,7 +426,7 @@ export default function ListingDetail() {
         <div>
           <div className="flex items-center gap-2 mb-4">
             <Star className="w-5 h-5 text-primary fill-primary" />
-            <h2 className="text-lg font-bold text-foreground">Reviews</h2>
+            <h2 className="text-lg font-bold text-foreground">{t('reviews.title')}</h2>
             {reviews.length > 0 && (
               <span className="text-sm text-muted-foreground">({reviews.length})</span>
             )}
@@ -467,13 +469,13 @@ export default function ListingDetail() {
               onClick={() => navigate(`/listing/${id}/edit`)}
             >
               <Pencil className="w-5 h-5 mr-2" />
-              Edit Listing
+              {t('listing.editListing')}
             </Button>
           ) : (
             <>
               <Button variant="call" size="lg" className="flex-1">
                 <Phone className="w-5 h-5 mr-2" />
-                Call
+                {t('listing.call')}
               </Button>
               <Button 
                 variant="contact" 
@@ -487,7 +489,7 @@ export default function ListingDetail() {
                 ) : (
                   <MessageSquare className="w-5 h-5 mr-2" />
                 )}
-                Contact
+                {t('listing.contact')}
               </Button>
             </>
           )}

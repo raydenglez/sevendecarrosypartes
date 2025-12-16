@@ -1,6 +1,8 @@
+import { useTranslation } from 'react-i18next';
 import { StarRating } from '@/components/StarRating';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { formatDistanceToNow } from 'date-fns';
+import { enUS, es, pt, type Locale } from 'date-fns/locale';
 
 export interface Review {
   id: string;
@@ -24,11 +26,18 @@ interface ReviewsListProps {
 }
 
 export function ReviewsList({ reviews, averageRating, totalReviews }: ReviewsListProps) {
+  const { t, i18n } = useTranslation();
+  
+  const getLocale = () => {
+    const locales: Record<string, Locale> = { en: enUS, es, pt };
+    return locales[i18n.language] || enUS;
+  };
+
   if (reviews.length === 0) {
     return (
       <div className="text-center py-8 text-muted-foreground">
-        <p>No reviews yet</p>
-        <p className="text-sm mt-1">Be the first to leave a review!</p>
+        <p>{t('reviews.noReviews')}</p>
+        <p className="text-sm mt-1">{t('reviews.beFirst')}</p>
       </div>
     );
   }
@@ -45,25 +54,25 @@ export function ReviewsList({ reviews, averageRating, totalReviews }: ReviewsLis
         <div className="text-center">
           <div className="text-3xl font-bold text-foreground">{averageRating.toFixed(1)}</div>
           <StarRating rating={Math.round(averageRating)} size="sm" />
-          <div className="text-xs text-muted-foreground mt-1">{totalReviews} reviews</div>
+          <div className="text-xs text-muted-foreground mt-1">{totalReviews} {t('reviews.reviewsCount')}</div>
         </div>
         <div className="flex-1 space-y-2">
           <div className="flex items-center justify-between text-sm">
-            <span className="text-muted-foreground">Communication</span>
+            <span className="text-muted-foreground">{t('reviews.communication')}</span>
             <div className="flex items-center gap-2">
               <StarRating rating={Math.round(communicationAvg)} size="sm" />
               <span className="text-foreground w-6">{communicationAvg.toFixed(1)}</span>
             </div>
           </div>
           <div className="flex items-center justify-between text-sm">
-            <span className="text-muted-foreground">Accuracy</span>
+            <span className="text-muted-foreground">{t('reviews.accuracy')}</span>
             <div className="flex items-center gap-2">
               <StarRating rating={Math.round(accuracyAvg)} size="sm" />
               <span className="text-foreground w-6">{accuracyAvg.toFixed(1)}</span>
             </div>
           </div>
           <div className="flex items-center justify-between text-sm">
-            <span className="text-muted-foreground">Service</span>
+            <span className="text-muted-foreground">{t('reviews.service')}</span>
             <div className="flex items-center gap-2">
               <StarRating rating={Math.round(serviceAvg)} size="sm" />
               <span className="text-foreground w-6">{serviceAvg.toFixed(1)}</span>
@@ -86,10 +95,10 @@ export function ReviewsList({ reviews, averageRating, totalReviews }: ReviewsLis
               <div className="flex-1 min-w-0">
                 <div className="flex items-center justify-between">
                   <span className="font-medium text-foreground">
-                    {review.reviewer?.full_name || 'Anonymous'}
+                    {review.reviewer?.full_name || t('reviews.anonymous')}
                   </span>
                   <span className="text-xs text-muted-foreground">
-                    {formatDistanceToNow(new Date(review.created_at), { addSuffix: true })}
+                    {formatDistanceToNow(new Date(review.created_at), { addSuffix: true, locale: getLocale() })}
                   </span>
                 </div>
                 <StarRating rating={review.rating} size="sm" className="mt-1" />
