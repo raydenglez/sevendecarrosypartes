@@ -133,46 +133,45 @@ export default function ListingDetail() {
       if (!id) return;
       
       setLoading(true);
-      const { data, error } = await supabase
+      const { data } = await supabase
         .from('listings')
         .select(`
           *,
-          profiles:owner_id (
-            id,
-            full_name,
-            avatar_url,
-            rating_avg,
-            rating_count,
-            is_verified,
-            user_type,
-            location_city,
-            location_state
-          ),
           vehicle_attributes (*)
         `)
         .eq('id', id)
         .maybeSingle();
 
       if (data) {
-        const owner: User | undefined = data.profiles ? {
-          id: data.profiles.id,
-          name: data.profiles.full_name || 'Unknown',
+        // Fetch owner profile from public_profiles view (excludes sensitive data)
+        const { data: ownerProfile } = await supabase
+          .from('public_profiles')
+          .select('id, full_name, avatar_url, rating_avg, rating_count, is_verified, user_type, location_city, location_state')
+          .eq('id', data.owner_id)
+          .single();
+
+        const owner: User | undefined = ownerProfile ? {
+          id: ownerProfile.id,
+          name: ownerProfile.full_name || 'Unknown',
           email: '',
           location: {
             lat: 0,
             lng: 0,
-            city: data.profiles.location_city || '',
-            state: data.profiles.location_state || ''
+            city: ownerProfile.location_city || '',
+            state: ownerProfile.location_state || ''
           },
-          avatarUrl: data.profiles.avatar_url || undefined,
-          type: data.profiles.user_type === 'dealer' ? 'pro_seller' : 
-                data.profiles.user_type === 'service_provider' ? 'service_provider' : 'user',
-          ratingAvg: Number(data.profiles.rating_avg) || 0,
-          totalReviews: data.profiles.rating_count || 0,
+          avatarUrl: ownerProfile.avatar_url || undefined,
+          type: ownerProfile.user_type === 'dealer' ? 'pro_seller' : 
+                ownerProfile.user_type === 'service_provider' ? 'service_provider' : 'user',
+          ratingAvg: Number(ownerProfile.rating_avg) || 0,
+          totalReviews: ownerProfile.rating_count || 0,
           memberSince: '',
-          isVerified: data.profiles.is_verified || false,
+          isVerified: ownerProfile.is_verified || false,
           badges: []
         } : undefined;
+
+        // Only include VIN if current user is the owner
+        const isOwner = user?.id === data.owner_id;
 
         const transformedListing: Listing = {
           id: data.id,
@@ -202,7 +201,7 @@ export default function ListingDetail() {
             fuelType: data.vehicle_attributes.fuel_type as any || 'gasoline',
             transmission: data.vehicle_attributes.transmission as any || 'automatic',
             color: data.vehicle_attributes.color || undefined,
-            vin: data.vehicle_attributes.vin || undefined
+            vin: isOwner ? (data.vehicle_attributes.vin || undefined) : undefined
           } : undefined
         };
         setListing(transformedListing);
