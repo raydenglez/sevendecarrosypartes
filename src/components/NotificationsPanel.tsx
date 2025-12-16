@@ -1,4 +1,4 @@
-import { X, MessageSquare, ChevronRight } from 'lucide-react';
+import { X, MessageSquare, ChevronRight, User } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { formatDistanceToNow } from 'date-fns';
@@ -68,8 +68,8 @@ export function NotificationsPanel({ isOpen, onClose, conversations, onViewAll }
                   <div className="flex gap-3">
                     <Avatar className="h-10 w-10 flex-shrink-0">
                       <AvatarImage src={conversation.other_user.avatar_url || undefined} alt={conversation.other_user.full_name} />
-                      <AvatarFallback className="bg-primary/10 text-primary">
-                        {conversation.other_user.full_name?.slice(0, 2).toUpperCase() || '??'}
+                      <AvatarFallback className="bg-muted">
+                        <User className="w-5 h-5 text-muted-foreground" />
                       </AvatarFallback>
                     </Avatar>
                     <div className="flex-1 min-w-0">

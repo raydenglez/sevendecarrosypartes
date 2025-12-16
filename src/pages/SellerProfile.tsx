@@ -14,7 +14,8 @@ import {
   Wrench,
   Settings,
   Share2,
-  Check
+  Check,
+  User as UserIcon
 } from 'lucide-react';
 import { toast } from 'sonner';
 import { Button } from '@/components/ui/button';
@@ -281,9 +282,7 @@ export default function SellerProfile() {
               />
             ) : (
               <div className="w-20 h-20 rounded-full bg-muted flex items-center justify-center border-2 border-border">
-                <span className="text-2xl font-bold text-muted-foreground">
-                  {seller.name.charAt(0).toUpperCase()}
-                </span>
+                <UserIcon className="w-8 h-8 text-muted-foreground" />
               </div>
             )}
             {seller.isVerified && (

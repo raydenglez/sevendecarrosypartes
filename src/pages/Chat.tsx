@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { ArrowLeft, Send, Loader2 } from 'lucide-react';
+import { ArrowLeft, Send, Loader2, User } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -138,11 +138,17 @@ export default function Chat() {
             className="flex items-center gap-3 flex-1 min-w-0 cursor-pointer"
             onClick={() => navigate(`/listing/${conversation.listing.id}`)}
           >
-            <img
-              src={conversation.other_user.avatar_url || '/placeholder.svg'}
-              alt={conversation.other_user.full_name}
-              className="w-10 h-10 rounded-full object-cover shrink-0"
-            />
+            {conversation.other_user.avatar_url ? (
+              <img
+                src={conversation.other_user.avatar_url}
+                alt={conversation.other_user.full_name}
+                className="w-10 h-10 rounded-full object-cover shrink-0"
+              />
+            ) : (
+              <div className="w-10 h-10 rounded-full bg-muted flex items-center justify-center shrink-0">
+                <User className="w-5 h-5 text-muted-foreground" />
+              </div>
+            )}
             <div className="min-w-0">
               <h1 className="font-semibold text-foreground truncate">
                 {conversation.other_user.full_name}

@@ -211,7 +211,7 @@ export default function Profile() {
         if (profile) {
           setProfileData({
             name: profile.full_name || user.email?.split('@')[0] || 'User',
-            avatarUrl: profile.avatar_url || 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=150&h=150&fit=crop&crop=face',
+            avatarUrl: profile.avatar_url || '',
             phone: profile.phone || '',
             location: {
               city: profile.location_city || 'Unknown',
@@ -345,11 +345,17 @@ export default function Profile() {
         {/* Profile Info */}
         <div className="flex flex-col items-center mt-6">
           <div className="relative">
-            <img
-              src={profileData?.avatarUrl || 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=150&h=150&fit=crop&crop=face'}
-              alt={profileData?.name || 'User'}
-              className="w-24 h-24 rounded-full object-cover border-4 border-card"
-            />
+            {profileData?.avatarUrl ? (
+              <img
+                src={profileData.avatarUrl}
+                alt={profileData?.name || 'User'}
+                className="w-24 h-24 rounded-full object-cover border-4 border-card"
+              />
+            ) : (
+              <div className="w-24 h-24 rounded-full bg-muted border-4 border-card flex items-center justify-center">
+                <User className="w-10 h-10 text-muted-foreground" />
+              </div>
+            )}
             <label className="absolute bottom-0 right-0 w-8 h-8 rounded-full bg-secondary flex items-center justify-center shadow-blue cursor-pointer hover:bg-secondary/80 transition-colors">
               {uploading ? (
                 <Loader2 className="w-4 h-4 text-secondary-foreground animate-spin" />

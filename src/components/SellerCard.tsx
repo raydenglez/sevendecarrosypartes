@@ -1,4 +1,4 @@
-import { Star, CheckCircle, ChevronRight } from 'lucide-react';
+import { Star, CheckCircle, ChevronRight, User as UserIcon } from 'lucide-react';
 import { User } from '@/types';
 import { cn } from '@/lib/utils';
 import { Link } from 'react-router-dom';
@@ -18,11 +18,17 @@ export function SellerCard({ seller, className }: SellerCardProps) {
       )}
     >
       <div className="relative">
-        <img
-          src={seller.avatarUrl}
-          alt={seller.name}
-          className="w-14 h-14 rounded-full object-cover"
-        />
+        {seller.avatarUrl ? (
+          <img
+            src={seller.avatarUrl}
+            alt={seller.name}
+            className="w-14 h-14 rounded-full object-cover"
+          />
+        ) : (
+          <div className="w-14 h-14 rounded-full bg-muted flex items-center justify-center">
+            <UserIcon className="w-6 h-6 text-muted-foreground" />
+          </div>
+        )}
         {seller.isVerified && (
           <div className="absolute -bottom-1 -right-1 w-5 h-5 rounded-full bg-success flex items-center justify-center">
             <CheckCircle className="w-3 h-3 text-success-foreground" />
