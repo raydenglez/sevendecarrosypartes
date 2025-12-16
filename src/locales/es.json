@@ -17,7 +17,10 @@
     "next": "Siguiente",
     "submit": "Enviar",
     "clear": "Limpiar",
-    "apply": "Aplicar"
+    "apply": "Aplicar",
+    "goBack": "Volver",
+    "mi": "mi",
+    "miAway": "mi de distancia"
   },
   "nav": {
     "home": "Explorar",
@@ -137,7 +140,7 @@
     "personalInfo": "Información Personal",
     "personalInfoDesc": "Correo, teléfono y dirección",
     "securityPrivacy": "Seguridad y Privacidad",
-    "securityPrivacyDesc": "Contraseña y configuración de privacidad",
+    "securityPrivacyDesc": "Contraseña, privacidad y eliminar cuenta",
     "appSettings": "Configuración de la Aplicación",
     "language": "Idioma",
     "languageDesc": "Inglés, Español, Portugués",
@@ -148,10 +151,11 @@
     "pushNotifications": "Notificaciones Push",
     "pushNotificationsDesc": "Recibir alertas de nuevos mensajes",
     "changePassword": "Cambiar Contraseña",
+    "updateAccountPassword": "Actualizar contraseña de tu cuenta",
     "currentPassword": "Contraseña Actual",
     "newPassword": "Nueva Contraseña",
     "confirmNewPassword": "Confirmar Nueva Contraseña",
-    "lastLogin": "Último acceso",
+    "lastLogin": "Último Acceso",
     "privacySettings": "Configuración de Privacidad",
     "showPhoneOnListings": "Mostrar teléfono en anuncios",
     "showPhoneOnListingsDesc": "Permitir que los compradores vean tu número",
@@ -164,9 +168,25 @@
     "comingSoon": "Próximamente",
     "deleteAccount": "Eliminar Cuenta",
     "deleteAccountDesc": "Eliminar permanentemente tu cuenta y datos",
-    "deleteAccountConfirm": "¿Estás seguro de que quieres eliminar tu cuenta?",
-    "deleteAccountWarning": "Esta acción no se puede deshacer. Todos tus datos, anuncios y mensajes serán eliminados permanentemente.",
-    "typeDelete": "Escribe DELETE para confirmar"
+    "deleteMyAccount": "Eliminar Mi Cuenta",
+    "deleteAccountPermanently": "¿Eliminar cuenta permanentemente?",
+    "deleteAccountWarningFull": "Esta acción no se puede deshacer. Esto eliminará permanentemente tu cuenta y todos tus datos incluyendo:",
+    "deleteWarningProfile": "Tu perfil y configuración",
+    "deleteWarningListings": "Todos tus anuncios e imágenes",
+    "deleteWarningMessages": "Tus mensajes y conversaciones",
+    "deleteWarningReviews": "Tus reseñas y favoritos",
+    "typeDeleteConfirm": "Escribe DELETE para confirmar",
+    "deleting": "Eliminando...",
+    "failedUpdateSetting": "Error al actualizar configuración",
+    "failedUpdatePassword": "Error al actualizar contraseña",
+    "passwordUpdated": "Contraseña actualizada",
+    "passwordChangedSuccess": "Tu contraseña ha sido cambiada exitosamente.",
+    "confirmationRequired": "Confirmación requerida",
+    "pleaseTypeDelete": "Por favor escribe DELETE para confirmar la eliminación.",
+    "accountDeleted": "Cuenta eliminada",
+    "accountDeletedDesc": "Tu cuenta ha sido eliminada permanentemente.",
+    "deletionFailed": "Error al eliminar",
+    "failedDeleteAccount": "Error al eliminar cuenta. Intenta de nuevo."
   },
   "listing": {
     "price": "Precio",
@@ -187,6 +207,7 @@
     "draft": "BORRADOR",
     "expired": "EXPIRADO",
     "premium": "PREMIUM",
+    "service": "SERVICIO",
     "verified": "Verificado",
     "topRated": "Mejor Calificado",
     "reviews": "reseñas",
@@ -324,7 +345,30 @@
     "nearbyListings": "Anuncios Cercanos",
     "getDirections": "Obtener Direcciones",
     "travelTime": "Tiempo de Viaje",
-    "distance": "Distancia"
+    "distance": "Distancia",
+    "searchLocations": "Buscar ubicaciones...",
+    "gettingLocation": "Obteniendo ubicación...",
+    "viewListings": "Ver {{count}} Anuncios",
+    "exploreOnMap": "Explorar en Mapa",
+    "discoverListings": "Descubre {{count}}+ anuncios cerca de ti",
+    "directions": "Direcciones",
+    "viewDetails": "Ver Detalles",
+    "drive": "en auto",
+    "open": "Abierto",
+    "verified": "Verificado",
+    "memberSince": "Miembro desde {{date}}",
+    "reviews": "{{count}} reseñas",
+    "filterTypes": {
+      "all": "Todos",
+      "vehicle": "Vehículos",
+      "service": "Servicios",
+      "part": "Repuestos"
+    },
+    "listingTypes": {
+      "vehicle": "Vehículo",
+      "part": "Repuesto",
+      "service": "Proveedor de Servicios"
+    }
   },
   "reviews": {
     "title": "Reseñas",
@@ -370,7 +414,9 @@
     "reviewSubmitted": "Reseña enviada correctamente.",
     "signedOut": "Has cerrado sesión correctamente.",
     "invalidFileType": "Por favor sube un archivo de imagen.",
-    "fileTooLarge": "Por favor sube una imagen menor a 5MB."
+    "fileTooLarge": "Por favor sube una imagen menor a 5MB.",
+    "listingNotFound": "Anuncio no encontrado",
+    "canOnlyEditOwn": "Solo puedes editar tus propios anuncios"
   },
   "filters": {
     "title": "Filtros",
@@ -388,30 +434,103 @@
       "fair": "Regular"
     }
   },
-  "map": {
-    "searchLocations": "Buscar ubicaciones...",
-    "gettingLocation": "Obteniendo ubicación...",
-    "viewListings": "Ver {{count}} Anuncios",
-    "nearbyListings": "Anuncios Cercanos",
-    "exploreOnMap": "Explorar en Mapa",
-    "discoverListings": "Descubre {{count}}+ anuncios cerca de ti",
-    "directions": "Direcciones",
-    "viewDetails": "Ver Detalles",
-    "drive": "en auto",
-    "open": "Abierto",
-    "verified": "Verificado",
-    "memberSince": "Miembro desde {{date}}",
-    "reviews": "{{count}} reseñas",
-    "filterTypes": {
-      "all": "Todos",
-      "vehicle": "Vehículos",
-      "service": "Servicios",
-      "part": "Repuestos"
-    },
-    "listingTypes": {
-      "vehicle": "Vehículo",
-      "part": "Repuesto",
-      "service": "Proveedor de Servicios"
+  "editListing": {
+    "title": "Editar Anuncio",
+    "deleteListing": "Eliminar Anuncio",
+    "deleteConfirm": "¿Estás seguro de eliminar este anuncio? Esta acción no se puede deshacer.",
+    "deleting": "Eliminando...",
+    "listingStatus": "Estado del Anuncio",
+    "cannotBeChanged": "No se puede cambiar",
+    "updateListing": "Actualizar Anuncio",
+    "updating": "Actualizando...",
+    "status": {
+      "active": "Activo",
+      "activeDesc": "Visible para todos",
+      "sold": "Vendido",
+      "soldDesc": "Marcado como vendido",
+      "expired": "Expirado",
+      "expiredDesc": "Ya no disponible",
+      "draft": "Borrador",
+      "draftDesc": "Solo visible para ti"
     }
+  },
+  "chat": {
+    "conversationNotFound": "Conversación no encontrada",
+    "startConversation": "Inicia la conversación enviando un mensaje"
+  },
+  "myListings": {
+    "title": "Mis Anuncios",
+    "noListingsFound": "No se encontraron anuncios",
+    "createListing": "Crear Anuncio",
+    "typeFilters": {
+      "all": "Todos",
+      "vehicles": "Vehículos",
+      "parts": "Partes",
+      "services": "Servicios"
+    },
+    "statusFilters": {
+      "all": "Todos",
+      "active": "Activo",
+      "sold": "Vendido",
+      "expired": "Expirado",
+      "draft": "Borrador"
+    }
+  },
+  "sellerProfile": {
+    "title": "Perfil del Vendedor",
+    "notFound": "Vendedor no encontrado",
+    "notFoundDesc": "Este perfil no existe o ha sido eliminado.",
+    "linkCopied": "¡Enlace del perfil copiado!",
+    "proSeller": "Vendedor Pro",
+    "serviceProvider": "Proveedor de Servicios",
+    "memberSince": "Miembro desde {{date}}",
+    "activeListings": "Anuncios Activos",
+    "avgRating": "Calificación",
+    "reviews": "Reseñas",
+    "tabs": {
+      "listings": "Anuncios",
+      "reviews": "Reseñas"
+    },
+    "noActiveListings": "Sin anuncios activos",
+    "noReviewsYet": "Sin reseñas aún",
+    "vehicles": "Vehículos",
+    "parts": "Partes",
+    "services": "Servicios"
+  },
+  "featured": {
+    "title": "Destacados Cerca de Ti",
+    "noFeatured": "No hay destacados cerca"
+  },
+  "notFound": {
+    "title": "404",
+    "message": "¡Oops! Página no encontrada",
+    "returnHome": "Volver al Inicio"
+  },
+  "vinScanner": {
+    "title": "Escanear VIN",
+    "enterManually": "Ingresar VIN Manualmente",
+    "manualDescription": "Escribe el VIN de 17 caracteres de tu vehículo",
+    "characters": "caracteres",
+    "invalidVin": "VIN inválido. Debe tener 17 caracteres (letras A-H, J-N, P, R-Z y números).",
+    "decodeVin": "Decodificar VIN",
+    "decodingVin": "Decodificando VIN...",
+    "pointAtBarcode": "Apunta al Código de Barras del VIN",
+    "alignBarcode": "Alinea el código de barras dentro del marco para escanear automáticamente",
+    "vinLocation": "El VIN generalmente se encuentra en el tablero cerca del parabrisas o en el marco de la puerta del conductor",
+    "cameraError": "Acceso a cámara denegado o no disponible. Intenta ingreso manual.",
+    "decodeError": "Error al decodificar VIN. Intenta de nuevo.",
+    "vehicleError": "No se pudieron obtener los detalles del vehículo del VIN",
+    "vehicleDetected": "¡Detalles del vehículo obtenidos!"
+  },
+  "notifications": {
+    "title": "Mensajes",
+    "noNewMessages": "Sin mensajes nuevos",
+    "viewAllMessages": "Ver Todos los Mensajes"
+  },
+  "locationPermission": {
+    "title": "Activar Ubicación",
+    "description": "La app mejora sus resultados con tu ubicación. Activa el GPS para descubrir vehículos, partes y servicios cerca de ti.",
+    "enable": "Activar Ubicación",
+    "maybeLater": "Quizás Después"
   }
 }
