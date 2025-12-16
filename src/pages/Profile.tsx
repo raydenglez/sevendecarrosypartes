@@ -1,5 +1,6 @@
 import { useNavigate } from 'react-router-dom';
 import { useState, useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 import { 
   Settings,
   MapPin,
@@ -55,6 +56,7 @@ export default function Profile() {
   const navigate = useNavigate();
   const { user, loading, signOut } = useAuth();
   const { toast } = useToast();
+  const { t } = useTranslation();
   const [profileData, setProfileData] = useState<ProfileData | null>(null);
   const [stats, setStats] = useState<UserStats>({
     published: 0,
@@ -234,8 +236,8 @@ export default function Profile() {
   const handleSignOut = async () => {
     await signOut();
     toast({
-      title: "Signed out",
-      description: "You have been signed out successfully.",
+      title: t('toast.success'),
+      description: t('toast.signedOut'),
     });
     navigate('/');
   };
@@ -253,18 +255,18 @@ export default function Profile() {
     return (
       <div className="min-h-screen bg-background pb-24">
         <header className="px-4 pt-4 safe-top">
-          <h1 className="text-xl font-bold text-foreground">My Profile</h1>
+          <h1 className="text-xl font-bold text-foreground">{t('profile.myProfile')}</h1>
         </header>
         <div className="flex flex-col items-center justify-center px-6 py-20 text-center">
           <div className="w-20 h-20 rounded-full bg-muted flex items-center justify-center mb-4">
             <User className="w-10 h-10 text-muted-foreground" />
           </div>
-          <h2 className="text-xl font-bold text-foreground mb-2">Sign in to view your profile</h2>
+          <h2 className="text-xl font-bold text-foreground mb-2">{t('profile.signInPrompt')}</h2>
           <p className="text-muted-foreground mb-6 max-w-[280px]">
-            Create an account to save favorites, publish listings, and message sellers
+            {t('profile.signInPromptDesc')}
           </p>
           <Button variant="carnexo" size="lg" onClick={() => navigate('/auth')}>
-            Sign In or Create Account
+            {t('auth.signInOrCreate')}
           </Button>
         </div>
         <BottomNav />
@@ -277,7 +279,7 @@ export default function Profile() {
       {/* Header */}
       <header className="relative px-4 pt-4 pb-6 safe-top">
         <div className="flex justify-between items-start">
-          <h1 className="text-xl font-bold text-foreground">My Profile</h1>
+          <h1 className="text-xl font-bold text-foreground">{t('profile.myProfile')}</h1>
           <Button variant="ghost" size="icon">
             <Settings className="w-5 h-5" />
           </Button>
@@ -312,18 +314,18 @@ export default function Profile() {
             <span>{profileData?.location.city}{profileData?.location.state ? `, ${profileData.location.state}` : ''}</span>
           </div>
           <p className="text-sm text-muted-foreground">
-            Member since {profileData?.memberSince || 'Unknown'}
+            {t('profile.memberSince', { date: profileData?.memberSince || 'Unknown' })}
           </p>
 
           {/* Action Buttons */}
           <div className="flex gap-3 mt-4">
             <Button variant="carnexoSecondary" size="sm" className="px-6" onClick={() => setEditModalOpen(true)}>
               <Edit className="w-4 h-4 mr-2" />
-              Edit Profile
+              {t('profile.editProfile')}
             </Button>
             <Button variant="carnexoOutline" size="sm" className="px-6">
               <Share2 className="w-4 h-4 mr-2" />
-              Share
+              {t('common.share')}
             </Button>
           </div>
         </div>
@@ -332,17 +334,17 @@ export default function Profile() {
       {/* Stats */}
       <div className="px-4 grid grid-cols-3 gap-3 animate-fade-in">
         <StatCard
-          label="Published"
+          label={t('profile.published')}
           value={stats.published}
           icon={<FileText className="w-3 h-3" />}
         />
         <StatCard
-          label="Favorites"
+          label={t('profile.favorites')}
           value={stats.favorites}
           icon={<Heart className="w-3 h-3 text-primary fill-primary" />}
         />
         <StatCard
-          label="Rating"
+          label={t('profile.rating')}
           value={stats.rating.toFixed(1)}
           suffix="/ 5.0"
           icon={<Star className="w-3 h-3 text-warning fill-warning" />}
@@ -352,8 +354,8 @@ export default function Profile() {
       {/* My Listings */}
       <section className="px-4 mt-6 animate-fade-in" style={{ animationDelay: '100ms' }}>
         <div className="flex items-center justify-between mb-4">
-          <h2 className="text-lg font-bold text-foreground">My Listings</h2>
-          <button className="text-sm font-medium text-primary" onClick={() => navigate('/my-listings')}>View all</button>
+          <h2 className="text-lg font-bold text-foreground">{t('profile.myListings')}</h2>
+          <button className="text-sm font-medium text-primary" onClick={() => navigate('/my-listings')}>{t('common.viewAll')}</button>
         </div>
         <div className="grid grid-cols-2 gap-3">
           {/* Vehicles Card */}
@@ -363,7 +365,7 @@ export default function Profile() {
           >
             <img
               src="https://images.unsplash.com/photo-1552519507-da3b142c6e3d?w=400&h=300&fit=crop"
-              alt="Vehicles"
+              alt={t('profile.vehicles')}
               className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
             />
             <div className="absolute inset-0 bg-gradient-to-t from-background/90 via-background/20 to-transparent" />
@@ -371,10 +373,10 @@ export default function Profile() {
               <div className="flex items-center gap-2 mb-1">
                 <Car className="w-4 h-4 text-foreground" />
                 <span className="text-xs font-medium px-2 py-0.5 rounded bg-success/90 text-success-foreground">
-                  {stats.vehicleCount} ACTIVE
+                  {stats.vehicleCount} {t('profile.active')}
                 </span>
               </div>
-              <p className="text-foreground font-semibold">Vehicles</p>
+              <p className="text-foreground font-semibold">{t('profile.vehicles')}</p>
             </div>
           </div>
 
@@ -385,7 +387,7 @@ export default function Profile() {
           >
             <img
               src="https://images.unsplash.com/photo-1486262715619-67b85e0b08d3?w=400&h=300&fit=crop"
-              alt="Parts"
+              alt={t('profile.parts')}
               className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
             />
             <div className="absolute inset-0 bg-gradient-to-t from-background/90 via-background/20 to-transparent" />
@@ -393,10 +395,10 @@ export default function Profile() {
               <div className="flex items-center gap-2 mb-1">
                 <Settings className="w-4 h-4 text-foreground" />
                 <span className="text-xs font-medium px-2 py-0.5 rounded bg-secondary/90 text-secondary-foreground">
-                  {stats.partsCount} LISTED
+                  {stats.partsCount} {t('profile.listed')}
                 </span>
               </div>
-              <p className="text-foreground font-semibold">Parts</p>
+              <p className="text-foreground font-semibold">{t('profile.parts')}</p>
             </div>
           </div>
 
@@ -407,17 +409,17 @@ export default function Profile() {
           >
             <img
               src="https://images.unsplash.com/photo-1625047509168-a7026f36de04?w=800&h=300&fit=crop"
-              alt="Services"
+              alt={t('home.services')}
               className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
             />
             <div className="absolute inset-0 bg-gradient-to-r from-background/90 via-background/50 to-transparent" />
             <div className="absolute bottom-3 left-3">
               <div className="flex items-center gap-2 mb-1">
                 <Wrench className="w-4 h-4 text-foreground" />
-                <span className="carnexo-badge-service">SERVICES</span>
+                <span className="carnexo-badge-service">{t('home.services').toUpperCase()}</span>
               </div>
-              <p className="text-foreground font-semibold">Services Offered</p>
-              <p className="text-xs text-muted-foreground">Appointment and inquiry management</p>
+              <p className="text-foreground font-semibold">{t('profile.servicesOffered')}</p>
+              <p className="text-xs text-muted-foreground">{t('profile.appointmentManagement')}</p>
             </div>
           </div>
         </div>
@@ -425,20 +427,20 @@ export default function Profile() {
 
       {/* Account Settings */}
       <section className="px-4 mt-6 animate-fade-in" style={{ animationDelay: '200ms' }}>
-        <h2 className="text-lg font-bold text-foreground mb-3">Account</h2>
+        <h2 className="text-lg font-bold text-foreground mb-3">{t('settings.account')}</h2>
         <div className="bg-card rounded-2xl overflow-hidden">
           <SettingsItem
             icon={<User className="w-5 h-5 text-secondary" />}
             iconBg="bg-secondary/20"
-            label="Personal Information"
-            description="Email, phone and address"
+            label={t('settings.personalInfo')}
+            description={t('settings.personalInfoDesc')}
             onClick={() => setPersonalInfoOpen(true)}
           />
           <SettingsItem
             icon={<Shield className="w-5 h-5 text-primary" />}
             iconBg="bg-primary/20"
-            label="Security & Privacy"
-            description="Password and privacy settings"
+            label={t('settings.securityPrivacy')}
+            description={t('settings.securityPrivacyDesc')}
             onClick={() => setSecurityOpen(true)}
           />
         </div>
@@ -446,14 +448,13 @@ export default function Profile() {
 
       {/* Application Settings */}
       <section className="px-4 mt-6 animate-fade-in" style={{ animationDelay: '300ms' }}>
-        <h2 className="text-lg font-bold text-foreground mb-3">Application Settings</h2>
+        <h2 className="text-lg font-bold text-foreground mb-3">{t('settings.appSettings')}</h2>
         <div className="bg-card rounded-2xl overflow-hidden">
           <SettingsItem
             icon={<Globe className="w-5 h-5 text-success" />}
             iconBg="bg-success/20"
-            label="Language"
-            description="English, Spanish, Portuguese"
-            value="English"
+            label={t('settings.language')}
+            description={t('settings.languageDesc')}
             onClick={() => setLanguageOpen(true)}
           />
           <div className="px-4">
@@ -462,13 +463,13 @@ export default function Profile() {
           <SettingsItem
             icon={<Bell className="w-5 h-5 text-warning" />}
             iconBg="bg-warning/20"
-            label="Notification Settings"
-            description="Search alerts and preferences"
+            label={t('settings.notificationSettings')}
+            description={t('settings.notificationSettingsDesc')}
           />
           <SettingsItem
             icon={<HelpCircle className="w-5 h-5 text-muted-foreground" />}
             iconBg="bg-muted"
-            label="Help Center"
+            label={t('settings.helpCenter')}
           />
         </div>
       </section>
@@ -481,7 +482,7 @@ export default function Profile() {
           onClick={handleSignOut}
         >
           <LogOut className="w-5 h-5 mr-2" />
-          Log Out
+          {t('auth.signOut')}
         </Button>
         <p className="text-center text-xs text-muted-foreground mt-3">
           CarNexo v2.4.0 (Build 2045)

@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Globe, Check } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 import {
   Sheet,
   SheetContent,
@@ -24,7 +25,8 @@ const LANGUAGES = [
 export function LanguageSheet({ open, onOpenChange }: LanguageSheetProps) {
   const { user } = useAuth();
   const { toast } = useToast();
-  const [selectedLanguage, setSelectedLanguage] = useState('en');
+  const { t, i18n } = useTranslation();
+  const [selectedLanguage, setSelectedLanguage] = useState(i18n.language || 'en');
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
@@ -39,38 +41,54 @@ export function LanguageSheet({ open, onOpenChange }: LanguageSheetProps) {
 
       if (data?.language) {
         setSelectedLanguage(data.language);
+        // Sync i18n with database value
+        if (data.language !== i18n.language) {
+          i18n.changeLanguage(data.language);
+          localStorage.setItem('carnexo-language', data.language);
+        }
       }
     }
 
     fetchLanguage();
-  }, [user, open]);
+  }, [user, open, i18n]);
 
   const handleLanguageSelect = async (languageCode: string) => {
-    if (!user || languageCode === selectedLanguage) return;
+    if (languageCode === selectedLanguage) return;
 
     setLoading(true);
     const previousLanguage = selectedLanguage;
     setSelectedLanguage(languageCode);
 
-    const { error } = await supabase
-      .from('profiles')
-      .update({ language: languageCode })
-      .eq('id', user.id);
+    // Change i18n language immediately
+    i18n.changeLanguage(languageCode);
+    localStorage.setItem('carnexo-language', languageCode);
 
-    if (error) {
-      setSelectedLanguage(previousLanguage);
-      toast({
-        title: 'Error',
-        description: 'Failed to update language preference.',
-        variant: 'destructive',
-      });
-    } else {
-      const langName = LANGUAGES.find(l => l.code === languageCode)?.name;
-      toast({
-        title: 'Language updated',
-        description: `Language changed to ${langName}.`,
-      });
+    // Save to database if user is logged in
+    if (user) {
+      const { error } = await supabase
+        .from('profiles')
+        .update({ language: languageCode })
+        .eq('id', user.id);
+
+      if (error) {
+        setSelectedLanguage(previousLanguage);
+        i18n.changeLanguage(previousLanguage);
+        localStorage.setItem('carnexo-language', previousLanguage);
+        toast({
+          title: t('toast.error'),
+          description: 'Failed to update language preference.',
+          variant: 'destructive',
+        });
+        setLoading(false);
+        return;
+      }
     }
+
+    const langName = LANGUAGES.find(l => l.code === languageCode)?.name;
+    toast({
+      title: t('toast.success'),
+      description: t('toast.languageUpdated', { language: langName }),
+    });
 
     setLoading(false);
   };
@@ -81,7 +99,7 @@ export function LanguageSheet({ open, onOpenChange }: LanguageSheetProps) {
         <SheetHeader className="pb-4">
           <SheetTitle className="flex items-center gap-2">
             <Globe className="w-5 h-5 text-success" />
-            Language
+            {t('settings.language')}
           </SheetTitle>
         </SheetHeader>
 
