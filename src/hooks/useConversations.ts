@@ -135,7 +135,7 @@ export function useConversations() {
         return {
           ...conv,
           listing: conv.listing,
-          other_user: otherUser || { id: otherId, full_name: 'Unknown', avatar_url: null },
+          other_user: otherUser || { id: otherId, full_name: '', avatar_url: null },
           last_message: lastMsg || undefined,
           unread_count: count || 0,
           has_messages: (totalMessages || 0) > 0,

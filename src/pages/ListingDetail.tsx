@@ -170,7 +170,7 @@ export default function ListingDetail() {
 
         const owner: User | undefined = ownerProfile ? {
           id: ownerProfile.id,
-          name: ownerProfile.full_name || 'Unknown',
+          name: ownerProfile.full_name || '',
           email: '',
           location: {
             lat: 0,

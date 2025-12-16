@@ -95,7 +95,7 @@ export default function SellerProfile() {
       if (profileData) {
         const transformedSeller: User = {
           id: profileData.id,
-          name: profileData.full_name || 'Unknown',
+          name: profileData.full_name || '',
           email: '', // Not exposed in public view
           phone: undefined, // Not exposed in public view
           location: {
@@ -211,7 +211,7 @@ export default function SellerProfile() {
         
         const reviewsWithReviewers = reviewsData.map(r => ({
           ...r,
-          reviewer: reviewerMap.get(r.reviewer_id) || { full_name: 'Unknown', avatar_url: null }
+          reviewer: reviewerMap.get(r.reviewer_id) || { full_name: '', avatar_url: null }
         }));
         
         setReviews(reviewsWithReviewers as any);
