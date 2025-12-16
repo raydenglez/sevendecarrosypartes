@@ -1,7 +1,9 @@
 import { useState, useEffect, useCallback } from 'react';
+import { Capacitor } from '@capacitor/core';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from './useAuth';
 import { toast } from 'sonner';
+import { useNativePushNotifications } from './useNativePushNotifications';
 
 function urlBase64ToUint8Array(base64String: string): Uint8Array {
   const padding = '='.repeat((4 - base64String.length % 4) % 4);
@@ -20,12 +22,22 @@ function urlBase64ToUint8Array(base64String: string): Uint8Array {
 
 export function usePushNotifications() {
   const { user } = useAuth();
+  const platform = Capacitor.getPlatform();
+  const isNative = platform === 'ios' || platform === 'android';
+  
+  // Use native push for iOS/Android
+  const nativePush = useNativePushNotifications();
+  
+  // Web push state
   const [isSubscribed, setIsSubscribed] = useState(false);
   const [isSupported, setIsSupported] = useState(false);
   const [permission, setPermission] = useState<NotificationPermission>('default');
   const [vapidKey, setVapidKey] = useState<string | null>(null);
 
   useEffect(() => {
+    // If native, we don't need web push setup
+    if (isNative) return;
+    
     // Check if push notifications are supported
     const supported = 'serviceWorker' in navigator && 'PushManager' in window;
     setIsSupported(supported);
@@ -35,7 +47,7 @@ export function usePushNotifications() {
       checkSubscription();
       fetchVapidKey();
     }
-  }, [user]);
+  }, [user, isNative]);
 
   const fetchVapidKey = async () => {
     try {
@@ -73,7 +85,7 @@ export function usePushNotifications() {
     return registration;
   };
 
-  const subscribe = useCallback(async () => {
+  const subscribeWeb = useCallback(async () => {
     if (!user || !isSupported || !vapidKey) {
       if (!vapidKey) {
         toast.error('Push notifications not configured');
@@ -132,7 +144,7 @@ export function usePushNotifications() {
     }
   }, [user, isSupported, vapidKey]);
 
-  const unsubscribe = useCallback(async () => {
+  const unsubscribeWeb = useCallback(async () => {
     if (!user) return false;
 
     try {
@@ -160,11 +172,16 @@ export function usePushNotifications() {
     }
   }, [user]);
 
+  // Return native push for iOS/Android, web push for browsers
+  if (isNative) {
+    return nativePush;
+  }
+
   return {
     isSupported,
     isSubscribed,
     permission,
-    subscribe,
-    unsubscribe,
+    subscribe: subscribeWeb,
+    unsubscribe: unsubscribeWeb,
   };
 }

@@ -8,21 +8,9 @@ const config: CapacitorConfig = {
     url: 'https://8db981fe-6fc1-41c8-8123-78be2661e81a.lovableproject.com?forceHideBadge=true',
     cleartext: true,
   },
-  ios: {
-    contentInset: 'automatic',
-    preferredContentMode: 'mobile',
-  },
-  android: {
-    allowMixedContent: true,
-  },
   plugins: {
-    StatusBar: {
-      style: 'dark',
-      backgroundColor: '#0d1117',
-    },
-    Keyboard: {
-      resize: 'body',
-      resizeOnFullScreen: true,
+    PushNotifications: {
+      presentationOptions: ['badge', 'sound', 'alert'],
     },
   },
 };
