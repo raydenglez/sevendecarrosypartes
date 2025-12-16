@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import { z } from 'zod';
 import { Eye, EyeOff, Lock, ArrowLeft, KeyRound, CheckCircle } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -9,18 +10,19 @@ import { useAuth } from '@/hooks/useAuth';
 import { useToast } from '@/hooks/use-toast';
 import logo from '@/assets/logo.png';
 
-const passwordSchema = z.object({
-  password: z.string().min(6, { message: "Password must be at least 6 characters" }),
-  confirmPassword: z.string(),
-}).refine((data) => data.password === data.confirmPassword, {
-  message: "Passwords don't match",
-  path: ["confirmPassword"],
-});
-
 export default function ResetPassword() {
   const navigate = useNavigate();
+  const { t } = useTranslation();
   const { updatePassword, session } = useAuth();
   const { toast } = useToast();
+
+  const passwordSchema = z.object({
+    password: z.string().min(6, { message: t('auth.validation.passwordMin') }),
+    confirmPassword: z.string(),
+  }).refine((data) => data.password === data.confirmPassword, {
+    message: t('auth.validation.passwordsMatch'),
+    path: ["confirmPassword"],
+  });
   
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -38,8 +40,8 @@ export default function ResetPassword() {
     const timeout = setTimeout(() => {
       if (!session) {
         toast({
-          title: "Invalid or expired link",
-          description: "Please request a new password reset link.",
+          title: t('auth.invalidExpiredLink'),
+          description: t('auth.requestNewLink'),
           variant: "destructive",
         });
         navigate('/auth');
@@ -80,7 +82,7 @@ export default function ResetPassword() {
 
     if (error) {
       toast({
-        title: "Failed to update password",
+        title: t('auth.toast.failedUpdatePassword'),
         description: error.message,
         variant: "destructive",
       });
@@ -103,11 +105,11 @@ export default function ResetPassword() {
           </div>
           
           <h1 className="text-2xl font-bold text-foreground text-center mb-2">
-            Password updated!
+            {t('auth.passwordUpdated')}
           </h1>
           
           <p className="text-muted-foreground text-center mb-6">
-            Your password has been successfully changed.
+            {t('auth.passwordUpdatedDesc')}
           </p>
 
           <Button
@@ -115,7 +117,7 @@ export default function ResetPassword() {
             onClick={() => navigate('/')}
             className="w-full max-w-sm"
           >
-            Continue to CarNexo
+            {t('auth.continueToApp')}
           </Button>
         </div>
       </div>
@@ -139,16 +141,16 @@ export default function ResetPassword() {
             <KeyRound className="w-8 h-8 text-secondary" />
           </div>
           <h1 className="text-2xl font-bold text-foreground">
-            Set new password
+            {t('auth.setNewPassword')}
           </h1>
           <p className="text-muted-foreground text-sm mt-1 text-center">
-            Enter your new password below
+            {t('auth.setNewPasswordDesc')}
           </p>
         </div>
 
         <form onSubmit={handleSubmit} className="space-y-4 animate-fade-in">
           <div className="space-y-2">
-            <Label htmlFor="password">New Password</Label>
+            <Label htmlFor="password">{t('auth.newPassword')}</Label>
             <div className="relative">
               <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
               <Input
@@ -174,7 +176,7 @@ export default function ResetPassword() {
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="confirmPassword">Confirm New Password</Label>
+            <Label htmlFor="confirmPassword">{t('auth.confirmNewPassword')}</Label>
             <div className="relative">
               <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
               <Input
@@ -199,7 +201,7 @@ export default function ResetPassword() {
             className="w-full mt-6"
             disabled={loading}
           >
-            {loading ? 'Updating...' : 'Update Password'}
+            {loading ? t('auth.updating') : t('auth.updatePassword')}
           </Button>
         </form>
       </div>
