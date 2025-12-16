@@ -94,8 +94,10 @@ export default function Messages() {
                       className="w-14 h-14 rounded-full object-cover"
                     />
                   ) : (
-                    <div className="w-14 h-14 rounded-full bg-muted flex items-center justify-center">
-                      <User className="w-6 h-6 text-muted-foreground" />
+                    <div className="w-14 h-14 rounded-full bg-secondary flex items-center justify-center">
+                      <span className="text-lg font-bold text-secondary-foreground">
+                        {conv.other_user.full_name?.split(' ').map(n => n[0]).join('').slice(0, 2).toUpperCase() || 'U'}
+                      </span>
                     </div>
                   )}
                   {conv.unread_count > 0 && (

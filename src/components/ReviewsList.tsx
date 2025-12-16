@@ -89,8 +89,8 @@ export function ReviewsList({ reviews, averageRating, totalReviews }: ReviewsLis
             <div className="flex items-start gap-3">
               <Avatar className="w-10 h-10">
                 <AvatarImage src={review.reviewer?.avatar_url || undefined} />
-                <AvatarFallback className="bg-muted">
-                  <User className="w-5 h-5 text-muted-foreground" />
+                <AvatarFallback className="bg-secondary text-secondary-foreground font-semibold">
+                  {review.reviewer?.full_name?.split(' ').map(n => n[0]).join('').slice(0, 2).toUpperCase() || 'U'}
                 </AvatarFallback>
               </Avatar>
               <div className="flex-1 min-w-0">

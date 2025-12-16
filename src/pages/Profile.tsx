@@ -352,8 +352,10 @@ export default function Profile() {
                 className="w-24 h-24 rounded-full object-cover border-4 border-card"
               />
             ) : (
-              <div className="w-24 h-24 rounded-full bg-muted border-4 border-card flex items-center justify-center">
-                <User className="w-10 h-10 text-muted-foreground" />
+              <div className="w-24 h-24 rounded-full bg-gradient-orange border-4 border-card flex items-center justify-center">
+                <span className="text-2xl font-bold text-primary-foreground">
+                  {profileData?.name?.split(' ').map(n => n[0]).join('').slice(0, 2).toUpperCase() || 'U'}
+                </span>
               </div>
             )}
             <label className="absolute bottom-0 right-0 w-8 h-8 rounded-full bg-secondary flex items-center justify-center shadow-blue cursor-pointer hover:bg-secondary/80 transition-colors">

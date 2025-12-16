@@ -281,8 +281,10 @@ export default function SellerProfile() {
                 className="w-20 h-20 rounded-full object-cover border-2 border-border"
               />
             ) : (
-              <div className="w-20 h-20 rounded-full bg-muted flex items-center justify-center border-2 border-border">
-                <UserIcon className="w-8 h-8 text-muted-foreground" />
+              <div className="w-20 h-20 rounded-full bg-secondary flex items-center justify-center border-2 border-border">
+                <span className="text-2xl font-bold text-secondary-foreground">
+                  {seller.name?.split(' ').map(n => n[0]).join('').slice(0, 2).toUpperCase() || 'U'}
+                </span>
               </div>
             )}
             {seller.isVerified && (

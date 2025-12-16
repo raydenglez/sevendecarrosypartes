@@ -25,8 +25,10 @@ export function SellerCard({ seller, className }: SellerCardProps) {
             className="w-14 h-14 rounded-full object-cover"
           />
         ) : (
-          <div className="w-14 h-14 rounded-full bg-muted flex items-center justify-center">
-            <UserIcon className="w-6 h-6 text-muted-foreground" />
+          <div className="w-14 h-14 rounded-full bg-secondary flex items-center justify-center">
+            <span className="text-lg font-bold text-secondary-foreground">
+              {seller.name?.split(' ').map(n => n[0]).join('').slice(0, 2).toUpperCase() || 'U'}
+            </span>
           </div>
         )}
         {seller.isVerified && (
