@@ -256,6 +256,7 @@ export type Database = {
           full_name: string | null
           id: string
           is_verified: boolean | null
+          language: string | null
           location_city: string | null
           location_lat: number | null
           location_lng: number | null
@@ -276,6 +277,7 @@ export type Database = {
           full_name?: string | null
           id: string
           is_verified?: boolean | null
+          language?: string | null
           location_city?: string | null
           location_lat?: number | null
           location_lng?: number | null
@@ -296,6 +298,7 @@ export type Database = {
           full_name?: string | null
           id?: string
           is_verified?: boolean | null
+          language?: string | null
           location_city?: string | null
           location_lat?: number | null
           location_lng?: number | null
