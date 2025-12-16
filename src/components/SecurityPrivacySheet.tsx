@@ -1,12 +1,24 @@
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from '@/components/ui/sheet';
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from '@/components/ui/alert-dialog';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Switch } from '@/components/ui/switch';
-import { KeyRound, Eye, EyeOff, Shield, Smartphone, Clock, AlertTriangle } from 'lucide-react';
+import { KeyRound, Eye, EyeOff, Shield, Smartphone, Clock, AlertTriangle, Loader2 } from 'lucide-react';
 import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@/hooks/useAuth';
 import { useToast } from '@/hooks/use-toast';
+import { supabase } from '@/integrations/supabase/client';
 import { z } from 'zod';
 
 const passwordSchema = z.object({
@@ -23,11 +35,15 @@ interface SecurityPrivacySheetProps {
 }
 
 export function SecurityPrivacySheet({ open, onClose }: SecurityPrivacySheetProps) {
-  const { user, updatePassword } = useAuth();
+  const navigate = useNavigate();
+  const { user, updatePassword, signOut } = useAuth();
   const { toast } = useToast();
   const [showChangePassword, setShowChangePassword] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
+  const [deleteLoading, setDeleteLoading] = useState(false);
+  const [deleteConfirmText, setDeleteConfirmText] = useState('');
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [formData, setFormData] = useState({
     newPassword: '',
@@ -78,6 +94,60 @@ export function SecurityPrivacySheet({ open, onClose }: SecurityPrivacySheetProp
         minute: '2-digit'
       })
     : 'Unknown';
+
+  const handleDeleteAccount = async () => {
+    if (deleteConfirmText !== 'DELETE') {
+      toast({
+        title: "Confirmation required",
+        description: "Please type DELETE to confirm account deletion.",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    setDeleteLoading(true);
+
+    try {
+      const { data: { session } } = await supabase.auth.getSession();
+      
+      if (!session) {
+        throw new Error("No active session");
+      }
+
+      const { data, error } = await supabase.functions.invoke('delete-account', {
+        headers: {
+          Authorization: `Bearer ${session.access_token}`,
+        },
+      });
+
+      if (error) throw error;
+
+      if (data?.error) {
+        throw new Error(data.error);
+      }
+
+      toast({
+        title: "Account deleted",
+        description: "Your account has been permanently deleted.",
+      });
+
+      // Sign out and redirect
+      await signOut();
+      navigate('/');
+      
+    } catch (error) {
+      console.error("Delete account error:", error);
+      toast({
+        title: "Deletion failed",
+        description: error instanceof Error ? error.message : "Failed to delete account. Please try again.",
+        variant: "destructive",
+      });
+    } finally {
+      setDeleteLoading(false);
+      setDeleteDialogOpen(false);
+      setDeleteConfirmText('');
+    }
+  };
 
   return (
     <Sheet open={open} onOpenChange={onClose}>
@@ -231,12 +301,70 @@ export function SecurityPrivacySheet({ open, onClose }: SecurityPrivacySheetProp
             <Button 
               variant="ghost" 
               className="w-full mt-3 text-destructive hover:text-destructive hover:bg-destructive/10"
+              onClick={() => setDeleteDialogOpen(true)}
             >
               Delete My Account
             </Button>
           </div>
         </div>
       </SheetContent>
+
+      {/* Delete Account Confirmation Dialog */}
+      <AlertDialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
+        <AlertDialogContent className="bg-card border-border">
+          <AlertDialogHeader>
+            <AlertDialogTitle className="flex items-center gap-2 text-destructive">
+              <AlertTriangle className="w-5 h-5" />
+              Delete Account Permanently?
+            </AlertDialogTitle>
+            <AlertDialogDescription className="text-muted-foreground">
+              This action cannot be undone. This will permanently delete your account and remove all your data including:
+              <ul className="list-disc list-inside mt-2 space-y-1">
+                <li>Your profile and settings</li>
+                <li>All your listings and images</li>
+                <li>Your messages and conversations</li>
+                <li>Your reviews and favorites</li>
+              </ul>
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          
+          <div className="py-4">
+            <Label htmlFor="deleteConfirm" className="text-sm text-muted-foreground">
+              Type <span className="font-bold text-foreground">DELETE</span> to confirm
+            </Label>
+            <Input
+              id="deleteConfirm"
+              value={deleteConfirmText}
+              onChange={(e) => setDeleteConfirmText(e.target.value)}
+              placeholder="DELETE"
+              className="mt-2"
+            />
+          </div>
+
+          <AlertDialogFooter>
+            <AlertDialogCancel 
+              disabled={deleteLoading}
+              onClick={() => setDeleteConfirmText('')}
+            >
+              Cancel
+            </AlertDialogCancel>
+            <AlertDialogAction
+              className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+              onClick={handleDeleteAccount}
+              disabled={deleteLoading || deleteConfirmText !== 'DELETE'}
+            >
+              {deleteLoading ? (
+                <>
+                  <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                  Deleting...
+                </>
+              ) : (
+                'Delete Account'
+              )}
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </Sheet>
   );
 }
