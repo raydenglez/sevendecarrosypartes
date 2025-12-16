@@ -172,7 +172,10 @@
     "price": "Price",
     "negotiable": "Negotiable",
     "description": "Description",
+    "readMore": "Read more",
+    "features": "Features",
     "location": "Location",
+    "viewOnMap": "View on map",
     "condition": "Condition",
     "contact": "Contact",
     "message": "Message",
@@ -187,7 +190,19 @@
     "verified": "Verified",
     "topRated": "Top Rated",
     "reviews": "reviews",
-    "noReviews": "No reviews yet"
+    "noReviews": "No reviews yet",
+    "notFound": "Listing not found",
+    "seller": "Seller",
+    "editListing": "Edit Listing",
+    "cannotMessage": "Cannot message",
+    "cannotMessageSelf": "You cannot message yourself",
+    "conversationError": "Could not start conversation. Please try again.",
+    "specs": {
+      "mileage": "Mileage",
+      "transmission": "Transmission",
+      "fuel": "Fuel",
+      "body": "Body"
+    }
   },
   "publish": {
     "title": "Publish Listing",
@@ -318,9 +333,24 @@
     "communication": "Communication",
     "accuracy": "Accuracy",
     "service": "Service",
+    "serviceQuality": "Service Quality",
     "comment": "Comment",
     "commentPlaceholder": "Share your experience...",
-    "submitReview": "Submit Review"
+    "submitReview": "Submit Review",
+    "submitting": "Submitting...",
+    "noReviews": "No reviews yet",
+    "beFirst": "Be the first to leave a review!",
+    "reviewsCount": "reviews",
+    "anonymous": "Anonymous",
+    "cannotReview": "Cannot leave a review",
+    "canReview": "You can leave a review for this listing",
+    "yourReview": "Your Review (optional)",
+    "ratingRequired": "Rating required",
+    "selectRating": "Please select an overall rating",
+    "loginRequired": "You must be logged in to submit a review",
+    "submitError": "Failed to submit review. Please try again.",
+    "submitted": "Review submitted",
+    "thankYou": "Thank you for your feedback!"
   },
   "toast": {
     "success": "Success",

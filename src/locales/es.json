@@ -172,7 +172,10 @@
     "price": "Precio",
     "negotiable": "Negociable",
     "description": "Descripción",
+    "readMore": "Leer más",
+    "features": "Características",
     "location": "Ubicación",
+    "viewOnMap": "Ver en mapa",
     "condition": "Condición",
     "contact": "Contactar",
     "message": "Mensaje",
@@ -187,7 +190,19 @@
     "verified": "Verificado",
     "topRated": "Mejor Calificado",
     "reviews": "reseñas",
-    "noReviews": "Sin reseñas aún"
+    "noReviews": "Sin reseñas aún",
+    "notFound": "Anuncio no encontrado",
+    "seller": "Vendedor",
+    "editListing": "Editar Anuncio",
+    "cannotMessage": "No se puede enviar mensaje",
+    "cannotMessageSelf": "No puedes enviarte un mensaje a ti mismo",
+    "conversationError": "No se pudo iniciar la conversación. Inténtalo de nuevo.",
+    "specs": {
+      "mileage": "Kilometraje",
+      "transmission": "Transmisión",
+      "fuel": "Combustible",
+      "body": "Carrocería"
+    }
   },
   "publish": {
     "title": "Publicar Anuncio",
@@ -318,9 +333,24 @@
     "communication": "Comunicación",
     "accuracy": "Precisión",
     "service": "Servicio",
+    "serviceQuality": "Calidad del Servicio",
     "comment": "Comentario",
     "commentPlaceholder": "Comparte tu experiencia...",
-    "submitReview": "Enviar Reseña"
+    "submitReview": "Enviar Reseña",
+    "submitting": "Enviando...",
+    "noReviews": "Aún no hay reseñas",
+    "beFirst": "¡Sé el primero en dejar una reseña!",
+    "reviewsCount": "reseñas",
+    "anonymous": "Anónimo",
+    "cannotReview": "No puedes dejar una reseña",
+    "canReview": "Puedes dejar una reseña para este anuncio",
+    "yourReview": "Tu Reseña (opcional)",
+    "ratingRequired": "Calificación requerida",
+    "selectRating": "Por favor selecciona una calificación",
+    "loginRequired": "Debes iniciar sesión para enviar una reseña",
+    "submitError": "Error al enviar la reseña. Inténtalo de nuevo.",
+    "submitted": "Reseña enviada",
+    "thankYou": "¡Gracias por tu opinión!"
   },
   "toast": {
     "success": "Éxito",

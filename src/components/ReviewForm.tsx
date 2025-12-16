@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
 import { StarRating } from '@/components/StarRating';
@@ -16,6 +17,7 @@ interface ReviewFormProps {
 }
 
 export function ReviewForm({ listingId, onSuccess, eligibility }: ReviewFormProps) {
+  const { t } = useTranslation();
   const { toast } = useToast();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [overallRating, setOverallRating] = useState(0);
@@ -29,8 +31,8 @@ export function ReviewForm({ listingId, onSuccess, eligibility }: ReviewFormProp
     
     if (overallRating === 0) {
       toast({
-        title: 'Rating required',
-        description: 'Please select an overall rating',
+        title: t('reviews.ratingRequired'),
+        description: t('reviews.selectRating'),
         variant: 'destructive'
       });
       return;
@@ -41,8 +43,8 @@ export function ReviewForm({ listingId, onSuccess, eligibility }: ReviewFormProp
     const { data: { user } } = await supabase.auth.getUser();
     if (!user) {
       toast({
-        title: 'Error',
-        description: 'You must be logged in to submit a review',
+        title: t('toast.error'),
+        description: t('reviews.loginRequired'),
         variant: 'destructive'
       });
       setIsSubmitting(false);
@@ -61,14 +63,14 @@ export function ReviewForm({ listingId, onSuccess, eligibility }: ReviewFormProp
 
     if (error) {
       toast({
-        title: 'Error',
-        description: 'Failed to submit review. Please try again.',
+        title: t('toast.error'),
+        description: t('reviews.submitError'),
         variant: 'destructive'
       });
     } else {
       toast({
-        title: 'Review submitted',
-        description: 'Thank you for your feedback!'
+        title: t('reviews.submitted'),
+        description: t('reviews.thankYou')
       });
       onSuccess();
       // Reset form
@@ -87,7 +89,7 @@ export function ReviewForm({ listingId, onSuccess, eligibility }: ReviewFormProp
       <div className="p-4 bg-muted/50 rounded-xl flex items-start gap-3">
         <AlertCircle className="w-5 h-5 text-muted-foreground mt-0.5 flex-shrink-0" />
         <div>
-          <p className="text-sm font-medium text-foreground">Cannot leave a review</p>
+          <p className="text-sm font-medium text-foreground">{t('reviews.cannotReview')}</p>
           <p className="text-sm text-muted-foreground mt-1">{eligibility.reason}</p>
         </div>
       </div>
@@ -98,13 +100,13 @@ export function ReviewForm({ listingId, onSuccess, eligibility }: ReviewFormProp
     <form onSubmit={handleSubmit} className="space-y-5 p-4 bg-card rounded-xl border border-border">
       <div className="flex items-center gap-2 text-sm text-muted-foreground">
         <CheckCircle className="w-4 h-4 text-green-500" />
-        You can leave a review for this listing
+        {t('reviews.canReview')}
       </div>
 
       {/* Overall Rating */}
       <div>
         <label className="text-sm font-medium text-foreground mb-2 block">
-          Overall Rating *
+          {t('reviews.overallRating')} *
         </label>
         <StarRating
           rating={overallRating}
@@ -117,7 +119,7 @@ export function ReviewForm({ listingId, onSuccess, eligibility }: ReviewFormProp
       {/* Breakdown Ratings */}
       <div className="grid grid-cols-1 gap-4">
         <div className="flex items-center justify-between">
-          <span className="text-sm text-muted-foreground">Communication</span>
+          <span className="text-sm text-muted-foreground">{t('reviews.communication')}</span>
           <StarRating
             rating={communicationRating}
             size="sm"
@@ -126,7 +128,7 @@ export function ReviewForm({ listingId, onSuccess, eligibility }: ReviewFormProp
           />
         </div>
         <div className="flex items-center justify-between">
-          <span className="text-sm text-muted-foreground">Accuracy</span>
+          <span className="text-sm text-muted-foreground">{t('reviews.accuracy')}</span>
           <StarRating
             rating={accuracyRating}
             size="sm"
@@ -135,7 +137,7 @@ export function ReviewForm({ listingId, onSuccess, eligibility }: ReviewFormProp
           />
         </div>
         <div className="flex items-center justify-between">
-          <span className="text-sm text-muted-foreground">Service Quality</span>
+          <span className="text-sm text-muted-foreground">{t('reviews.serviceQuality')}</span>
           <StarRating
             rating={serviceRating}
             size="sm"
@@ -148,12 +150,12 @@ export function ReviewForm({ listingId, onSuccess, eligibility }: ReviewFormProp
       {/* Comment */}
       <div>
         <label className="text-sm font-medium text-foreground mb-2 block">
-          Your Review (optional)
+          {t('reviews.yourReview')}
         </label>
         <Textarea
           value={comment}
           onChange={(e) => setComment(e.target.value)}
-          placeholder="Share your experience..."
+          placeholder={t('reviews.commentPlaceholder')}
           maxLength={500}
           className="resize-none"
           rows={3}
@@ -167,10 +169,10 @@ export function ReviewForm({ listingId, onSuccess, eligibility }: ReviewFormProp
         {isSubmitting ? (
           <>
             <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-            Submitting...
+            {t('reviews.submitting')}
           </>
         ) : (
-          'Submit Review'
+          t('reviews.submitReview')
         )}
       </Button>
     </form>
