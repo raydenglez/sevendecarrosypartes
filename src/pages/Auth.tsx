@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { z } from 'zod';
 import { Eye, EyeOff, Mail, Lock, User, ArrowLeft, MailCheck, RefreshCw } from 'lucide-react';
+import { Skeleton } from '@/components/ui/skeleton';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -26,7 +27,7 @@ const signupSchema = z.object({
 
 export default function Auth() {
   const navigate = useNavigate();
-  const { user, signUp, signIn, signInWithOAuth, resendConfirmationEmail, resetPassword } = useAuth();
+  const { user, loading: authLoading, signUp, signIn, signInWithOAuth, resendConfirmationEmail, resetPassword } = useAuth();
   const { toast } = useToast();
   const [oauthLoading, setOauthLoading] = useState<string | null>(null);
   
@@ -49,10 +50,56 @@ export default function Auth() {
 
   // Redirect if already logged in
   useEffect(() => {
-    if (user) {
+    if (user && !authLoading) {
       navigate('/');
     }
-  }, [user, navigate]);
+  }, [user, authLoading, navigate]);
+
+  // Loading skeleton while checking auth state
+  if (authLoading) {
+    return (
+      <div className="min-h-screen bg-background flex flex-col">
+        <header className="px-4 pt-4 safe-top">
+          <Skeleton className="w-10 h-10 rounded-full" />
+        </header>
+
+        <div className="flex-1 px-6 py-8 flex flex-col">
+          <div className="flex flex-col items-center mb-8">
+            <Skeleton className="h-16 w-16 rounded-2xl mb-4" />
+            <Skeleton className="h-8 w-48 mb-2" />
+            <Skeleton className="h-4 w-32" />
+          </div>
+
+          <div className="space-y-4 animate-fade-in">
+            <div className="space-y-2">
+              <Skeleton className="h-4 w-16" />
+              <Skeleton className="h-11 w-full rounded-lg" />
+            </div>
+            <div className="space-y-2">
+              <Skeleton className="h-4 w-20" />
+              <Skeleton className="h-11 w-full rounded-lg" />
+            </div>
+            <Skeleton className="h-12 w-full rounded-lg mt-6" />
+          </div>
+
+          <div className="flex items-center gap-4 my-6">
+            <Skeleton className="flex-1 h-px" />
+            <Skeleton className="h-4 w-28" />
+            <Skeleton className="flex-1 h-px" />
+          </div>
+
+          <div className="flex gap-3">
+            <Skeleton className="flex-1 h-12 rounded-lg" />
+            <Skeleton className="flex-1 h-12 rounded-lg" />
+          </div>
+
+          <div className="mt-6 flex justify-center">
+            <Skeleton className="h-4 w-48" />
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
