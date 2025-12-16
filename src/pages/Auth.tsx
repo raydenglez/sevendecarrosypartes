@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { z } from 'zod';
-import { Eye, EyeOff, Mail, Lock, User, ArrowLeft } from 'lucide-react';
+import { Eye, EyeOff, Mail, Lock, User, ArrowLeft, CheckCircle, RefreshCw } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -26,13 +26,16 @@ const signupSchema = z.object({
 
 export default function Auth() {
   const navigate = useNavigate();
-  const { user, signUp, signIn } = useAuth();
+  const { user, signUp, signIn, resendConfirmationEmail } = useAuth();
   const { toast } = useToast();
   
   const [isLogin, setIsLogin] = useState(true);
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
   const [errors, setErrors] = useState<Record<string, string>>({});
+  const [confirmationPending, setConfirmationPending] = useState(false);
+  const [pendingEmail, setPendingEmail] = useState('');
+  const [resendLoading, setResendLoading] = useState(false);
   
   const [formData, setFormData] = useState({
     fullName: '',
@@ -55,6 +58,30 @@ export default function Auth() {
     if (errors[name]) {
       setErrors(prev => ({ ...prev, [name]: '' }));
     }
+  };
+
+  const handleResendEmail = async () => {
+    setResendLoading(true);
+    const { error } = await resendConfirmationEmail(pendingEmail);
+    setResendLoading(false);
+    
+    if (error) {
+      toast({
+        title: "Failed to resend",
+        description: error.message,
+        variant: "destructive",
+      });
+    } else {
+      toast({
+        title: "Email sent!",
+        description: "A new confirmation email has been sent to your inbox.",
+      });
+    }
+  };
+
+  const handleBackToSignup = () => {
+    setConfirmationPending(false);
+    setPendingEmail('');
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -85,6 +112,10 @@ export default function Auth() {
               description: "Invalid email or password. Please try again.",
               variant: "destructive",
             });
+          } else if (error.message.includes('Email not confirmed')) {
+            // User exists but hasn't confirmed email
+            setPendingEmail(formData.email);
+            setConfirmationPending(true);
           } else {
             toast({
               title: "Login failed",
@@ -113,7 +144,7 @@ export default function Auth() {
           return;
         }
 
-        const { error } = await signUp(formData.email, formData.password, formData.fullName);
+        const { error, confirmationPending: isPending } = await signUp(formData.email, formData.password, formData.fullName);
         if (error) {
           if (error.message.includes('already registered')) {
             toast({
@@ -128,7 +159,12 @@ export default function Auth() {
               variant: "destructive",
             });
           }
+        } else if (isPending) {
+          // Email confirmation required
+          setPendingEmail(formData.email);
+          setConfirmationPending(true);
         } else {
+          // Auto-confirm is enabled, user is logged in
           toast({
             title: "Account created!",
             description: "Welcome to CarNexo! You can now browse and create listings.",
@@ -146,6 +182,73 @@ export default function Auth() {
       setLoading(false);
     }
   };
+
+  // Email Confirmation Pending Screen
+  if (confirmationPending) {
+    return (
+      <div className="min-h-screen bg-background flex flex-col">
+        <header className="px-4 pt-4 safe-top">
+          <button 
+            onClick={handleBackToSignup}
+            className="w-10 h-10 flex items-center justify-center text-foreground"
+          >
+            <ArrowLeft className="w-6 h-6" />
+          </button>
+        </header>
+
+        <div className="flex-1 px-6 py-8 flex flex-col items-center justify-center">
+          <div className="w-20 h-20 rounded-full bg-primary/10 flex items-center justify-center mb-6">
+            <CheckCircle className="w-10 h-10 text-primary" />
+          </div>
+          
+          <h1 className="text-2xl font-bold text-foreground text-center mb-2">
+            Check your inbox
+          </h1>
+          
+          <p className="text-muted-foreground text-center mb-2">
+            We've sent a confirmation link to:
+          </p>
+          
+          <p className="text-foreground font-medium text-center mb-6">
+            {pendingEmail}
+          </p>
+          
+          <div className="bg-muted/50 rounded-xl p-4 mb-6 w-full max-w-sm">
+            <p className="text-sm text-muted-foreground text-center">
+              Click the link in the email to verify your account. If you don't see it, check your spam folder.
+            </p>
+          </div>
+
+          <Button
+            variant="outline"
+            onClick={handleResendEmail}
+            disabled={resendLoading}
+            className="w-full max-w-sm mb-3"
+          >
+            {resendLoading ? (
+              <>
+                <RefreshCw className="w-4 h-4 mr-2 animate-spin" />
+                Sending...
+              </>
+            ) : (
+              <>
+                <RefreshCw className="w-4 h-4 mr-2" />
+                Resend confirmation email
+              </>
+            )}
+          </Button>
+
+          <Button
+            variant="ghost"
+            onClick={handleBackToSignup}
+            className="text-muted-foreground"
+          >
+            Use a different email
+          </Button>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-background flex flex-col">
