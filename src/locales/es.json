@@ -96,7 +96,10 @@
       "welcomeToCarNexo": "¡Bienvenido a CarNexo! Ya puedes explorar y crear anuncios.",
       "failedResetEmail": "Error al enviar correo de recuperación",
       "failedUpdatePassword": "Error al actualizar contraseña",
-      "somethingWrong": "Algo salió mal. Por favor intenta de nuevo."
+      "somethingWrong": "Algo salió mal. Por favor intenta de nuevo.",
+      "oauthNotConfigured": "Inicio de sesión no disponible",
+      "googleNotConfiguredDesc": "El inicio de sesión con Google aún no está configurado. Por favor usa correo y contraseña para crear una cuenta.",
+      "appleNotConfiguredDesc": "El inicio de sesión con Apple aún no está configurado. Por favor usa correo y contraseña para crear una cuenta."
     }
   },
   "home": {
