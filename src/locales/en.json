@@ -17,7 +17,10 @@
     "next": "Next",
     "submit": "Submit",
     "clear": "Clear",
-    "apply": "Apply"
+    "apply": "Apply",
+    "goBack": "Go Back",
+    "mi": "mi",
+    "miAway": "mi away"
   },
   "nav": {
     "home": "Explore",
@@ -137,7 +140,7 @@
     "personalInfo": "Personal Information",
     "personalInfoDesc": "Email, phone and address",
     "securityPrivacy": "Security & Privacy",
-    "securityPrivacyDesc": "Password and privacy settings",
+    "securityPrivacyDesc": "Password, privacy settings and delete your account",
     "appSettings": "Application Settings",
     "language": "Language",
     "languageDesc": "English, Spanish, Portuguese",
@@ -148,25 +151,39 @@
     "pushNotifications": "Push Notifications",
     "pushNotificationsDesc": "Receive alerts for new messages",
     "changePassword": "Change Password",
+    "updateAccountPassword": "Update your account password",
     "currentPassword": "Current Password",
     "newPassword": "New Password",
     "confirmNewPassword": "Confirm New Password",
-    "lastLogin": "Last login",
+    "lastLogin": "Last Login",
     "privacySettings": "Privacy Settings",
     "showPhoneOnListings": "Show phone number on listings",
-    "showPhoneOnListingsDesc": "Allow buyers to see your contact number",
     "allowMessagesFromAnyone": "Allow messages from anyone",
-    "allowMessagesFromAnyoneDesc": "Receive inquiries without prior contact",
     "showOnlineStatus": "Show online status",
-    "showOnlineStatusDesc": "Let others see when you're active",
     "twoFactorAuth": "Two-Factor Authentication",
     "twoFactorAuthDesc": "Add an extra layer of security",
     "comingSoon": "Coming soon",
     "deleteAccount": "Delete Account",
-    "deleteAccountDesc": "Permanently remove your account and data",
-    "deleteAccountConfirm": "Are you sure you want to delete your account?",
-    "deleteAccountWarning": "This action cannot be undone. All your data, listings, and messages will be permanently deleted.",
-    "typeDelete": "Type DELETE to confirm"
+    "deleteAccountDesc": "Permanently delete your account and data",
+    "deleteMyAccount": "Delete My Account",
+    "deleteAccountPermanently": "Delete Account Permanently?",
+    "deleteAccountWarningFull": "This action cannot be undone. This will permanently delete your account and remove all your data including:",
+    "deleteWarningProfile": "Your profile and settings",
+    "deleteWarningListings": "All your listings and images",
+    "deleteWarningMessages": "Your messages and conversations",
+    "deleteWarningReviews": "Your reviews and favorites",
+    "typeDeleteConfirm": "Type DELETE to confirm",
+    "deleting": "Deleting...",
+    "failedUpdateSetting": "Failed to update setting",
+    "failedUpdatePassword": "Failed to update password",
+    "passwordUpdated": "Password updated",
+    "passwordChangedSuccess": "Your password has been changed successfully.",
+    "confirmationRequired": "Confirmation required",
+    "pleaseTypeDelete": "Please type DELETE to confirm account deletion.",
+    "accountDeleted": "Account deleted",
+    "accountDeletedDesc": "Your account has been permanently deleted.",
+    "deletionFailed": "Deletion failed",
+    "failedDeleteAccount": "Failed to delete account. Please try again."
   },
   "listing": {
     "price": "Price",
@@ -187,6 +204,7 @@
     "draft": "DRAFT",
     "expired": "EXPIRED",
     "premium": "PREMIUM",
+    "service": "SERVICE",
     "verified": "Verified",
     "topRated": "Top Rated",
     "reviews": "reviews",
@@ -324,7 +342,30 @@
     "nearbyListings": "Nearby Listings",
     "getDirections": "Get Directions",
     "travelTime": "Travel Time",
-    "distance": "Distance"
+    "distance": "Distance",
+    "searchLocations": "Search locations...",
+    "gettingLocation": "Getting location...",
+    "viewListings": "View {{count}} Listings",
+    "exploreOnMap": "Explore on Map",
+    "discoverListings": "Discover {{count}}+ listings near you",
+    "directions": "Directions",
+    "viewDetails": "View Details",
+    "drive": "drive",
+    "open": "Open",
+    "verified": "Verified",
+    "memberSince": "Member since {{date}}",
+    "reviews": "{{count}} reviews",
+    "filterTypes": {
+      "all": "All",
+      "vehicle": "Vehicles",
+      "service": "Services",
+      "part": "Parts"
+    },
+    "listingTypes": {
+      "vehicle": "Vehicle",
+      "part": "Auto Part",
+      "service": "Service Provider"
+    }
   },
   "reviews": {
     "title": "Reviews",
@@ -370,7 +411,9 @@
     "reviewSubmitted": "Review submitted successfully.",
     "signedOut": "You have been signed out successfully.",
     "invalidFileType": "Please upload an image file.",
-    "fileTooLarge": "Please upload an image smaller than 5MB."
+    "fileTooLarge": "Please upload an image smaller than 5MB.",
+    "listingNotFound": "Listing not found",
+    "canOnlyEditOwn": "You can only edit your own listings"
   },
   "filters": {
     "title": "Filters",
@@ -388,30 +431,103 @@
       "fair": "Fair"
     }
   },
-  "map": {
-    "searchLocations": "Search locations...",
-    "gettingLocation": "Getting location...",
-    "viewListings": "View {{count}} Listings",
-    "nearbyListings": "Nearby Listings",
-    "exploreOnMap": "Explore on Map",
-    "discoverListings": "Discover {{count}}+ listings near you",
-    "directions": "Directions",
-    "viewDetails": "View Details",
-    "drive": "drive",
-    "open": "Open",
-    "verified": "Verified",
-    "memberSince": "Member since {{date}}",
-    "reviews": "{{count}} reviews",
-    "filterTypes": {
-      "all": "All",
-      "vehicle": "Vehicles",
-      "service": "Services",
-      "part": "Parts"
-    },
-    "listingTypes": {
-      "vehicle": "Vehicle",
-      "part": "Auto Part",
-      "service": "Service Provider"
+  "editListing": {
+    "title": "Edit Listing",
+    "deleteListing": "Delete Listing",
+    "deleteConfirm": "Are you sure you want to delete this listing? This action cannot be undone.",
+    "deleting": "Deleting...",
+    "listingStatus": "Listing Status",
+    "cannotBeChanged": "Cannot be changed",
+    "updateListing": "Update Listing",
+    "updating": "Updating...",
+    "status": {
+      "active": "Active",
+      "activeDesc": "Visible to everyone",
+      "sold": "Sold",
+      "soldDesc": "Marked as sold",
+      "expired": "Expired",
+      "expiredDesc": "No longer available",
+      "draft": "Draft",
+      "draftDesc": "Only visible to you"
     }
+  },
+  "chat": {
+    "conversationNotFound": "Conversation not found",
+    "startConversation": "Start the conversation by sending a message"
+  },
+  "myListings": {
+    "title": "My Listings",
+    "noListingsFound": "No listings found",
+    "createListing": "Create Listing",
+    "typeFilters": {
+      "all": "All",
+      "vehicles": "Vehicles",
+      "parts": "Parts",
+      "services": "Services"
+    },
+    "statusFilters": {
+      "all": "All",
+      "active": "Active",
+      "sold": "Sold",
+      "expired": "Expired",
+      "draft": "Draft"
+    }
+  },
+  "sellerProfile": {
+    "title": "Seller Profile",
+    "notFound": "Seller not found",
+    "notFoundDesc": "This profile doesn't exist or has been removed.",
+    "linkCopied": "Profile link copied to clipboard!",
+    "proSeller": "Pro Seller",
+    "serviceProvider": "Service Provider",
+    "memberSince": "Member since {{date}}",
+    "activeListings": "Active Listings",
+    "avgRating": "Avg Rating",
+    "reviews": "Reviews",
+    "tabs": {
+      "listings": "Listings",
+      "reviews": "Reviews"
+    },
+    "noActiveListings": "No active listings",
+    "noReviewsYet": "No reviews yet",
+    "vehicles": "Vehicles",
+    "parts": "Parts",
+    "services": "Services"
+  },
+  "featured": {
+    "title": "Featured Near You",
+    "noFeatured": "No featured listings nearby"
+  },
+  "notFound": {
+    "title": "404",
+    "message": "Oops! Page not found",
+    "returnHome": "Return to Home"
+  },
+  "vinScanner": {
+    "title": "Scan VIN",
+    "enterManually": "Enter VIN Manually",
+    "manualDescription": "Type the 17-character VIN from your vehicle",
+    "characters": "characters",
+    "invalidVin": "Invalid VIN. Must be 17 characters (letters A-H, J-N, P, R-Z and numbers).",
+    "decodeVin": "Decode VIN",
+    "decodingVin": "Decoding VIN...",
+    "pointAtBarcode": "Point at VIN Barcode",
+    "alignBarcode": "Align the barcode within the frame to scan automatically",
+    "vinLocation": "VIN is typically found on the dashboard near the windshield or on the driver's door jamb",
+    "cameraError": "Camera access denied or unavailable. Try manual entry.",
+    "decodeError": "Failed to decode VIN. Please try again.",
+    "vehicleError": "Could not retrieve vehicle details from VIN",
+    "vehicleDetected": "Vehicle details retrieved!"
+  },
+  "notifications": {
+    "title": "Messages",
+    "noNewMessages": "No new messages",
+    "viewAllMessages": "View All Messages"
+  },
+  "locationPermission": {
+    "title": "Enable Location",
+    "description": "The app improves its results with your location. Enable GPS to discover vehicles, parts, and services near you.",
+    "enable": "Enable Location",
+    "maybeLater": "Maybe Later"
   }
 }
