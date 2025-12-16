@@ -1,4 +1,5 @@
 import { Star, MapPin, Clock, Phone, Navigation, ExternalLink, ChevronRight, X, Car, Wrench, Settings } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 import { Listing } from '@/types';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -19,6 +20,8 @@ export function MapBusinessCard({
   onGetDirections,
   onViewDetails 
 }: MapBusinessCardProps) {
+  const { t } = useTranslation();
+  
   const getTypeIcon = () => {
     switch (listing.type) {
       case 'vehicle': return <Car className="w-4 h-4" />;
@@ -29,9 +32,9 @@ export function MapBusinessCard({
 
   const getTypeLabel = () => {
     switch (listing.type) {
-      case 'vehicle': return 'Vehicle';
-      case 'part': return 'Auto Part';
-      case 'service': return 'Service Provider';
+      case 'vehicle': return t('map.listingTypes.vehicle');
+      case 'part': return t('map.listingTypes.part');
+      case 'service': return t('map.listingTypes.service');
     }
   };
 
@@ -103,7 +106,7 @@ export function MapBusinessCard({
             <div className="flex items-center gap-1 text-sm">
               <Star className="w-4 h-4 text-warning fill-warning" />
               <span className="font-medium text-foreground">{listing.owner.ratingAvg}</span>
-              <span className="text-muted-foreground">({listing.owner.totalReviews} reviews)</span>
+              <span className="text-muted-foreground">({t('map.reviews', { count: listing.owner.totalReviews })})</span>
             </div>
           )}
         </div>
@@ -127,7 +130,7 @@ export function MapBusinessCard({
           {travelTime && (
             <div className="flex items-center gap-1 text-primary font-medium">
               <Clock className="w-4 h-4" />
-              <span>{travelTime.driving} drive</span>
+              <span>{travelTime.driving} {t('map.drive')}</span>
             </div>
           )}
         </div>
@@ -148,7 +151,7 @@ export function MapBusinessCard({
         {listing.serviceAttributes?.availability && (
           <div className="flex items-center gap-1 text-sm">
             <Clock className="w-4 h-4 text-success" />
-            <span className="text-success font-medium">Open</span>
+            <span className="text-success font-medium">{t('map.open')}</span>
             <span className="text-muted-foreground">• {listing.serviceAttributes.availability[0]}</span>
           </div>
         )}
@@ -165,9 +168,9 @@ export function MapBusinessCard({
               <p className="font-medium text-foreground text-sm truncate">{listing.owner.name}</p>
               <div className="flex items-center gap-2 text-xs text-muted-foreground">
                 {listing.owner.isVerified && (
-                  <span className="text-success">✓ Verified</span>
+                  <span className="text-success">✓ {t('map.verified')}</span>
                 )}
-                <span>Member since {listing.owner.memberSince}</span>
+                <span>{t('map.memberSince', { date: listing.owner.memberSince })}</span>
               </div>
             </div>
             {listing.owner.phone && (
@@ -188,14 +191,14 @@ export function MapBusinessCard({
             onClick={openInMaps}
           >
             <Navigation className="w-4 h-4 mr-2" />
-            Directions
+            {t('map.directions')}
           </Button>
           <Button 
             variant="outline"
             className="flex-1"
             onClick={onViewDetails}
           >
-            View Details
+            {t('map.viewDetails')}
             <ChevronRight className="w-4 h-4 ml-1" />
           </Button>
         </div>

@@ -387,5 +387,31 @@
       "good": "Bom",
       "fair": "Regular"
     }
+  },
+  "map": {
+    "searchLocations": "Buscar locais...",
+    "gettingLocation": "Obtendo localização...",
+    "viewListings": "Ver {{count}} Anúncios",
+    "nearbyListings": "Anúncios Próximos",
+    "exploreOnMap": "Explorar no Mapa",
+    "discoverListings": "Descubra {{count}}+ anúncios perto de você",
+    "directions": "Direções",
+    "viewDetails": "Ver Detalhes",
+    "drive": "de carro",
+    "open": "Aberto",
+    "verified": "Verificado",
+    "memberSince": "Membro desde {{date}}",
+    "reviews": "{{count}} avaliações",
+    "filterTypes": {
+      "all": "Todos",
+      "vehicle": "Veículos",
+      "service": "Serviços",
+      "part": "Peças"
+    },
+    "listingTypes": {
+      "vehicle": "Veículo",
+      "part": "Peça de Automóvel",
+      "service": "Prestador de Serviços"
+    }
   }
 }

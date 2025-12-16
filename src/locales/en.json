@@ -387,5 +387,31 @@
       "good": "Good",
       "fair": "Fair"
     }
+  },
+  "map": {
+    "searchLocations": "Search locations...",
+    "gettingLocation": "Getting location...",
+    "viewListings": "View {{count}} Listings",
+    "nearbyListings": "Nearby Listings",
+    "exploreOnMap": "Explore on Map",
+    "discoverListings": "Discover {{count}}+ listings near you",
+    "directions": "Directions",
+    "viewDetails": "View Details",
+    "drive": "drive",
+    "open": "Open",
+    "verified": "Verified",
+    "memberSince": "Member since {{date}}",
+    "reviews": "{{count}} reviews",
+    "filterTypes": {
+      "all": "All",
+      "vehicle": "Vehicles",
+      "service": "Services",
+      "part": "Parts"
+    },
+    "listingTypes": {
+      "vehicle": "Vehicle",
+      "part": "Auto Part",
+      "service": "Service Provider"
+    }
   }
 }
