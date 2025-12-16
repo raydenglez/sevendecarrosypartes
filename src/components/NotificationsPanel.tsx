@@ -68,8 +68,8 @@ export function NotificationsPanel({ isOpen, onClose, conversations, onViewAll }
                   <div className="flex gap-3">
                     <Avatar className="h-10 w-10 flex-shrink-0">
                       <AvatarImage src={conversation.other_user.avatar_url || undefined} alt={conversation.other_user.full_name} />
-                      <AvatarFallback className="bg-muted">
-                        <User className="w-5 h-5 text-muted-foreground" />
+                      <AvatarFallback className="bg-secondary text-secondary-foreground font-semibold">
+                        {conversation.other_user.full_name?.split(' ').map(n => n[0]).join('').slice(0, 2).toUpperCase() || 'U'}
                       </AvatarFallback>
                     </Avatar>
                     <div className="flex-1 min-w-0">
