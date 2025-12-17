@@ -94,45 +94,132 @@ async function sendWebPush(subscription: PushSubscription, payload: PushPayload)
   }
 }
 
-// Send push notification via Firebase Cloud Messaging (Android)
-async function sendFCM(deviceToken: string, payload: PushPayload): Promise<boolean> {
-  const fcmServerKey = Deno.env.get('FCM_SERVER_KEY');
+// Generate OAuth 2.0 access token for FCM HTTP v1 API
+async function getFCMAccessToken(): Promise<string | null> {
+  const clientEmail = Deno.env.get('FCM_CLIENT_EMAIL');
+  const privateKey = Deno.env.get('FCM_PRIVATE_KEY');
   
-  if (!fcmServerKey) {
-    console.error('FCM_SERVER_KEY not configured');
+  if (!clientEmail || !privateKey) {
+    console.error('FCM service account credentials not configured');
+    return null;
+  }
+
+  try {
+    const now = Math.floor(Date.now() / 1000);
+    const header = { alg: 'RS256', typ: 'JWT' };
+    const claims = {
+      iss: clientEmail,
+      sub: clientEmail,
+      aud: 'https://oauth2.googleapis.com/token',
+      iat: now,
+      exp: now + 3600,
+      scope: 'https://www.googleapis.com/auth/firebase.messaging',
+    };
+
+    const encodedHeader = btoa(JSON.stringify(header)).replace(/=/g, '').replace(/\+/g, '-').replace(/\//g, '_');
+    const encodedClaims = btoa(JSON.stringify(claims)).replace(/=/g, '').replace(/\+/g, '-').replace(/\//g, '_');
+    
+    // Parse PEM private key
+    const pemKey = privateKey
+      .replace(/-----BEGIN PRIVATE KEY-----/g, '')
+      .replace(/-----END PRIVATE KEY-----/g, '')
+      .replace(/\\n/g, '')
+      .replace(/\s/g, '');
+    const privateKeyBuffer = Uint8Array.from(atob(pemKey), c => c.charCodeAt(0));
+    
+    const key = await crypto.subtle.importKey(
+      'pkcs8',
+      privateKeyBuffer,
+      { name: 'RSASSA-PKCS1-v1_5', hash: 'SHA-256' },
+      false,
+      ['sign']
+    );
+    
+    const signatureInput = new TextEncoder().encode(`${encodedHeader}.${encodedClaims}`);
+    const signature = await crypto.subtle.sign(
+      'RSASSA-PKCS1-v1_5',
+      key,
+      signatureInput
+    );
+    
+    const encodedSignature = btoa(String.fromCharCode(...new Uint8Array(signature)))
+      .replace(/=/g, '').replace(/\+/g, '-').replace(/\//g, '_');
+    
+    const jwt = `${encodedHeader}.${encodedClaims}.${encodedSignature}`;
+
+    // Exchange JWT for access token
+    const tokenResponse = await fetch('https://oauth2.googleapis.com/token', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+      body: `grant_type=urn:ietf:params:oauth:grant-type:jwt-bearer&assertion=${jwt}`,
+    });
+
+    const tokenData = await tokenResponse.json();
+    
+    if (tokenData.access_token) {
+      return tokenData.access_token;
+    } else {
+      console.error('Failed to get FCM access token:', tokenData);
+      return null;
+    }
+  } catch (error) {
+    console.error('Error generating FCM access token:', error);
+    return null;
+  }
+}
+
+// Send push notification via Firebase Cloud Messaging HTTP v1 API (Android)
+async function sendFCM(deviceToken: string, payload: PushPayload): Promise<boolean> {
+  const projectId = Deno.env.get('FCM_PROJECT_ID');
+  
+  if (!projectId) {
+    console.error('FCM_PROJECT_ID not configured');
+    return false;
+  }
+
+  const accessToken = await getFCMAccessToken();
+  if (!accessToken) {
     return false;
   }
 
   try {
-    const response = await fetch('https://fcm.googleapis.com/fcm/send', {
-      method: 'POST',
-      headers: {
-        'Authorization': `key=${fcmServerKey}`,
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        to: deviceToken,
-        notification: {
-          title: payload.title,
-          body: payload.body,
-          click_action: 'FCM_PLUGIN_ACTIVITY',
-          sound: 'default',
+    const response = await fetch(
+      `https://fcm.googleapis.com/v1/projects/${projectId}/messages:send`,
+      {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${accessToken}`,
+          'Content-Type': 'application/json',
         },
-        data: {
-          conversationId: payload.conversationId,
-          url: payload.url,
-        },
-        priority: 'high',
-      }),
-    });
+        body: JSON.stringify({
+          message: {
+            token: deviceToken,
+            notification: {
+              title: payload.title,
+              body: payload.body,
+            },
+            android: {
+              priority: 'high',
+              notification: {
+                click_action: 'FCM_PLUGIN_ACTIVITY',
+                sound: 'default',
+              },
+            },
+            data: {
+              conversationId: payload.conversationId || '',
+              url: payload.url || '',
+            },
+          },
+        }),
+      }
+    );
 
-    const result = await response.json();
-    
-    if (result.success === 1) {
+    if (response.ok) {
       console.log('FCM notification sent successfully');
       return true;
     } else {
-      console.error('FCM notification failed:', result);
+      const errorData = await response.json();
+      console.error('FCM notification failed:', response.status, errorData);
       return false;
     }
   } catch (error) {
