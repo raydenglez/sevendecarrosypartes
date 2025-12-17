@@ -242,7 +242,7 @@ export default function MapView() {
         <Sheet open={showListings} onOpenChange={setShowListings}>
           <SheetTrigger asChild>
             <Button
-              className="absolute bottom-6 left-1/2 -translate-x-1/2 z-10 rounded-full shadow-orange safe-bottom"
+              className="absolute bottom-6 left-1/2 -translate-x-1/2 z-10 rounded-full shadow-orange safe-bottom leading-none"
             >
               <List className="w-4 h-4 mr-2" />
               {t('map.viewListings', { count: filteredListings.length })}
