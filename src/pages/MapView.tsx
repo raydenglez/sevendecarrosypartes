@@ -201,16 +201,18 @@ export default function MapView() {
       </div>
 
       {/* Map */}
-      <Map 
-        center={mapCenter}
-        zoom={12}
-        listings={filteredListings}
-        onMarkerClick={handleMarkerClick}
-        showRoute={showRoute}
-        destination={selectedListing?.location ? [selectedListing.location.lng, selectedListing.location.lat] : undefined}
-        userLocation={userLocation || undefined}
-        className="flex-1"
-      />
+      <div className="flex-1 relative">
+        <Map 
+          center={mapCenter}
+          zoom={12}
+          listings={filteredListings}
+          onMarkerClick={handleMarkerClick}
+          showRoute={showRoute}
+          destination={selectedListing?.location ? [selectedListing.location.lng, selectedListing.location.lat] : undefined}
+          userLocation={userLocation || undefined}
+          className="absolute inset-0"
+        />
+      </div>
 
       {/* Loading Location Indicator */}
       {isLoadingLocation && (
