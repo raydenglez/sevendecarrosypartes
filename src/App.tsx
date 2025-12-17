@@ -19,6 +19,8 @@ import Featured from "./pages/Featured";
 import Chat from "./pages/Chat";
 import MyListings from "./pages/MyListings";
 import ResetPassword from "./pages/ResetPassword";
+import PrivacyPolicy from "./pages/PrivacyPolicy";
+import TermsConditions from "./pages/TermsConditions";
 import NotFound from "./pages/NotFound";
 
 // Lazy load heavy pages
@@ -61,6 +63,8 @@ const App = () => (
                 <Route path="/chat/:conversationId" element={<Chat />} />
                 <Route path="/my-listings" element={<MyListings />} />
                 <Route path="/reset-password" element={<ResetPassword />} />
+                <Route path="/privacy-policy" element={<PrivacyPolicy />} />
+                <Route path="/terms-conditions" element={<TermsConditions />} />
                 {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
                 <Route path="*" element={<NotFound />} />
               </Routes>

@@ -643,6 +643,14 @@
     "notFound": {
       "title": "Página Não Encontrada | CarNexo",
       "description": "A página que você procura não existe. Volte para a página inicial do CarNexo."
+    },
+    "privacyPolicy": {
+      "title": "Política de Privacidade | CarNexo",
+      "description": "Saiba como o CarNexo coleta, usa e protege suas informações pessoais."
+    },
+    "termsConditions": {
+      "title": "Termos e Condições | CarNexo",
+      "description": "Leia os termos de serviço e acordo de usuário do CarNexo para usar nosso marketplace."
     }
   }
 }

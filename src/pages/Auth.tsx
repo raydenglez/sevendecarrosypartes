@@ -638,6 +638,28 @@ export default function Auth() {
               </button>
             </p>
           </div>
+
+          {/* Legal Links */}
+          <div className="mt-6 text-center">
+            <p className="text-xs text-muted-foreground">
+              By continuing, you agree to our{' '}
+              <button
+                type="button"
+                onClick={() => navigate('/terms-conditions')}
+                className="text-primary hover:underline"
+              >
+                Terms & Conditions
+              </button>
+              {' '}and{' '}
+              <button
+                type="button"
+                onClick={() => navigate('/privacy-policy')}
+                className="text-primary hover:underline"
+              >
+                Privacy Policy
+              </button>
+            </p>
+          </div>
         </div>
       </div>
       </AuthBackground>
