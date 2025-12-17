@@ -640,6 +640,14 @@
     "notFound": {
       "title": "Page Not Found | CarNexo",
       "description": "The page you're looking for doesn't exist. Return to CarNexo homepage."
+    },
+    "privacyPolicy": {
+      "title": "Privacy Policy | CarNexo",
+      "description": "Learn how CarNexo collects, uses, and protects your personal information."
+    },
+    "termsConditions": {
+      "title": "Terms & Conditions | CarNexo",
+      "description": "Read CarNexo's terms of service and user agreement for using our marketplace."
     }
   }
 }
