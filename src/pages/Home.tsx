@@ -14,6 +14,7 @@ import { NotificationsPanel } from '@/components/NotificationsPanel';
 import { FilterSheet, FilterOptions } from '@/components/FilterSheet';
 import { PullToRefresh } from '@/components/PullToRefresh';
 import { Button } from '@/components/ui/button';
+import { ThemeToggle } from '@/components/ThemeToggle';
 
 import { useAuth } from '@/hooks/useAuth';
 import { useInfiniteScroll } from '@/hooks/useInfiniteScroll';
@@ -123,27 +124,30 @@ export default function Home() {
         <div className="px-4 pt-4 pb-3 space-y-4">
           <div className="flex items-center justify-between">
             <h1 className="text-2xl font-bold text-primary">CarNexo</h1>
-            {user ? (
-              <button 
-                onClick={() => setIsNotificationsOpen(true)}
-                className="w-10 h-10 flex items-center justify-center text-foreground relative"
-              >
-                <Bell className="w-6 h-6" />
-                {unreadCount > 0 && (
-                  <span className="absolute top-1 right-1 w-4 h-4 bg-primary text-primary-foreground text-[10px] font-bold rounded-full flex items-center justify-center">
-                    {unreadCount}
-                  </span>
-                )}
-              </button>
-            ) : (
-              <Button 
-                variant="carnexo" 
-                size="sm"
-                onClick={() => navigate('/auth')}
-              >
-                {t('auth.signIn')}
-              </Button>
-            )}
+            <div className="flex items-center gap-1">
+              <ThemeToggle />
+              {user ? (
+                <button 
+                  onClick={() => setIsNotificationsOpen(true)}
+                  className="w-10 h-10 flex items-center justify-center text-foreground relative"
+                >
+                  <Bell className="w-6 h-6" />
+                  {unreadCount > 0 && (
+                    <span className="absolute top-1 right-1 w-4 h-4 bg-primary text-primary-foreground text-[10px] font-bold rounded-full flex items-center justify-center">
+                      {unreadCount}
+                    </span>
+                  )}
+                </button>
+              ) : (
+                <Button 
+                  variant="carnexo" 
+                  size="sm"
+                  onClick={() => navigate('/auth')}
+                >
+                  {t('auth.signIn')}
+                </Button>
+              )}
+            </div>
           </div>
           <div className="flex justify-center">
             <SegmentedControl

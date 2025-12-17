@@ -20,6 +20,7 @@ import {
   LogOut,
   Loader2,
   Camera,
+  Palette,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { StatCard } from '@/components/StatCard';
@@ -38,6 +39,7 @@ import { SecurityPrivacySheet } from '@/components/SecurityPrivacySheet';
 import { LanguageSheet } from '@/components/LanguageSheet';
 import { NotificationSettingsSheet } from '@/components/NotificationSettingsSheet';
 import { HelpCenterSheet } from '@/components/HelpCenterSheet';
+import { ThemeSettingsSheet } from '@/components/ThemeSettingsSheet';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -99,6 +101,7 @@ export default function Profile() {
   const [notificationSettingsOpen, setNotificationSettingsOpen] = useState(false);
   const [helpCenterOpen, setHelpCenterOpen] = useState(false);
   const [signOutDialogOpen, setSignOutDialogOpen] = useState(false);
+  const [themeOpen, setThemeOpen] = useState(false);
 
   const handleFileSelect = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
@@ -326,6 +329,10 @@ export default function Profile() {
               <DropdownMenuItem onClick={() => setLanguageOpen(true)}>
                 <Globe className="w-4 h-4 mr-2 text-success" />
                 {t('settings.language')}
+              </DropdownMenuItem>
+              <DropdownMenuItem onClick={() => setThemeOpen(true)}>
+                <Palette className="w-4 h-4 mr-2 text-secondary" />
+                {t('settings.theme')}
               </DropdownMenuItem>
               <DropdownMenuItem onClick={() => setNotificationSettingsOpen(true)}>
                 <Bell className="w-4 h-4 mr-2 text-warning" />
@@ -641,6 +648,11 @@ export default function Profile() {
       <HelpCenterSheet
         open={helpCenterOpen}
         onClose={() => setHelpCenterOpen(false)}
+      />
+
+      <ThemeSettingsSheet
+        open={themeOpen}
+        onOpenChange={setThemeOpen}
       />
 
       <AlertDialog open={signOutDialogOpen} onOpenChange={setSignOutDialogOpen}>
