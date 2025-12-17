@@ -12,7 +12,7 @@ import {
   DialogFooter,
 } from '@/components/ui/dialog';
 
-const MAPBOX_TOKEN = import.meta.env.VITE_MAPBOX_TOKEN;
+const MAPBOX_TOKEN = import.meta.env.VITE_MAPBOX_TOKEN || 'pk.eyJ1IjoicmF5ZGVuZ2xleiIsImEiOiJjbWphZXRrOXYwNWE5M2NvYjVyYXF2cWYwIn0.gf5T_m7h8riFgLoPsPFyBg';
 
 interface LocationData {
   lat: number;
