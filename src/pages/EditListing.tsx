@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect } from 'react';
+import { useState, useRef, useEffect, lazy, Suspense } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -40,12 +40,14 @@ import {
 } from '@/components/ui/alert-dialog';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { useAuth } from '@/hooks/useAuth';
-import { ImageCropModal } from '@/components/ImageCropModal';
-import { LocationPicker } from '@/components/LocationPicker';
-import { VinScanner } from '@/components/VinScanner';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
 import { cn } from '@/lib/utils';
+
+// Lazy load heavy modal components
+const ImageCropModal = lazy(() => import('@/components/ImageCropModal').then(m => ({ default: m.ImageCropModal })));
+const LocationPicker = lazy(() => import('@/components/LocationPicker').then(m => ({ default: m.LocationPicker })));
+const VinScanner = lazy(() => import('@/components/VinScanner').then(m => ({ default: m.VinScanner })));
 
 type ListingType = 'vehicle' | 'part' | 'service';
 
@@ -1340,25 +1342,31 @@ export default function EditListing() {
       </div>
 
       {/* Modals */}
-      <ImageCropModal
-        open={cropModalOpen}
-        onClose={() => setCropModalOpen(false)}
-        imageSrc={selectedImageSrc}
-        onCropComplete={handleCropComplete}
-      />
+      <Suspense fallback={null}>
+        <ImageCropModal
+          open={cropModalOpen}
+          onClose={() => setCropModalOpen(false)}
+          imageSrc={selectedImageSrc}
+          onCropComplete={handleCropComplete}
+        />
+      </Suspense>
 
-      <LocationPicker
-        open={locationPickerOpen}
-        onClose={() => setLocationPickerOpen(false)}
-        onLocationSelect={setLocation}
-        initialLocation={location}
-      />
+      <Suspense fallback={null}>
+        <LocationPicker
+          open={locationPickerOpen}
+          onClose={() => setLocationPickerOpen(false)}
+          onLocationSelect={setLocation}
+          initialLocation={location}
+        />
+      </Suspense>
 
-      <VinScanner
-        open={vinScannerOpen}
-        onClose={() => setVinScannerOpen(false)}
-        onVehicleDetected={handleVinDetected}
-      />
+      <Suspense fallback={null}>
+        <VinScanner
+          open={vinScannerOpen}
+          onClose={() => setVinScannerOpen(false)}
+          onVehicleDetected={handleVinDetected}
+        />
+      </Suspense>
     </div>
   );
 }

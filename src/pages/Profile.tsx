@@ -1,5 +1,5 @@
 import { useNavigate } from 'react-router-dom';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, lazy, Suspense } from 'react';
 import { useTranslation } from 'react-i18next';
 import SEO from '@/components/SEO';
 import { 
@@ -28,8 +28,10 @@ import { BottomNav } from '@/components/BottomNav';
 import { useAuth } from '@/hooks/useAuth';
 import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
-import { ImageCropModal } from '@/components/ImageCropModal';
 import { EditProfileModal } from '@/components/EditProfileModal';
+
+// Lazy load heavy modal component
+const ImageCropModal = lazy(() => import('@/components/ImageCropModal').then(m => ({ default: m.ImageCropModal })));
 import { NotificationToggle } from '@/components/NotificationToggle';
 import { PersonalInfoSheet } from '@/components/PersonalInfoSheet';
 import { SecurityPrivacySheet } from '@/components/SecurityPrivacySheet';
@@ -559,12 +561,14 @@ export default function Profile() {
       <BottomNav />
 
       {selectedImageSrc && (
-        <ImageCropModal
-          open={cropModalOpen}
-          onClose={handleCropModalClose}
-          imageSrc={selectedImageSrc}
-          onCropComplete={handleCropComplete}
-        />
+        <Suspense fallback={null}>
+          <ImageCropModal
+            open={cropModalOpen}
+            onClose={handleCropModalClose}
+            imageSrc={selectedImageSrc}
+            onCropComplete={handleCropComplete}
+          />
+        </Suspense>
       )}
 
       {user && profileData && (
