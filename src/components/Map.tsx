@@ -92,11 +92,17 @@ export function Map({
 
   // Initialize map
   useEffect(() => {
-    if (!mapContainer.current || map.current) return;
+    if (!mapContainer.current) return;
+    
+    // Clean up existing map first
+    if (map.current) {
+      map.current.remove();
+      map.current = null;
+    }
 
     mapboxgl.accessToken = MAPBOX_TOKEN;
     
-    map.current = new mapboxgl.Map({
+    const mapInstance = new mapboxgl.Map({
       container: mapContainer.current,
       style: 'mapbox://styles/mapbox/dark-v11',
       center: center,
@@ -104,6 +110,8 @@ export function Map({
       pitch: 45,
       bearing: -17.6,
     });
+    
+    map.current = mapInstance;
 
     map.current.addControl(
       new mapboxgl.NavigationControl({ visualizePitch: true }),
@@ -313,9 +321,9 @@ export function Map({
   }, [center, zoom, mapLoaded]);
 
   return (
-    <div className={`relative ${className}`}>
-      <div ref={mapContainer} className="absolute inset-0 rounded-2xl overflow-hidden" />
-      <div className="absolute inset-0 pointer-events-none rounded-2xl ring-1 ring-inset ring-border/20" />
+    <div className={`relative w-full h-full min-h-[300px] ${className}`}>
+      <div ref={mapContainer} className="absolute inset-0" />
+      <div className="absolute inset-0 pointer-events-none ring-1 ring-inset ring-border/20" />
     </div>
   );
 }
