@@ -329,6 +329,33 @@ serve(async (req) => {
   try {
     const supabaseUrl = Deno.env.get('SUPABASE_URL')!;
     const supabaseServiceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
+    const supabaseAnonKey = Deno.env.get('SUPABASE_ANON_KEY')!;
+    
+    // Create client with user's JWT to verify authentication
+    const authHeader = req.headers.get('Authorization');
+    if (!authHeader) {
+      return new Response(
+        JSON.stringify({ error: 'Authorization header required' }),
+        { status: 401, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
+    }
+    
+    const token = authHeader.replace('Bearer ', '');
+    const userClient = createClient(supabaseUrl, supabaseAnonKey, {
+      global: { headers: { Authorization: `Bearer ${token}` } }
+    });
+    
+    // Verify the caller is authenticated
+    const { data: { user: caller }, error: authError } = await userClient.auth.getUser(token);
+    if (authError || !caller) {
+      console.error('Auth error:', authError);
+      return new Response(
+        JSON.stringify({ error: 'Unauthorized' }),
+        { status: 401, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
+    }
+    
+    // Service role client for database operations
     const supabase = createClient(supabaseUrl, supabaseServiceKey);
 
     const { userId, title, body, conversationId } = await req.json();
@@ -337,6 +364,51 @@ serve(async (req) => {
       return new Response(
         JSON.stringify({ error: 'userId is required' }),
         { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
+    }
+    
+    if (!conversationId) {
+      return new Response(
+        JSON.stringify({ error: 'conversationId is required for authorization' }),
+        { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
+    }
+    
+    // Authorization: Verify caller is a participant in the conversation
+    const { data: conversation, error: convError } = await supabase
+      .from('conversations')
+      .select('buyer_id, seller_id')
+      .eq('id', conversationId)
+      .single();
+    
+    if (convError || !conversation) {
+      console.error('Conversation not found:', convError);
+      return new Response(
+        JSON.stringify({ error: 'Conversation not found' }),
+        { status: 404, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
+    }
+    
+    // Check if caller is a participant in the conversation
+    const isParticipant = conversation.buyer_id === caller.id || conversation.seller_id === caller.id;
+    if (!isParticipant) {
+      console.error('Caller is not a participant in the conversation');
+      return new Response(
+        JSON.stringify({ error: 'Not authorized to send notifications for this conversation' }),
+        { status: 403, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
+    }
+    
+    // Verify the target userId is the other participant (not self-notification)
+    const otherParticipant = conversation.buyer_id === caller.id 
+      ? conversation.seller_id 
+      : conversation.buyer_id;
+    
+    if (userId !== otherParticipant) {
+      console.error('Target user is not the other conversation participant');
+      return new Response(
+        JSON.stringify({ error: 'Can only notify the other conversation participant' }),
+        { status: 403, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
       );
     }
 
