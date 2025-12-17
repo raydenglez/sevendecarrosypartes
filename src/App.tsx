@@ -22,9 +22,9 @@ import ResetPassword from "./pages/ResetPassword";
 import PrivacyPolicy from "./pages/PrivacyPolicy";
 import TermsConditions from "./pages/TermsConditions";
 import NotFound from "./pages/NotFound";
+import MapView from "./pages/MapView";
 
 // Lazy load heavy pages
-const MapView = lazy(() => import("./pages/MapView"));
 const PublishListing = lazy(() => import("./pages/PublishListing"));
 const EditListing = lazy(() => import("./pages/EditListing"));
 
