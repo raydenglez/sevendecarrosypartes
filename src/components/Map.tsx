@@ -3,7 +3,7 @@ import mapboxgl from 'mapbox-gl';
 import 'mapbox-gl/dist/mapbox-gl.css';
 import { Listing } from '@/types';
 
-const MAPBOX_TOKEN = import.meta.env.VITE_MAPBOX_TOKEN;
+const MAPBOX_TOKEN = import.meta.env.VITE_MAPBOX_TOKEN || 'pk.eyJ1IjoicmF5ZGVuZ2xleiIsImEiOiJjbWphZXRrOXYwNWE5M2NvYjVyYXF2cWYwIn0.gf5T_m7h8riFgLoPsPFyBg';
 
 interface MapProps {
   center?: [number, number];
