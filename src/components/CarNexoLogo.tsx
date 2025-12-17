@@ -210,13 +210,13 @@ const CarNexoLogo = ({
         animate="animate"
       >
         <motion.span 
-          className="text-primary"
+          className="text-foreground"
           variants={animate ? letterVariants : undefined}
         >
           Car
         </motion.span>
         <motion.span 
-          className="text-foreground"
+          className="text-primary"
           variants={animate ? letterVariants : undefined}
         >
           Nexo
