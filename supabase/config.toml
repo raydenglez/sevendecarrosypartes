@@ -17,3 +17,6 @@ verify_jwt = true
 
 [functions.send-ban-notification]
 verify_jwt = true
+
+[functions.send-takedown-notification]
+verify_jwt = true
