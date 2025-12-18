@@ -72,6 +72,7 @@ export interface Listing {
   features?: string[];
   isPremium?: boolean;
   isSponsored?: boolean;
+  sponsoredUntil?: string;
   isNegotiable?: boolean;
   createdAt: string;
   updatedAt: string;
