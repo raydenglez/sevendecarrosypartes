@@ -1,7 +1,7 @@
 import { useState, useEffect, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import { Flame, ChevronRight, Bell, Loader2 } from 'lucide-react';
+import { Flame, ChevronRight, Bell, Loader2, Megaphone } from 'lucide-react';
 import SEO from '@/components/SEO';
 import { BottomNav } from '@/components/BottomNav';
 import { SearchBar } from '@/components/SearchBar';
@@ -84,19 +84,27 @@ export default function Home() {
       distance: l.distance ? parseFloat(l.distance.toFixed(1)) : undefined,
       images: l.images || ['/placeholder.svg'],
       isPremium: l.is_premium || false,
+      isSponsored: l.is_sponsored || false,
       isNegotiable: l.is_negotiable || false,
       createdAt: l.created_at || new Date().toISOString(),
       updatedAt: l.created_at || new Date().toISOString(),
     }))
   , [nearbyListings]);
 
+  // Get sponsored listings
+  const sponsoredListings = useMemo(() => {
+    return transformedListings.filter(l => l.isSponsored).slice(0, 3);
+  }, [transformedListings]);
+
   // For vehicles: use is_premium flag (top 10% by price)
   // For services: use proximity (closest = featured, already sorted by distance)
   const featuredListings = useMemo(() => {
+    // Exclude sponsored from featured to avoid duplicates
+    const nonSponsored = transformedListings.filter(l => !l.isSponsored);
     if (segment === 'vehicles') {
-      return transformedListings.filter(l => l.isPremium).slice(0, 3);
+      return nonSponsored.filter(l => l.isPremium).slice(0, 3);
     }
-    return transformedListings.slice(0, 3);
+    return nonSponsored.slice(0, 3);
   }, [transformedListings, segment]);
 
   const { displayedItems, hasMore, isLoading, reset } = useInfiniteScroll(transformedListings, {
@@ -170,6 +178,27 @@ export default function Home() {
 
       {/* Content */}
       <main className="px-4 space-y-6 animate-fade-in">
+        {/* Sponsored Section */}
+        {!listingsLoading && sponsoredListings.length > 0 && (
+          <section>
+            <div className="flex items-center gap-2 mb-4">
+              <h2 className="text-lg font-bold text-foreground">Sponsored</h2>
+              <Megaphone className="w-5 h-5 text-warning" />
+            </div>
+            <div className="flex gap-4 overflow-x-auto hide-scrollbar -mx-4 px-4 pb-2">
+              {sponsoredListings.map((listing, index) => (
+                <ListingCard
+                  key={listing.id}
+                  listing={listing}
+                  variant="featured"
+                  className="animate-fade-in"
+                  style={{ animationDelay: `${index * 100}ms` } as React.CSSProperties}
+                />
+              ))}
+            </div>
+          </section>
+        )}
+
         {/* Featured Near You */}
         <section>
           <div className="flex items-center justify-between mb-4">

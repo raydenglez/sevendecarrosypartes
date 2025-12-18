@@ -219,6 +219,7 @@
     "draft": "DRAFT",
     "expired": "EXPIRED",
     "premium": "PREMIUM",
+    "sponsored": "SPONSORED",
     "service": "SERVICE",
     "verified": "Verified",
     "topRated": "Top Rated",

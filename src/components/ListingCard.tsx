@@ -1,4 +1,4 @@
-import { Heart, MapPin, Gauge, Star } from 'lucide-react';
+import { Heart, MapPin, Gauge, Star, Megaphone } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { Listing } from '@/types';
 import { cn } from '@/lib/utils';
@@ -56,12 +56,18 @@ export function ListingCard({ listing, variant = 'featured', className, style }:
               {t('listing.expired')}
             </span>
           )}
-          {listing.status === 'active' && listing.isPremium && (
+          {listing.status === 'active' && listing.isSponsored && (
+            <span className="absolute top-2 left-2 carnexo-badge-sponsored text-[10px] px-1.5 py-0.5 flex items-center gap-1">
+              <Megaphone className="w-3 h-3" />
+              {t('listing.sponsored')}
+            </span>
+          )}
+          {listing.status === 'active' && listing.isPremium && !listing.isSponsored && (
             <span className="absolute top-2 left-2 carnexo-badge-premium text-[10px] px-1.5 py-0.5">
               {t('listing.premium')}
             </span>
           )}
-          {listing.status === 'active' && listing.type === 'service' && !listing.isPremium && (
+          {listing.status === 'active' && listing.type === 'service' && !listing.isPremium && !listing.isSponsored && (
             <span className="absolute top-2 left-2 carnexo-badge-service text-[10px] px-1.5 py-0.5">
               {t('listing.service')}
             </span>
@@ -183,12 +189,18 @@ export function ListingCard({ listing, variant = 'featured', className, style }:
             {t('listing.expired')}
           </span>
         )}
-        {listing.status === 'active' && listing.isPremium && (
+        {listing.status === 'active' && listing.isSponsored && (
+          <span className="absolute top-3 left-3 carnexo-badge-sponsored flex items-center gap-1">
+            <Megaphone className="w-3 h-3" />
+            {t('listing.sponsored')}
+          </span>
+        )}
+        {listing.status === 'active' && listing.isPremium && !listing.isSponsored && (
           <span className="absolute top-3 left-3 carnexo-badge-premium">
             {t('listing.premium')}
           </span>
         )}
-        {listing.status === 'active' && listing.type === 'service' && !listing.isPremium && (
+        {listing.status === 'active' && listing.type === 'service' && !listing.isPremium && !listing.isSponsored && (
           <span className="absolute top-3 left-3 carnexo-badge-service">
             {t('listing.service')}
           </span>
