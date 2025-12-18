@@ -47,6 +47,7 @@ interface Report {
     price: number;
     images: string[];
     status: string;
+    owner_id: string;
   };
   reporter: {
     full_name: string;
@@ -78,7 +79,7 @@ export default function ReportsManagement() {
           reviewer_notes,
           listing_id,
           reporter_id,
-          listings(title, price, images, status)
+          listings(title, price, images, status, owner_id)
         `)
         .eq('status', status)
         .order('created_at', { ascending: false });
@@ -153,17 +154,44 @@ export default function ReportsManagement() {
       if (listingError) throw listingError;
 
       // Mark report as reviewed
+      const reviewerNotes = reviewNotes[takeDownReport.id] || 'Listing taken down due to report.';
       const { error: reportError } = await supabase
         .from('reports')
         .update({
           status: 'reviewed',
           reviewed_by: user.id,
           reviewed_at: new Date().toISOString(),
-          reviewer_notes: reviewNotes[takeDownReport.id] || 'Listing taken down due to report.',
+          reviewer_notes: reviewerNotes,
         })
         .eq('id', takeDownReport.id);
 
       if (reportError) throw reportError;
+
+      // Fetch owner profile to get email
+      const { data: ownerProfile } = await supabase
+        .from('profiles')
+        .select('email, full_name')
+        .eq('id', takeDownReport.listings.owner_id)
+        .single();
+
+      // Send email notification to owner
+      if (ownerProfile?.email) {
+        try {
+          await supabase.functions.invoke('send-takedown-notification', {
+            body: {
+              ownerEmail: ownerProfile.email,
+              ownerName: ownerProfile.full_name || 'User',
+              listingTitle: takeDownReport.listings.title,
+              reason: reviewerNotes,
+              reportReason: getReasonLabel(takeDownReport.reason),
+            },
+          });
+          console.log('Takedown notification sent to owner');
+        } catch (emailError) {
+          console.error('Failed to send takedown notification:', emailError);
+          // Don't fail the whole operation if email fails
+        }
+      }
 
       toast.success('Listing has been taken down');
       
