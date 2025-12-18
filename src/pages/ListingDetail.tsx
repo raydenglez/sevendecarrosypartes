@@ -18,7 +18,8 @@ import {
   Loader2,
   Star,
   Pencil,
-  Trash2
+  Trash2,
+  Flag
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { SellerCard } from '@/components/SellerCard';
@@ -30,6 +31,7 @@ import { useToast } from '@/hooks/use-toast';
 import { ReviewForm } from '@/components/ReviewForm';
 import { ReviewsList, type Review } from '@/components/ReviewsList';
 import { useReviewEligibility } from '@/hooks/useReviewEligibility';
+import { ReportModal } from '@/components/ReportModal';
 import type { Listing, User } from '@/types';
 
 export default function ListingDetail() {
@@ -45,6 +47,7 @@ export default function ListingDetail() {
   const [contactLoading, setContactLoading] = useState(false);
   const [reviews, setReviews] = useState<Review[]>([]);
   const [reviewsLoading, setReviewsLoading] = useState(true);
+  const [showReportModal, setShowReportModal] = useState(false);
 
   const eligibility = useReviewEligibility(id || '', listing?.ownerId || '');
 
@@ -294,20 +297,40 @@ export default function ListingDetail() {
               <Share2 className="w-5 h-5" />
             </Button>
             {user && listing.ownerId !== user.id && (
-              <Button
-                variant="ghost"
-                size="icon"
-                className={cn(
-                  "bg-background/20 backdrop-blur-sm hover:bg-background/40",
-                  isFavorite && "text-primary"
-                )}
-                onClick={() => setIsFavorite(!isFavorite)}
-              >
-                <Heart className={cn("w-5 h-5", isFavorite && "fill-current")} />
-              </Button>
+              <>
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  className="bg-background/20 backdrop-blur-sm hover:bg-background/40"
+                  onClick={() => setShowReportModal(true)}
+                >
+                  <Flag className="w-5 h-5" />
+                </Button>
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  className={cn(
+                    "bg-background/20 backdrop-blur-sm hover:bg-background/40",
+                    isFavorite && "text-primary"
+                  )}
+                  onClick={() => setIsFavorite(!isFavorite)}
+                >
+                  <Heart className={cn("w-5 h-5", isFavorite && "fill-current")} />
+                </Button>
+              </>
             )}
           </div>
         </div>
+
+        {/* Report Modal */}
+        {listing && (
+          <ReportModal
+            isOpen={showReportModal}
+            onClose={() => setShowReportModal(false)}
+            listingId={listing.id}
+            listingTitle={listing.title}
+          />
+        )}
 
         {/* Image indicators */}
         {listing.images.length > 1 && (

@@ -1,5 +1,8 @@
 export type ListingType = 'vehicle' | 'part' | 'service';
-export type ListingStatus = 'active' | 'sold' | 'inactive' | 'expired' | 'draft';
+export type ListingStatus = 'active' | 'sold' | 'inactive' | 'expired' | 'draft' | 'pending_review' | 'rejected';
+export type ReportReason = 'spam' | 'inappropriate' | 'scam' | 'misleading' | 'counterfeit' | 'other';
+export type ReportStatus = 'pending' | 'reviewed' | 'dismissed';
+export type ModerationAction = 'approved' | 'rejected' | 'flagged' | 'pending';
 export type UserType = 'user' | 'pro_seller' | 'service_provider';
 export type FuelType = 'gasoline' | 'diesel' | 'electric' | 'hybrid' | 'other';
 export type TransmissionType = 'automatic' | 'manual' | 'cvt';
