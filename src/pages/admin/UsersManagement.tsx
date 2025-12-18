@@ -136,6 +136,9 @@ export default function UsersManagement() {
 
   const handleBanUser = async (userId: string, reason: string) => {
     try {
+      // Find the user to get their email
+      const targetUser = users.find(u => u.id === userId);
+      
       const { error } = await supabase
         .from('profiles')
         .update({
@@ -172,6 +175,24 @@ export default function UsersManagement() {
         return prev;
       });
 
+      // Send email notification
+      if (targetUser?.email) {
+        supabase.functions.invoke('send-ban-notification', {
+          body: {
+            email: targetUser.email,
+            userName: targetUser.full_name,
+            action: 'ban',
+            reason,
+          },
+        }).then(({ error: emailError }) => {
+          if (emailError) {
+            console.error('Failed to send ban notification email:', emailError);
+          } else {
+            console.log('Ban notification email sent');
+          }
+        });
+      }
+
       toast.success('User has been banned');
     } catch (error) {
       console.error('Error banning user:', error);
@@ -181,6 +202,9 @@ export default function UsersManagement() {
 
   const handleUnbanUser = async (userId: string) => {
     try {
+      // Find the user to get their email
+      const targetUser = users.find(u => u.id === userId);
+      
       const { error } = await supabase
         .from('profiles')
         .update({
@@ -216,6 +240,23 @@ export default function UsersManagement() {
         }
         return prev;
       });
+
+      // Send email notification
+      if (targetUser?.email) {
+        supabase.functions.invoke('send-ban-notification', {
+          body: {
+            email: targetUser.email,
+            userName: targetUser.full_name,
+            action: 'unban',
+          },
+        }).then(({ error: emailError }) => {
+          if (emailError) {
+            console.error('Failed to send unban notification email:', emailError);
+          } else {
+            console.log('Unban notification email sent');
+          }
+        });
+      }
 
       toast.success('User has been unbanned');
     } catch (error) {
