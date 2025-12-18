@@ -147,10 +147,10 @@ export default function ReportsManagement() {
 
   return (
     <AdminLayout>
-      <div className="space-y-6">
+      <div className="space-y-4 md:space-y-6 pb-20 lg:pb-0">
         <div>
-          <h1 className="text-2xl font-bold">Reports Management</h1>
-          <p className="text-muted-foreground">
+          <h1 className="text-xl md:text-2xl font-bold">Reports Management</h1>
+          <p className="text-sm md:text-base text-muted-foreground">
             Review and manage user-submitted reports
           </p>
         </div>
