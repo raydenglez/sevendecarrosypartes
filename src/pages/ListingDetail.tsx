@@ -437,21 +437,40 @@ export default function ListingDetail() {
         <div>
           <div className="flex items-center justify-between mb-3">
             <h2 className="text-lg font-bold text-foreground">{t('listing.location')}</h2>
-            <button className="text-sm text-primary font-medium flex items-center gap-1">
-              {t('listing.viewOnMap')}
-              <ExternalLink className="w-4 h-4" />
+            {listing.location.lat !== 0 && listing.location.lng !== 0 && (
+              <button 
+                onClick={() => window.open(`https://www.google.com/maps/search/?api=1&query=${listing.location.lat},${listing.location.lng}`, '_blank')}
+                className="text-sm text-primary font-medium flex items-center gap-1 hover:underline"
+              >
+                {t('listing.viewOnMap')}
+                <ExternalLink className="w-4 h-4" />
+              </button>
+            )}
+          </div>
+          {listing.location.lat !== 0 && listing.location.lng !== 0 ? (
+            <button
+              onClick={() => window.open(`https://www.google.com/maps/search/?api=1&query=${listing.location.lat},${listing.location.lng}`, '_blank')}
+              className="relative w-full h-40 rounded-2xl overflow-hidden group cursor-pointer"
+            >
+              <img
+                src={`https://api.mapbox.com/styles/v1/mapbox/dark-v11/static/pin-l+ff6a00(${listing.location.lng},${listing.location.lat})/${listing.location.lng},${listing.location.lat},13,0/800x400@2x?access_token=pk.eyJ1IjoibG92YWJsZSIsImEiOiJjbHJwOWhtYmkwMjR1MmpwZnFuZnk5ZmdhIn0.9Wxs0c6BcEPauFsj_TxmPA`}
+                alt="Location map"
+                className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
+              />
+              <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors" />
+              <div className="absolute bottom-3 left-3 px-3 py-1.5 bg-background/90 backdrop-blur-sm rounded-lg text-sm font-medium flex items-center gap-2">
+                <MapPin className="w-4 h-4 text-primary" />
+                {listing.location.city}, {listing.location.state}
+              </div>
             </button>
-          </div>
-          <div className="relative h-40 rounded-2xl overflow-hidden">
-            <img
-              src={`https://api.mapbox.com/styles/v1/mapbox/dark-v11/static/pin-l+ff6a00(${listing.location.lng},${listing.location.lat})/${listing.location.lng},${listing.location.lat},13,0/800x400@2x?access_token=pk.eyJ1IjoibG92YWJsZSIsImEiOiJjbHJwOWhtYmkwMjR1MmpwZnFuZnk5ZmdhIn0.9Wxs0c6BcEPauFsj_TxmPA`}
-              alt="Location map"
-              className="w-full h-full object-cover"
-            />
-            <div className="absolute bottom-3 left-3 px-3 py-1.5 bg-background/90 backdrop-blur-sm rounded-lg text-sm font-medium">
-              {listing.location.city}, {listing.location.state}
+          ) : (
+            <div className="relative h-40 rounded-2xl overflow-hidden bg-muted flex items-center justify-center">
+              <div className="text-center">
+                <MapPin className="w-8 h-8 text-muted-foreground mx-auto mb-2" />
+                <p className="text-sm text-muted-foreground">{listing.location.city}, {listing.location.state}</p>
+              </div>
             </div>
-          </div>
+          )}
         </div>
 
         {/* Seller */}
