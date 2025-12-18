@@ -19,7 +19,9 @@ import {
   Star,
   Pencil,
   Trash2,
-  Flag
+  Flag,
+  Maximize2,
+  X
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { SellerCard } from '@/components/SellerCard';
@@ -49,6 +51,7 @@ export default function ListingDetail() {
   const [reviews, setReviews] = useState<Review[]>([]);
   const [reviewsLoading, setReviewsLoading] = useState(true);
   const [showReportModal, setShowReportModal] = useState(false);
+  const [showFullscreenMap, setShowFullscreenMap] = useState(false);
 
   const eligibility = useReviewEligibility(id || '', listing?.ownerId || '');
 
@@ -449,7 +452,7 @@ export default function ListingDetail() {
             )}
           </div>
           {listing.location.lat !== 0 && listing.location.lng !== 0 ? (
-            <div className="relative h-48 rounded-2xl overflow-hidden">
+            <div className="relative h-48 rounded-2xl overflow-hidden group">
               <MapComponent
                 center={[listing.location.lng, listing.location.lat]}
                 zoom={14}
@@ -460,6 +463,14 @@ export default function ListingDetail() {
                 <MapPin className="w-4 h-4 text-primary" />
                 {listing.location.city}, {listing.location.state}
               </div>
+              <Button
+                variant="ghost"
+                size="icon"
+                className="absolute top-3 right-3 bg-background/80 backdrop-blur-sm hover:bg-background/90 opacity-0 group-hover:opacity-100 transition-opacity"
+                onClick={() => setShowFullscreenMap(true)}
+              >
+                <Maximize2 className="w-4 h-4" />
+              </Button>
             </div>
           ) : (
             <div className="relative h-48 rounded-2xl overflow-hidden bg-muted flex items-center justify-center">
@@ -514,6 +525,45 @@ export default function ListingDetail() {
           )}
         </div>
       </div>
+
+      {/* Fullscreen Map Modal */}
+      {showFullscreenMap && listing.location.lat !== 0 && listing.location.lng !== 0 && (
+        <div className="fixed inset-0 z-50 bg-background animate-fade-in">
+          <div className="absolute inset-0">
+            <MapComponent
+              center={[listing.location.lng, listing.location.lat]}
+              zoom={15}
+              className="h-full"
+              listings={[listing]}
+            />
+          </div>
+          <div className="absolute top-4 left-4 right-4 flex items-center justify-between safe-top">
+            <Button
+              variant="ghost"
+              size="icon"
+              className="bg-background/80 backdrop-blur-sm hover:bg-background/90"
+              onClick={() => setShowFullscreenMap(false)}
+            >
+              <X className="w-5 h-5" />
+            </Button>
+            <div className="px-4 py-2 bg-background/80 backdrop-blur-sm rounded-lg">
+              <h3 className="font-semibold text-sm">{listing.title}</h3>
+              <p className="text-xs text-muted-foreground flex items-center gap-1">
+                <MapPin className="w-3 h-3" />
+                {listing.location.city}, {listing.location.state}
+              </p>
+            </div>
+            <Button
+              variant="ghost"
+              size="icon"
+              className="bg-background/80 backdrop-blur-sm hover:bg-background/90"
+              onClick={() => window.open(`https://www.google.com/maps/search/?api=1&query=${listing.location.lat},${listing.location.lng}`, '_blank')}
+            >
+              <ExternalLink className="w-5 h-5" />
+            </Button>
+          </div>
+        </div>
+      )}
 
       {/* Fixed CTA */}
       <div className="fixed bottom-0 left-0 right-0 p-4 bg-background/95 backdrop-blur-xl border-t border-border safe-bottom">
