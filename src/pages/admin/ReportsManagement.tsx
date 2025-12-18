@@ -14,7 +14,8 @@ import {
   Flag,
   Loader2,
   ExternalLink,
-  MessageSquare
+  MessageSquare,
+  Ban
 } from 'lucide-react';
 import { toast } from 'sonner';
 import { Link } from 'react-router-dom';
@@ -122,6 +123,44 @@ export default function ReportsManagement() {
     } catch (error) {
       console.error('Error updating report:', error);
       toast.error('Failed to update report');
+    } finally {
+      setActionLoading(null);
+    }
+  };
+
+  const handleTakeDownListing = async (report: Report) => {
+    if (!user) return;
+    setActionLoading(report.id);
+
+    try {
+      // Update listing status to rejected
+      const { error: listingError } = await supabase
+        .from('listings')
+        .update({ status: 'rejected' })
+        .eq('id', report.listing_id);
+
+      if (listingError) throw listingError;
+
+      // Mark report as reviewed
+      const { error: reportError } = await supabase
+        .from('reports')
+        .update({
+          status: 'reviewed',
+          reviewed_by: user.id,
+          reviewed_at: new Date().toISOString(),
+          reviewer_notes: reviewNotes[report.id] || 'Listing taken down due to report.',
+        })
+        .eq('id', report.id);
+
+      if (reportError) throw reportError;
+
+      toast.success('Listing has been taken down');
+      
+      // Remove from list
+      setReports(prev => prev.filter(r => r.id !== report.id));
+    } catch (error) {
+      console.error('Error taking down listing:', error);
+      toast.error('Failed to take down listing');
     } finally {
       setActionLoading(null);
     }
@@ -286,6 +325,7 @@ export default function ReportsManagement() {
                               )}
                             </Button>
                             <Button
+                              variant="secondary"
                               size="sm"
                               onClick={() => handleReportAction(report.id, 'reviewed')}
                               disabled={actionLoading === report.id}
@@ -295,7 +335,22 @@ export default function ReportsManagement() {
                               ) : (
                                 <>
                                   <CheckCircle className="h-4 w-4 mr-1" />
-                                  Mark Reviewed
+                                  Reviewed
+                                </>
+                              )}
+                            </Button>
+                            <Button
+                              variant="destructive"
+                              size="sm"
+                              onClick={() => handleTakeDownListing(report)}
+                              disabled={actionLoading === report.id || report.listings?.status === 'rejected'}
+                            >
+                              {actionLoading === report.id ? (
+                                <Loader2 className="h-4 w-4 animate-spin" />
+                              ) : (
+                                <>
+                                  <Ban className="h-4 w-4 mr-1" />
+                                  Take Down
                                 </>
                               )}
                             </Button>
