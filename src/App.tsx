@@ -8,6 +8,7 @@ import { HelmetProvider } from "react-helmet-async";
 import { ThemeProvider } from "next-themes";
 import { AuthProvider } from "@/hooks/useAuth";
 import { FavoritesProvider } from "@/contexts/FavoritesContext";
+import { PWAUpdatePrompt } from "@/components/PWAUpdatePrompt";
 import Home from "./pages/Home";
 import ListingDetail from "./pages/ListingDetail";
 import Profile from "./pages/Profile";
@@ -52,6 +53,7 @@ const App = () => (
           <TooltipProvider>
           <Toaster />
           <Sonner />
+          <PWAUpdatePrompt />
           <BrowserRouter>
             <Suspense fallback={<PageLoader />}>
               <Routes>
