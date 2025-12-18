@@ -7,6 +7,16 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Textarea } from '@/components/ui/textarea';
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from '@/components/ui/alert-dialog';
 import { 
   CheckCircle, 
   XCircle, 
@@ -51,6 +61,7 @@ export default function ReportsManagement() {
   const [activeTab, setActiveTab] = useState<ReportStatus>('pending');
   const [actionLoading, setActionLoading] = useState<string | null>(null);
   const [reviewNotes, setReviewNotes] = useState<Record<string, string>>({});
+  const [takeDownReport, setTakeDownReport] = useState<Report | null>(null);
 
   const fetchReports = async (status: ReportStatus) => {
     setLoading(true);
@@ -128,16 +139,16 @@ export default function ReportsManagement() {
     }
   };
 
-  const handleTakeDownListing = async (report: Report) => {
-    if (!user) return;
-    setActionLoading(report.id);
+  const handleTakeDownListing = async () => {
+    if (!user || !takeDownReport) return;
+    setActionLoading(takeDownReport.id);
 
     try {
       // Update listing status to rejected
       const { error: listingError } = await supabase
         .from('listings')
         .update({ status: 'rejected' })
-        .eq('id', report.listing_id);
+        .eq('id', takeDownReport.listing_id);
 
       if (listingError) throw listingError;
 
@@ -148,21 +159,22 @@ export default function ReportsManagement() {
           status: 'reviewed',
           reviewed_by: user.id,
           reviewed_at: new Date().toISOString(),
-          reviewer_notes: reviewNotes[report.id] || 'Listing taken down due to report.',
+          reviewer_notes: reviewNotes[takeDownReport.id] || 'Listing taken down due to report.',
         })
-        .eq('id', report.id);
+        .eq('id', takeDownReport.id);
 
       if (reportError) throw reportError;
 
       toast.success('Listing has been taken down');
       
       // Remove from list
-      setReports(prev => prev.filter(r => r.id !== report.id));
+      setReports(prev => prev.filter(r => r.id !== takeDownReport.id));
     } catch (error) {
       console.error('Error taking down listing:', error);
       toast.error('Failed to take down listing');
     } finally {
       setActionLoading(null);
+      setTakeDownReport(null);
     }
   };
 
@@ -342,7 +354,7 @@ export default function ReportsManagement() {
                             <Button
                               variant="destructive"
                               size="sm"
-                              onClick={() => handleTakeDownListing(report)}
+                              onClick={() => setTakeDownReport(report)}
                               disabled={actionLoading === report.id || report.listings?.status === 'rejected'}
                             >
                               {actionLoading === report.id ? (
@@ -364,6 +376,28 @@ export default function ReportsManagement() {
             )}
           </TabsContent>
         </Tabs>
+
+        {/* Take Down Confirmation Dialog */}
+        <AlertDialog open={!!takeDownReport} onOpenChange={(open) => !open && setTakeDownReport(null)}>
+          <AlertDialogContent>
+            <AlertDialogHeader>
+              <AlertDialogTitle>Take Down Listing</AlertDialogTitle>
+              <AlertDialogDescription>
+                Are you sure you want to take down "{takeDownReport?.listings?.title}"? 
+                This will reject the listing and it will no longer be visible to users.
+              </AlertDialogDescription>
+            </AlertDialogHeader>
+            <AlertDialogFooter>
+              <AlertDialogCancel>Cancel</AlertDialogCancel>
+              <AlertDialogAction
+                onClick={handleTakeDownListing}
+                className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+              >
+                Take Down
+              </AlertDialogAction>
+            </AlertDialogFooter>
+          </AlertDialogContent>
+        </AlertDialog>
       </div>
     </AdminLayout>
   );
