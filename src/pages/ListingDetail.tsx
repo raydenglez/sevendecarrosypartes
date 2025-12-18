@@ -466,7 +466,7 @@ export default function ListingDetail() {
               <Button
                 variant="ghost"
                 size="icon"
-                className="absolute top-3 right-3 bg-background/80 backdrop-blur-sm hover:bg-background/90 opacity-0 group-hover:opacity-100 transition-opacity"
+                className="absolute top-3 left-3 bg-background/80 backdrop-blur-sm hover:bg-background/90 opacity-0 group-hover:opacity-100 transition-opacity"
                 onClick={() => setShowFullscreenMap(true)}
               >
                 <Maximize2 className="w-4 h-4" />
