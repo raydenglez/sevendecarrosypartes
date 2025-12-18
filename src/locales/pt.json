@@ -161,6 +161,8 @@
     "notificationSettings": "Configurações de Notificações",
     "notificationSettingsDesc": "Alertas de busca e preferências",
     "helpCenter": "Central de Ajuda",
+    "adminDashboard": "Painel Administrativo",
+    "adminDashboardDesc": "Gerenciar usuários, moderação e denúncias",
     "pushNotifications": "Notificações Push",
     "pushNotificationsDesc": "Receber alertas de novas mensagens",
     "changePassword": "Alterar Senha",

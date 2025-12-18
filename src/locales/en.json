@@ -161,6 +161,8 @@
     "notificationSettings": "Notification Settings",
     "notificationSettingsDesc": "Search alerts and preferences",
     "helpCenter": "Help Center",
+    "adminDashboard": "Admin Dashboard",
+    "adminDashboardDesc": "Manage users, moderation & reports",
     "pushNotifications": "Push Notifications",
     "pushNotificationsDesc": "Receive alerts for new messages",
     "changePassword": "Change Password",

@@ -574,8 +574,8 @@ export default function Profile() {
             <SettingsItem
               icon={<LayoutDashboard className="w-5 h-5 text-primary" />}
               iconBg="bg-primary/20"
-              label="Admin Dashboard"
-              description="Manage users, moderation & reports"
+              label={t('settings.adminDashboard')}
+              description={t('settings.adminDashboardDesc')}
               onClick={() => navigate('/admin')}
             />
           )}
