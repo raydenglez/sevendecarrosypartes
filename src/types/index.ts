@@ -71,6 +71,7 @@ export interface Listing {
   images: string[];
   features?: string[];
   isPremium?: boolean;
+  isSponsored?: boolean;
   isNegotiable?: boolean;
   createdAt: string;
   updatedAt: string;

@@ -172,12 +172,15 @@ export type Database = {
           images: string[] | null
           is_negotiable: boolean | null
           is_premium: boolean | null
+          is_sponsored: boolean | null
           location_city: string | null
           location_lat: number | null
           location_lng: number | null
           location_state: string | null
           owner_id: string
           price: number | null
+          sponsored_at: string | null
+          sponsored_by: string | null
           status: Database["public"]["Enums"]["listing_status"] | null
           title: string
           type: Database["public"]["Enums"]["listing_type"]
@@ -190,12 +193,15 @@ export type Database = {
           images?: string[] | null
           is_negotiable?: boolean | null
           is_premium?: boolean | null
+          is_sponsored?: boolean | null
           location_city?: string | null
           location_lat?: number | null
           location_lng?: number | null
           location_state?: string | null
           owner_id: string
           price?: number | null
+          sponsored_at?: string | null
+          sponsored_by?: string | null
           status?: Database["public"]["Enums"]["listing_status"] | null
           title: string
           type: Database["public"]["Enums"]["listing_type"]
@@ -208,12 +214,15 @@ export type Database = {
           images?: string[] | null
           is_negotiable?: boolean | null
           is_premium?: boolean | null
+          is_sponsored?: boolean | null
           location_city?: string | null
           location_lat?: number | null
           location_lng?: number | null
           location_state?: string | null
           owner_id?: string
           price?: number | null
+          sponsored_at?: string | null
+          sponsored_by?: string | null
           status?: Database["public"]["Enums"]["listing_status"] | null
           title?: string
           type?: Database["public"]["Enums"]["listing_type"]

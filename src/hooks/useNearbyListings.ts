@@ -13,6 +13,7 @@ interface DBListing {
   location_lat: number | null;
   location_lng: number | null;
   is_premium: boolean | null;
+  is_sponsored: boolean | null;
   is_negotiable: boolean | null;
   created_at: string | null;
   owner_id: string;
@@ -185,8 +186,14 @@ export function useNearbyListings(segment: 'vehicles' | 'services', filters?: Se
         });
       }
 
-      // Sort by proximity
-      listingsWithDistance.sort((a, b) => a.distance - b.distance);
+      // Sort: Sponsored first, then by proximity
+      listingsWithDistance.sort((a, b) => {
+        // Sponsored listings always come first
+        if (a.is_sponsored && !b.is_sponsored) return -1;
+        if (!a.is_sponsored && b.is_sponsored) return 1;
+        // Then sort by distance
+        return a.distance - b.distance;
+      });
 
       setListings(listingsWithDistance as DBListing[]);
       setLoading(false);

@@ -277,4 +277,16 @@
   .carnexo-badge-negotiable {
     @apply carnexo-badge bg-success text-success-foreground;
   }
+
+  .carnexo-badge-sponsored {
+    @apply carnexo-badge text-white font-bold;
+    background: linear-gradient(135deg, hsl(38 92% 50%) 0%, hsl(24 100% 50%) 100%);
+    box-shadow: 0 2px 8px hsla(38, 92%, 50%, 0.4);
+    animation: sponsored-pulse 2s ease-in-out infinite;
+  }
+
+  @keyframes sponsored-pulse {
+    0%, 100% { box-shadow: 0 2px 8px hsla(38, 92%, 50%, 0.4); }
+    50% { box-shadow: 0 2px 16px hsla(38, 92%, 50%, 0.6); }
+  }
 }

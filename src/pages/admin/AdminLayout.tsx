@@ -11,7 +11,8 @@ import {
   ChevronLeft,
   Loader2,
   Menu,
-  X
+  X,
+  Megaphone
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
@@ -25,6 +26,7 @@ const navItems = [
   { path: '/admin', icon: LayoutDashboard, label: 'Overview', exact: true },
   { path: '/admin/moderation', icon: Shield, label: 'Moderation' },
   { path: '/admin/reports', icon: Flag, label: 'Reports' },
+  { path: '/admin/sponsored', icon: Megaphone, label: 'Sponsored' },
   { path: '/admin/users', icon: Users, label: 'Users' },
   { path: '/admin/history', icon: History, label: 'History' },
 ];
