@@ -21,6 +21,7 @@ import {
   Loader2,
   Camera,
   Palette,
+  LayoutDashboard,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { StatCard } from '@/components/StatCard';
@@ -102,6 +103,7 @@ export default function Profile() {
   const [helpCenterOpen, setHelpCenterOpen] = useState(false);
   const [signOutDialogOpen, setSignOutDialogOpen] = useState(false);
   const [themeOpen, setThemeOpen] = useState(false);
+  const [isAdmin, setIsAdmin] = useState(false);
 
   const handleFileSelect = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
@@ -259,6 +261,27 @@ export default function Profile() {
     }
 
     fetchProfileData();
+  }, [user]);
+
+  // Check if user is admin
+  useEffect(() => {
+    const checkAdminRole = async () => {
+      if (!user) {
+        setIsAdmin(false);
+        return;
+      }
+      try {
+        const { data } = await supabase.rpc('has_role', {
+          _user_id: user.id,
+          _role: 'admin'
+        });
+        setIsAdmin(data || false);
+      } catch (error) {
+        console.error('Error checking admin role:', error);
+        setIsAdmin(false);
+      }
+    };
+    checkAdminRole();
   }, [user]);
 
   const handleSignOut = async () => {
@@ -547,6 +570,15 @@ export default function Profile() {
             label={t('settings.helpCenter')}
             onClick={() => setHelpCenterOpen(true)}
           />
+          {isAdmin && (
+            <SettingsItem
+              icon={<LayoutDashboard className="w-5 h-5 text-primary" />}
+              iconBg="bg-primary/20"
+              label="Admin Dashboard"
+              description="Manage users, moderation & reports"
+              onClick={() => navigate('/admin')}
+            />
+          )}
         </div>
       </section>
 
