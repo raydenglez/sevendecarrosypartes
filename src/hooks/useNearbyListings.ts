@@ -14,10 +14,18 @@ interface DBListing {
   location_lng: number | null;
   is_premium: boolean | null;
   is_sponsored: boolean | null;
+  sponsored_until: string | null;
   is_negotiable: boolean | null;
   created_at: string | null;
   owner_id: string;
   distance?: number;
+}
+
+// Helper to check if sponsorship is active (not expired)
+function isSponsorshipActive(listing: DBListing): boolean {
+  if (!listing.is_sponsored) return false;
+  if (!listing.sponsored_until) return true; // No expiration = always active
+  return new Date(listing.sponsored_until) > new Date();
 }
 
 export interface SearchFilters {
@@ -186,11 +194,13 @@ export function useNearbyListings(segment: 'vehicles' | 'services', filters?: Se
         });
       }
 
-      // Sort: Sponsored first, then by proximity
+      // Sort: Active sponsored first, then by proximity
       listingsWithDistance.sort((a, b) => {
-        // Sponsored listings always come first
-        if (a.is_sponsored && !b.is_sponsored) return -1;
-        if (!a.is_sponsored && b.is_sponsored) return 1;
+        const aSponsored = isSponsorshipActive(a);
+        const bSponsored = isSponsorshipActive(b);
+        // Active sponsored listings always come first
+        if (aSponsored && !bSponsored) return -1;
+        if (!aSponsored && bSponsored) return 1;
         // Then sort by distance
         return a.distance - b.distance;
       });

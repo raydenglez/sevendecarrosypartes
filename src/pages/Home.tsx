@@ -84,14 +84,14 @@ export default function Home() {
       distance: l.distance ? parseFloat(l.distance.toFixed(1)) : undefined,
       images: l.images || ['/placeholder.svg'],
       isPremium: l.is_premium || false,
-      isSponsored: l.is_sponsored || false,
+      isSponsored: l.is_sponsored && (!l.sponsored_until || new Date(l.sponsored_until) > new Date()),
       isNegotiable: l.is_negotiable || false,
       createdAt: l.created_at || new Date().toISOString(),
       updatedAt: l.created_at || new Date().toISOString(),
     }))
   , [nearbyListings]);
 
-  // Get sponsored listings
+  // Get sponsored listings (only active, non-expired)
   const sponsoredListings = useMemo(() => {
     return transformedListings.filter(l => l.isSponsored).slice(0, 3);
   }, [transformedListings]);

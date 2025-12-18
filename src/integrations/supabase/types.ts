@@ -181,6 +181,7 @@ export type Database = {
           price: number | null
           sponsored_at: string | null
           sponsored_by: string | null
+          sponsored_until: string | null
           status: Database["public"]["Enums"]["listing_status"] | null
           title: string
           type: Database["public"]["Enums"]["listing_type"]
@@ -202,6 +203,7 @@ export type Database = {
           price?: number | null
           sponsored_at?: string | null
           sponsored_by?: string | null
+          sponsored_until?: string | null
           status?: Database["public"]["Enums"]["listing_status"] | null
           title: string
           type: Database["public"]["Enums"]["listing_type"]
@@ -223,6 +225,7 @@ export type Database = {
           price?: number | null
           sponsored_at?: string | null
           sponsored_by?: string | null
+          sponsored_until?: string | null
           status?: Database["public"]["Enums"]["listing_status"] | null
           title?: string
           type?: Database["public"]["Enums"]["listing_type"]
