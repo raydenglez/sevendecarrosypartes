@@ -371,10 +371,13 @@ export type Database = {
         Row: {
           allow_messages_from_anyone: boolean | null
           avatar_url: string | null
+          banned_at: string | null
+          banned_reason: string | null
           created_at: string | null
           email: string | null
           full_name: string | null
           id: string
+          is_banned: boolean | null
           is_verified: boolean | null
           language: string | null
           location_city: string | null
@@ -392,10 +395,13 @@ export type Database = {
         Insert: {
           allow_messages_from_anyone?: boolean | null
           avatar_url?: string | null
+          banned_at?: string | null
+          banned_reason?: string | null
           created_at?: string | null
           email?: string | null
           full_name?: string | null
           id: string
+          is_banned?: boolean | null
           is_verified?: boolean | null
           language?: string | null
           location_city?: string | null
@@ -413,10 +419,13 @@ export type Database = {
         Update: {
           allow_messages_from_anyone?: boolean | null
           avatar_url?: string | null
+          banned_at?: string | null
+          banned_reason?: string | null
           created_at?: string | null
           email?: string | null
           full_name?: string | null
           id?: string
+          is_banned?: boolean | null
           is_verified?: boolean | null
           language?: string | null
           location_city?: string | null

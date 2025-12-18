@@ -7,14 +7,15 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Input } from '@/components/ui/input';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { UserDetailModal } from '@/components/admin/UserDetailModal';
 import { 
   Search,
   Shield,
   ShieldCheck,
   Loader2,
   Car,
-  MessageSquare,
-  Star
+  Star,
+  Ban
 } from 'lucide-react';
 import { toast } from 'sonner';
 import { format } from 'date-fns';
@@ -26,9 +27,15 @@ interface UserProfile {
   avatar_url: string | null;
   user_type: string;
   is_verified: boolean;
+  is_banned?: boolean;
+  banned_at?: string | null;
+  banned_reason?: string | null;
   rating_avg: number;
   rating_count: number;
   created_at: string;
+  location_city?: string | null;
+  location_state?: string | null;
+  phone?: string | null;
   listing_count?: number;
   roles?: string[];
 }
@@ -39,6 +46,8 @@ export default function UsersManagement() {
   const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState('');
   const [actionLoading, setActionLoading] = useState<string | null>(null);
+  const [selectedUser, setSelectedUser] = useState<UserProfile | null>(null);
+  const [modalOpen, setModalOpen] = useState(false);
 
   const fetchUsers = async () => {
     try {
@@ -89,7 +98,6 @@ export default function UsersManagement() {
 
     try {
       if (currentlyModerator) {
-        // Remove moderator role
         const { error } = await supabase
           .from('user_roles')
           .delete()
@@ -99,7 +107,6 @@ export default function UsersManagement() {
         if (error) throw error;
         toast.success('Moderator role removed');
       } else {
-        // Add moderator role
         const { error } = await supabase
           .from('user_roles')
           .insert({ user_id: userId, role: 'moderator' });
@@ -108,7 +115,6 @@ export default function UsersManagement() {
         toast.success('Moderator role assigned');
       }
 
-      // Refresh user data
       setUsers(prev => prev.map(u => {
         if (u.id === userId) {
           return {
@@ -126,6 +132,101 @@ export default function UsersManagement() {
     } finally {
       setActionLoading(null);
     }
+  };
+
+  const handleBanUser = async (userId: string, reason: string) => {
+    try {
+      const { error } = await supabase
+        .from('profiles')
+        .update({
+          is_banned: true,
+          banned_at: new Date().toISOString(),
+          banned_reason: reason,
+        })
+        .eq('id', userId);
+
+      if (error) throw error;
+
+      setUsers(prev => prev.map(u => {
+        if (u.id === userId) {
+          return {
+            ...u,
+            is_banned: true,
+            banned_at: new Date().toISOString(),
+            banned_reason: reason,
+          };
+        }
+        return u;
+      }));
+
+      // Update selected user if modal is open
+      setSelectedUser(prev => {
+        if (prev?.id === userId) {
+          return {
+            ...prev,
+            is_banned: true,
+            banned_at: new Date().toISOString(),
+            banned_reason: reason,
+          };
+        }
+        return prev;
+      });
+
+      toast.success('User has been banned');
+    } catch (error) {
+      console.error('Error banning user:', error);
+      toast.error('Failed to ban user');
+    }
+  };
+
+  const handleUnbanUser = async (userId: string) => {
+    try {
+      const { error } = await supabase
+        .from('profiles')
+        .update({
+          is_banned: false,
+          banned_at: null,
+          banned_reason: null,
+        })
+        .eq('id', userId);
+
+      if (error) throw error;
+
+      setUsers(prev => prev.map(u => {
+        if (u.id === userId) {
+          return {
+            ...u,
+            is_banned: false,
+            banned_at: null,
+            banned_reason: null,
+          };
+        }
+        return u;
+      }));
+
+      // Update selected user if modal is open
+      setSelectedUser(prev => {
+        if (prev?.id === userId) {
+          return {
+            ...prev,
+            is_banned: false,
+            banned_at: null,
+            banned_reason: null,
+          };
+        }
+        return prev;
+      });
+
+      toast.success('User has been unbanned');
+    } catch (error) {
+      console.error('Error unbanning user:', error);
+      toast.error('Failed to unban user');
+    }
+  };
+
+  const handleUserClick = (profile: UserProfile) => {
+    setSelectedUser(profile);
+    setModalOpen(true);
   };
 
   const filteredUsers = users.filter(u => {
@@ -179,7 +280,11 @@ export default function UsersManagement() {
               const isModerator = profile.roles?.includes('moderator');
               
               return (
-                <Card key={profile.id}>
+                <Card 
+                  key={profile.id} 
+                  className="cursor-pointer hover:bg-muted/50 transition-colors"
+                  onClick={() => handleUserClick(profile)}
+                >
                   <CardContent className="p-3 md:p-4">
                     <div className="flex flex-col sm:flex-row sm:items-center gap-3 sm:gap-4">
                       <Avatar className="h-10 w-10 md:h-12 md:w-12 flex-shrink-0">
@@ -194,6 +299,12 @@ export default function UsersManagement() {
                           <h3 className="font-medium truncate text-sm md:text-base">
                             {profile.full_name || profile.email || 'Unknown User'}
                           </h3>
+                          {profile.is_banned && (
+                            <Badge variant="destructive" className="text-[10px] md:text-xs px-1.5 py-0">
+                              <Ban className="h-2.5 w-2.5 md:h-3 md:w-3 mr-0.5 md:mr-1" />
+                              Banned
+                            </Badge>
+                          )}
                           {isAdmin && (
                             <Badge variant="default" className="bg-primary text-[10px] md:text-xs px-1.5 py-0">
                               <ShieldCheck className="h-2.5 w-2.5 md:h-3 md:w-3 mr-0.5 md:mr-1" />
@@ -235,7 +346,10 @@ export default function UsersManagement() {
                         <Button
                           variant={isModerator ? 'outline' : 'secondary'}
                           size="sm"
-                          onClick={() => toggleModeratorRole(profile.id, isModerator)}
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            toggleModeratorRole(profile.id, isModerator);
+                          }}
                           disabled={actionLoading === profile.id}
                         >
                           {actionLoading === profile.id ? (
@@ -273,6 +387,15 @@ export default function UsersManagement() {
           </div>
         )}
       </div>
+
+      <UserDetailModal
+        user={selectedUser}
+        open={modalOpen}
+        onOpenChange={setModalOpen}
+        onBanUser={handleBanUser}
+        onUnbanUser={handleUnbanUser}
+        currentUserId={user?.id}
+      />
     </AdminLayout>
   );
 }
