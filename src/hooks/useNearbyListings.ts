@@ -57,10 +57,46 @@ function calculateDistance(
   return R * c;
 }
 
+const LOCATION_STORAGE_KEY = 'carnexo_user_location';
+const LOCATION_PERMISSION_KEY = 'carnexo_location_granted';
+
+function getSavedLocation(): { lat: number; lng: number } | null {
+  try {
+    const saved = localStorage.getItem(LOCATION_STORAGE_KEY);
+    if (saved) {
+      const parsed = JSON.parse(saved);
+      // Check if location is not too old (24 hours)
+      if (parsed.timestamp && Date.now() - parsed.timestamp < 24 * 60 * 60 * 1000) {
+        return { lat: parsed.lat, lng: parsed.lng };
+      }
+    }
+  } catch {
+    // Ignore parsing errors
+  }
+  return null;
+}
+
+function saveLocation(lat: number, lng: number) {
+  try {
+    localStorage.setItem(LOCATION_STORAGE_KEY, JSON.stringify({ lat, lng, timestamp: Date.now() }));
+    localStorage.setItem(LOCATION_PERMISSION_KEY, 'true');
+  } catch {
+    // Ignore storage errors
+  }
+}
+
+function hasLocationPermission(): boolean {
+  try {
+    return localStorage.getItem(LOCATION_PERMISSION_KEY) === 'true';
+  } catch {
+    return false;
+  }
+}
+
 export function useNearbyListings(segment: 'vehicles' | 'services', filters?: SearchFilters) {
   const [listings, setListings] = useState<DBListing[]>([]);
   const [loading, setLoading] = useState(true);
-  const [userLocation, setUserLocation] = useState<{ lat: number; lng: number } | null>(null);
+  const [userLocation, setUserLocation] = useState<{ lat: number; lng: number } | null>(() => getSavedLocation());
   const [locationDenied, setLocationDenied] = useState(false);
   const [showLocationModal, setShowLocationModal] = useState(false);
   const [refreshKey, setRefreshKey] = useState(0);
@@ -68,9 +104,13 @@ export function useNearbyListings(segment: 'vehicles' | 'services', filters?: Se
   const requestLocation = useCallback(() => {
     const fallback = () => {
       // Default to San Luis, Argentina if location is unavailable or delayed
-      setUserLocation({ lat: -33.3, lng: -66.35 });
+      const defaultLocation = { lat: -33.3, lng: -66.35 };
+      setUserLocation(defaultLocation);
       setLocationDenied(true);
-      setShowLocationModal(true);
+      // Only show modal if user hasn't previously granted permission
+      if (!hasLocationPermission()) {
+        setShowLocationModal(true);
+      }
     };
 
     if (navigator.geolocation) {
@@ -83,10 +123,12 @@ export function useNearbyListings(segment: 'vehicles' | 'services', filters?: Se
         (position) => {
           finished = true;
           window.clearTimeout(timeoutId);
-          setUserLocation({
+          const newLocation = {
             lat: position.coords.latitude,
             lng: position.coords.longitude,
-          });
+          };
+          setUserLocation(newLocation);
+          saveLocation(newLocation.lat, newLocation.lng);
           setLocationDenied(false);
           setShowLocationModal(false);
         },
@@ -106,9 +148,14 @@ export function useNearbyListings(segment: 'vehicles' | 'services', filters?: Se
     }
   }, []);
 
-  // Get user location on mount
+  // Get user location on mount - use cached location first, then refresh
   useEffect(() => {
-    requestLocation();
+    // If we have a saved location, use it immediately but still refresh in background
+    if (userLocation) {
+      requestLocation(); // Refresh in background
+    } else {
+      requestLocation();
+    }
   }, [requestLocation]);
 
   // Fetch and sort listings
