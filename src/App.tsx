@@ -27,6 +27,11 @@ import MapView from "./pages/MapView";
 // Lazy load heavy pages
 const PublishListing = lazy(() => import("./pages/PublishListing"));
 const EditListing = lazy(() => import("./pages/EditListing"));
+const AdminOverview = lazy(() => import("./pages/admin/AdminOverview"));
+const ModerationQueue = lazy(() => import("./pages/admin/ModerationQueue"));
+const ReportsManagement = lazy(() => import("./pages/admin/ReportsManagement"));
+const UsersManagement = lazy(() => import("./pages/admin/UsersManagement"));
+const ModerationHistory = lazy(() => import("./pages/admin/ModerationHistory"));
 
 // Loading fallback component
 const PageLoader = () => (
@@ -65,6 +70,12 @@ const App = () => (
                 <Route path="/reset-password" element={<ResetPassword />} />
                 <Route path="/privacy-policy" element={<PrivacyPolicy />} />
                 <Route path="/terms-conditions" element={<TermsConditions />} />
+                {/* Admin Routes */}
+                <Route path="/admin" element={<AdminOverview />} />
+                <Route path="/admin/moderation" element={<ModerationQueue />} />
+                <Route path="/admin/reports" element={<ReportsManagement />} />
+                <Route path="/admin/users" element={<UsersManagement />} />
+                <Route path="/admin/history" element={<ModerationHistory />} />
                 {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
                 <Route path="*" element={<NotFound />} />
               </Routes>

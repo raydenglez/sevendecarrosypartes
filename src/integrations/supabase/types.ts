@@ -14,6 +14,50 @@ export type Database = {
   }
   public: {
     Tables: {
+      ai_moderation_results: {
+        Row: {
+          confidence_score: number | null
+          created_at: string
+          explanation: string | null
+          flags: string[] | null
+          id: string
+          is_flagged: boolean
+          listing_id: string
+          raw_response: Json | null
+          recommendation: string | null
+        }
+        Insert: {
+          confidence_score?: number | null
+          created_at?: string
+          explanation?: string | null
+          flags?: string[] | null
+          id?: string
+          is_flagged?: boolean
+          listing_id: string
+          raw_response?: Json | null
+          recommendation?: string | null
+        }
+        Update: {
+          confidence_score?: number | null
+          created_at?: string
+          explanation?: string | null
+          flags?: string[] | null
+          id?: string
+          is_flagged?: boolean
+          listing_id?: string
+          raw_response?: Json | null
+          recommendation?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "ai_moderation_results_listing_id_fkey"
+            columns: ["listing_id"]
+            isOneToOne: false
+            referencedRelation: "listings"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       conversations: {
         Row: {
           buyer_id: string
@@ -241,6 +285,47 @@ export type Database = {
           },
         ]
       }
+      moderation_logs: {
+        Row: {
+          action: Database["public"]["Enums"]["moderation_action"]
+          ai_confidence_score: number | null
+          ai_flags: string[] | null
+          created_at: string
+          id: string
+          listing_id: string
+          moderator_id: string
+          reason: string | null
+        }
+        Insert: {
+          action: Database["public"]["Enums"]["moderation_action"]
+          ai_confidence_score?: number | null
+          ai_flags?: string[] | null
+          created_at?: string
+          id?: string
+          listing_id: string
+          moderator_id: string
+          reason?: string | null
+        }
+        Update: {
+          action?: Database["public"]["Enums"]["moderation_action"]
+          ai_confidence_score?: number | null
+          ai_flags?: string[] | null
+          created_at?: string
+          id?: string
+          listing_id?: string
+          moderator_id?: string
+          reason?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "moderation_logs_listing_id_fkey"
+            columns: ["listing_id"]
+            isOneToOne: false
+            referencedRelation: "listings"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       part_attributes: {
         Row: {
           brand: string | null
@@ -395,6 +480,53 @@ export type Database = {
             columns: ["user_id"]
             isOneToOne: false
             referencedRelation: "public_profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      reports: {
+        Row: {
+          created_at: string
+          description: string | null
+          id: string
+          listing_id: string
+          reason: Database["public"]["Enums"]["report_reason"]
+          reporter_id: string
+          reviewed_at: string | null
+          reviewed_by: string | null
+          reviewer_notes: string | null
+          status: Database["public"]["Enums"]["report_status"]
+        }
+        Insert: {
+          created_at?: string
+          description?: string | null
+          id?: string
+          listing_id: string
+          reason: Database["public"]["Enums"]["report_reason"]
+          reporter_id: string
+          reviewed_at?: string | null
+          reviewed_by?: string | null
+          reviewer_notes?: string | null
+          status?: Database["public"]["Enums"]["report_status"]
+        }
+        Update: {
+          created_at?: string
+          description?: string | null
+          id?: string
+          listing_id?: string
+          reason?: Database["public"]["Enums"]["report_reason"]
+          reporter_id?: string
+          reviewed_at?: string | null
+          reviewed_by?: string | null
+          reviewer_notes?: string | null
+          status?: Database["public"]["Enums"]["report_status"]
+        }
+        Relationships: [
+          {
+            foreignKeyName: "reports_listing_id_fkey"
+            columns: ["listing_id"]
+            isOneToOne: false
+            referencedRelation: "listings"
             referencedColumns: ["id"]
           },
         ]
@@ -671,9 +803,24 @@ export type Database = {
     }
     Enums: {
       app_role: "admin" | "moderator" | "user"
-      listing_status: "active" | "sold" | "expired" | "draft"
+      listing_status:
+        | "active"
+        | "sold"
+        | "expired"
+        | "draft"
+        | "pending_review"
+        | "rejected"
       listing_type: "vehicle" | "part" | "service"
       message_status: "sent" | "delivered" | "read"
+      moderation_action: "approved" | "rejected" | "flagged" | "pending"
+      report_reason:
+        | "spam"
+        | "inappropriate"
+        | "scam"
+        | "misleading"
+        | "counterfeit"
+        | "other"
+      report_status: "pending" | "reviewed" | "dismissed"
       service_category:
         | "maintenance"
         | "bodywork"
@@ -811,9 +958,26 @@ export const Constants = {
   public: {
     Enums: {
       app_role: ["admin", "moderator", "user"],
-      listing_status: ["active", "sold", "expired", "draft"],
+      listing_status: [
+        "active",
+        "sold",
+        "expired",
+        "draft",
+        "pending_review",
+        "rejected",
+      ],
       listing_type: ["vehicle", "part", "service"],
       message_status: ["sent", "delivered", "read"],
+      moderation_action: ["approved", "rejected", "flagged", "pending"],
+      report_reason: [
+        "spam",
+        "inappropriate",
+        "scam",
+        "misleading",
+        "counterfeit",
+        "other",
+      ],
+      report_status: ["pending", "reviewed", "dismissed"],
       service_category: [
         "maintenance",
         "bodywork",
