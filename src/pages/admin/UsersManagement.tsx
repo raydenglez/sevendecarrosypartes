@@ -149,10 +149,10 @@ export default function UsersManagement() {
 
   return (
     <AdminLayout>
-      <div className="space-y-6">
+      <div className="space-y-4 md:space-y-6 pb-20 lg:pb-0">
         <div>
-          <h1 className="text-2xl font-bold">User Management</h1>
-          <p className="text-muted-foreground">
+          <h1 className="text-xl md:text-2xl font-bold">User Management</h1>
+          <p className="text-sm md:text-base text-muted-foreground">
             View and manage user accounts and roles
           </p>
         </div>
@@ -180,9 +180,9 @@ export default function UsersManagement() {
               
               return (
                 <Card key={profile.id}>
-                  <CardContent className="p-4">
-                    <div className="flex items-center gap-4">
-                      <Avatar className="h-12 w-12">
+                  <CardContent className="p-3 md:p-4">
+                    <div className="flex flex-col sm:flex-row sm:items-center gap-3 sm:gap-4">
+                      <Avatar className="h-10 w-10 md:h-12 md:w-12 flex-shrink-0">
                         <AvatarImage src={profile.avatar_url || undefined} />
                         <AvatarFallback>
                           {getInitials(profile.full_name, profile.email)}
@@ -190,42 +190,42 @@ export default function UsersManagement() {
                       </Avatar>
 
                       <div className="flex-1 min-w-0">
-                        <div className="flex items-center gap-2">
-                          <h3 className="font-medium truncate">
+                        <div className="flex items-center gap-1.5 md:gap-2 flex-wrap">
+                          <h3 className="font-medium truncate text-sm md:text-base">
                             {profile.full_name || profile.email || 'Unknown User'}
                           </h3>
                           {isAdmin && (
-                            <Badge variant="default" className="bg-primary">
-                              <ShieldCheck className="h-3 w-3 mr-1" />
+                            <Badge variant="default" className="bg-primary text-[10px] md:text-xs px-1.5 py-0">
+                              <ShieldCheck className="h-2.5 w-2.5 md:h-3 md:w-3 mr-0.5 md:mr-1" />
                               Admin
                             </Badge>
                           )}
                           {isModerator && (
-                            <Badge variant="secondary">
-                              <Shield className="h-3 w-3 mr-1" />
-                              Moderator
+                            <Badge variant="secondary" className="text-[10px] md:text-xs px-1.5 py-0">
+                              <Shield className="h-2.5 w-2.5 md:h-3 md:w-3 mr-0.5 md:mr-1" />
+                              Mod
                             </Badge>
                           )}
                           {profile.is_verified && (
-                            <Badge variant="outline" className="text-blue-500 border-blue-500">
+                            <Badge variant="outline" className="text-blue-500 border-blue-500 text-[10px] md:text-xs px-1.5 py-0 hidden sm:flex">
                               Verified
                             </Badge>
                           )}
                         </div>
-                        <p className="text-sm text-muted-foreground truncate">
+                        <p className="text-xs md:text-sm text-muted-foreground truncate">
                           {profile.email}
                         </p>
-                        <div className="flex items-center gap-4 mt-1 text-xs text-muted-foreground">
+                        <div className="flex items-center gap-2 md:gap-4 mt-1 text-[10px] md:text-xs text-muted-foreground flex-wrap">
                           <span className="flex items-center gap-1">
                             <Car className="h-3 w-3" />
-                            {profile.listing_count} listings
+                            {profile.listing_count}
                           </span>
                           <span className="flex items-center gap-1">
                             <Star className="h-3 w-3" />
-                            {profile.rating_avg?.toFixed(1) || '0.0'} ({profile.rating_count})
+                            {profile.rating_avg?.toFixed(1) || '0.0'}
                           </span>
-                          <span>
-                            Joined {format(new Date(profile.created_at), 'MMM d, yyyy')}
+                          <span className="hidden sm:inline">
+                            {format(new Date(profile.created_at), 'MMM d, yyyy')}
                           </span>
                         </div>
                       </div>
