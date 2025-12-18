@@ -31,6 +31,7 @@ export function ListingCard({ listing, variant = 'featured', className, style }:
         to={`/listing/${listing.id}`}
         className={cn(
           "block bg-card rounded-xl overflow-hidden transition-all duration-200 hover:bg-card-elevated",
+          listing.isSponsored && "ring-2 ring-warning shadow-orange",
           className
         )}
         style={style}
@@ -103,6 +104,7 @@ export function ListingCard({ listing, variant = 'featured', className, style }:
         to={`/listing/${listing.id}`}
         className={cn(
           "flex gap-4 p-3 bg-card rounded-xl transition-all duration-200 hover:bg-card-elevated",
+          listing.isSponsored && "ring-2 ring-warning shadow-orange",
           className
         )}
         style={style}
@@ -164,6 +166,7 @@ export function ListingCard({ listing, variant = 'featured', className, style }:
       to={`/listing/${listing.id}`}
       className={cn(
         "block w-[280px] shrink-0 bg-card rounded-2xl overflow-hidden transition-all duration-300 hover:shadow-elevated group",
+        listing.isSponsored && "ring-2 ring-warning shadow-orange",
         className
       )}
       style={style}
