@@ -163,38 +163,42 @@ export default function SponsoredManagement() {
     return (
       <Card className="overflow-hidden">
         <CardContent className="p-0">
-          <div className="flex gap-4 p-4">
-            <div className="w-20 h-20 rounded-lg overflow-hidden shrink-0 bg-muted">
+          <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 p-3 sm:p-4">
+            {/* Image */}
+            <div className="w-full sm:w-20 h-40 sm:h-20 rounded-lg overflow-hidden shrink-0 bg-muted">
               <img
                 src={listing.images?.[0] || '/placeholder.svg'}
                 alt={listing.title}
                 className="w-full h-full object-cover"
               />
             </div>
-            <div className="flex-1 min-w-0">
-              <div className="flex items-start justify-between gap-2">
-                <div className="min-w-0">
-                  <h3 className="font-semibold text-foreground truncate">{listing.title}</h3>
-                  <p className="text-sm text-muted-foreground">
+            
+            {/* Content */}
+            <div className="flex-1 min-w-0 space-y-2">
+              <div className="flex flex-wrap items-start justify-between gap-2">
+                <div className="min-w-0 flex-1">
+                  <h3 className="font-semibold text-foreground text-sm sm:text-base line-clamp-1">{listing.title}</h3>
+                  <p className="text-xs sm:text-sm text-muted-foreground">
                     by {listing.profiles?.full_name || listing.profiles?.email || 'Unknown'}
                   </p>
                 </div>
-                <div className="flex gap-1 shrink-0">
+                <div className="flex flex-wrap gap-1 shrink-0">
                   {listing.is_sponsored && (
-                    <Badge className={`border-0 ${isExpired ? 'bg-muted text-muted-foreground' : 'bg-gradient-to-r from-amber-500 to-orange-500 text-white'}`}>
+                    <Badge className={`border-0 text-xs ${isExpired ? 'bg-muted text-muted-foreground' : 'bg-gradient-to-r from-amber-500 to-orange-500 text-white'}`}>
                       <Megaphone className="w-3 h-3 mr-1" />
                       {isExpired ? 'Expired' : 'Sponsored'}
                     </Badge>
                   )}
                   {listing.is_premium && (
-                    <Badge variant="secondary">
+                    <Badge variant="secondary" className="text-xs">
                       <Star className="w-3 h-3 mr-1" />
                       Premium
                     </Badge>
                   )}
                 </div>
               </div>
-              <div className="flex items-center gap-3 mt-2 text-xs text-muted-foreground">
+              
+              <div className="flex flex-wrap items-center gap-2 sm:gap-3 text-xs text-muted-foreground">
                 <span className="font-bold text-primary text-sm">
                   ${listing.price?.toLocaleString() || 0}
                 </span>
@@ -206,7 +210,8 @@ export default function SponsoredManagement() {
                   {listing.type}
                 </Badge>
               </div>
-              <div className="flex flex-wrap items-center gap-2 mt-1">
+              
+              <div className="flex flex-wrap items-center gap-2">
                 {listing.sponsored_at && (
                   <p className="text-xs text-muted-foreground flex items-center gap-1">
                     <Calendar className="w-3 h-3" />
@@ -227,27 +232,29 @@ export default function SponsoredManagement() {
                 )}
               </div>
             </div>
-            <div className="flex items-center gap-2">
+            
+            {/* Actions */}
+            <div className="flex flex-col sm:flex-row sm:items-center gap-2 pt-2 sm:pt-0 border-t sm:border-t-0 border-border/50">
               {showRemove || listing.is_sponsored ? (
                 <Button
                   variant="ghost"
                   size="sm"
                   onClick={() => toggleSponsoredMutation.mutate({ listingId: listing.id, makeSponsored: false })}
                   disabled={toggleSponsoredMutation.isPending}
-                  className="text-destructive hover:text-destructive hover:bg-destructive/10"
+                  className="text-destructive hover:text-destructive hover:bg-destructive/10 w-full sm:w-auto"
                 >
                   <X className="w-4 h-4 mr-1" />
                   Remove
                 </Button>
               ) : (
-                <div className="flex items-center gap-2">
+                <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 w-full sm:w-auto">
                   <Select
                     value={selectedDurations[listing.id] || '1month'}
                     onValueChange={(value: DurationOption) => 
                       setSelectedDurations(prev => ({ ...prev, [listing.id]: value }))
                     }
                   >
-                    <SelectTrigger className="w-[130px] h-8 text-xs">
+                    <SelectTrigger className="w-full sm:w-[130px] h-9 sm:h-8 text-xs">
                       <SelectValue />
                     </SelectTrigger>
                     <SelectContent>
@@ -263,7 +270,7 @@ export default function SponsoredManagement() {
                     size="sm"
                     onClick={() => handleSponsor(listing.id)}
                     disabled={toggleSponsoredMutation.isPending}
-                    className="bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600"
+                    className="bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 w-full sm:w-auto h-9 sm:h-8"
                   >
                     <Megaphone className="w-4 h-4 mr-1" />
                     Sponsor
@@ -279,26 +286,30 @@ export default function SponsoredManagement() {
 
   return (
     <AdminLayout>
-      <div className="space-y-6">
+      <div className="space-y-4 sm:space-y-6">
         <div>
-          <h1 className="text-2xl font-bold text-foreground">Sponsored Content</h1>
-          <p className="text-muted-foreground">
+          <h1 className="text-xl sm:text-2xl font-bold text-foreground">Sponsored Content</h1>
+          <p className="text-sm text-muted-foreground mt-1">
             Manage sponsored listings with time-limited or indefinite promotion periods.
           </p>
         </div>
 
-        <Tabs value={activeTab} onValueChange={setActiveTab}>
-          <TabsList>
-            <TabsTrigger value="sponsored">
-              Currently Sponsored ({sponsoredListings?.length || 0})
+        <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
+          <TabsList className="w-full sm:w-auto grid grid-cols-2 sm:inline-flex h-auto">
+            <TabsTrigger value="sponsored" className="text-xs sm:text-sm py-2 px-3">
+              <span className="hidden sm:inline">Currently Sponsored</span>
+              <span className="sm:hidden">Sponsored</span>
+              <span className="ml-1">({sponsoredListings?.length || 0})</span>
             </TabsTrigger>
-            <TabsTrigger value="add">Add Sponsored</TabsTrigger>
+            <TabsTrigger value="add" className="text-xs sm:text-sm py-2 px-3">
+              Add Sponsored
+            </TabsTrigger>
           </TabsList>
 
-          <TabsContent value="sponsored" className="space-y-4 mt-4">
+          <TabsContent value="sponsored" className="space-y-3 sm:space-y-4 mt-4">
             {loadingSponsored ? (
-              <div className="flex justify-center py-12">
-                <Loader2 className="w-8 h-8 animate-spin text-primary" />
+              <div className="flex justify-center py-8 sm:py-12">
+                <Loader2 className="w-6 h-6 sm:w-8 sm:h-8 animate-spin text-primary" />
               </div>
             ) : sponsoredListings && sponsoredListings.length > 0 ? (
               <div className="space-y-3">
@@ -308,10 +319,10 @@ export default function SponsoredManagement() {
               </div>
             ) : (
               <Card>
-                <CardContent className="py-12 text-center">
-                  <Megaphone className="w-12 h-12 mx-auto text-muted-foreground mb-4" />
-                  <h3 className="font-semibold text-foreground mb-2">No Sponsored Listings</h3>
-                  <p className="text-muted-foreground text-sm">
+                <CardContent className="py-8 sm:py-12 text-center">
+                  <Megaphone className="w-10 h-10 sm:w-12 sm:h-12 mx-auto text-muted-foreground mb-3 sm:mb-4" />
+                  <h3 className="font-semibold text-foreground text-sm sm:text-base mb-1 sm:mb-2">No Sponsored Listings</h3>
+                  <p className="text-muted-foreground text-xs sm:text-sm">
                     Search for listings to mark them as sponsored.
                   </p>
                 </CardContent>
@@ -319,18 +330,18 @@ export default function SponsoredManagement() {
             )}
           </TabsContent>
 
-          <TabsContent value="add" className="space-y-4 mt-4">
-            <form onSubmit={handleSearch} className="flex gap-2">
+          <TabsContent value="add" className="space-y-3 sm:space-y-4 mt-4">
+            <form onSubmit={handleSearch} className="flex flex-col sm:flex-row gap-2">
               <div className="relative flex-1">
                 <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
                 <Input
-                  placeholder="Search listings by title or description..."
+                  placeholder="Search listings..."
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
                   className="pl-10"
                 />
               </div>
-              <Button type="submit" disabled={loadingSearch}>
+              <Button type="submit" disabled={loadingSearch} className="w-full sm:w-auto">
                 {loadingSearch ? <Loader2 className="w-4 h-4 animate-spin" /> : 'Search'}
               </Button>
             </form>
@@ -338,8 +349,8 @@ export default function SponsoredManagement() {
             {searchQuery && (
               <div className="space-y-3">
                 {loadingSearch ? (
-                  <div className="flex justify-center py-12">
-                    <Loader2 className="w-8 h-8 animate-spin text-primary" />
+                  <div className="flex justify-center py-8 sm:py-12">
+                    <Loader2 className="w-6 h-6 sm:w-8 sm:h-8 animate-spin text-primary" />
                   </div>
                 ) : searchResults && searchResults.length > 0 ? (
                   searchResults.map((listing) => (
@@ -347,10 +358,10 @@ export default function SponsoredManagement() {
                   ))
                 ) : (
                   <Card>
-                    <CardContent className="py-12 text-center">
-                      <Search className="w-12 h-12 mx-auto text-muted-foreground mb-4" />
-                      <h3 className="font-semibold text-foreground mb-2">No Results</h3>
-                      <p className="text-muted-foreground text-sm">
+                    <CardContent className="py-8 sm:py-12 text-center">
+                      <Search className="w-10 h-10 sm:w-12 sm:h-12 mx-auto text-muted-foreground mb-3 sm:mb-4" />
+                      <h3 className="font-semibold text-foreground text-sm sm:text-base mb-1 sm:mb-2">No Results</h3>
+                      <p className="text-muted-foreground text-xs sm:text-sm">
                         No listings found matching "{searchQuery}".
                       </p>
                     </CardContent>
@@ -361,10 +372,10 @@ export default function SponsoredManagement() {
 
             {!searchQuery && (
               <Card>
-                <CardContent className="py-12 text-center">
-                  <Search className="w-12 h-12 mx-auto text-muted-foreground mb-4" />
-                  <h3 className="font-semibold text-foreground mb-2">Search for Listings</h3>
-                  <p className="text-muted-foreground text-sm">
+                <CardContent className="py-8 sm:py-12 text-center">
+                  <Search className="w-10 h-10 sm:w-12 sm:h-12 mx-auto text-muted-foreground mb-3 sm:mb-4" />
+                  <h3 className="font-semibold text-foreground text-sm sm:text-base mb-1 sm:mb-2">Search for Listings</h3>
+                  <p className="text-muted-foreground text-xs sm:text-sm">
                     Enter a search term to find listings you want to sponsor.
                   </p>
                 </CardContent>
