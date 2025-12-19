@@ -10,8 +10,19 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { useToast } from '@/hooks/use-toast';
 import { useAuth } from '@/hooks/useAuth';
-import { Search, Megaphone, X, Loader2, Star, MapPin, Calendar, Clock } from 'lucide-react';
+import { Search, Megaphone, X, Loader2, Star, MapPin, Calendar, Clock, ArrowUpDown } from 'lucide-react';
 import { format, addDays, addWeeks, addMonths, isPast } from 'date-fns';
+
+type SortOption = 'date_desc' | 'date_asc' | 'price_desc' | 'price_asc' | 'expiration_asc' | 'expiration_desc';
+
+const sortOptions: { value: SortOption; label: string }[] = [
+  { value: 'date_desc', label: 'Newest First' },
+  { value: 'date_asc', label: 'Oldest First' },
+  { value: 'price_desc', label: 'Price: High to Low' },
+  { value: 'price_asc', label: 'Price: Low to High' },
+  { value: 'expiration_asc', label: 'Expiring Soon' },
+  { value: 'expiration_desc', label: 'Expiring Later' },
+];
 
 interface ListingWithSponsored {
   id: string;
@@ -66,6 +77,37 @@ export default function SponsoredManagement() {
   const [searchQuery, setSearchQuery] = useState('');
   const [activeTab, setActiveTab] = useState('sponsored');
   const [selectedDurations, setSelectedDurations] = useState<Record<string, DurationOption>>({});
+  const [sortBy, setSortBy] = useState<SortOption>('date_desc');
+
+  // Sort function for listings
+  const sortListings = (listings: ListingWithSponsored[]) => {
+    return [...listings].sort((a, b) => {
+      switch (sortBy) {
+        case 'date_desc':
+          return new Date(b.sponsored_at || b.created_at || 0).getTime() - new Date(a.sponsored_at || a.created_at || 0).getTime();
+        case 'date_asc':
+          return new Date(a.sponsored_at || a.created_at || 0).getTime() - new Date(b.sponsored_at || b.created_at || 0).getTime();
+        case 'price_desc':
+          return (b.price || 0) - (a.price || 0);
+        case 'price_asc':
+          return (a.price || 0) - (b.price || 0);
+        case 'expiration_asc':
+          // No expiration goes last
+          if (!a.sponsored_until && !b.sponsored_until) return 0;
+          if (!a.sponsored_until) return 1;
+          if (!b.sponsored_until) return -1;
+          return new Date(a.sponsored_until).getTime() - new Date(b.sponsored_until).getTime();
+        case 'expiration_desc':
+          // No expiration goes first
+          if (!a.sponsored_until && !b.sponsored_until) return 0;
+          if (!a.sponsored_until) return -1;
+          if (!b.sponsored_until) return 1;
+          return new Date(b.sponsored_until).getTime() - new Date(a.sponsored_until).getTime();
+        default:
+          return 0;
+      }
+    });
+  };
 
   // Fetch sponsored listings
   const { data: sponsoredListings, isLoading: loadingSponsored } = useQuery({
@@ -307,13 +349,32 @@ export default function SponsoredManagement() {
           </TabsList>
 
           <TabsContent value="sponsored" className="space-y-3 sm:space-y-4 mt-4">
+            {/* Sort Controls */}
+            {sponsoredListings && sponsoredListings.length > 1 && (
+              <div className="flex items-center justify-end gap-2">
+                <ArrowUpDown className="w-4 h-4 text-muted-foreground" />
+                <Select value={sortBy} onValueChange={(value: SortOption) => setSortBy(value)}>
+                  <SelectTrigger className="w-[160px] sm:w-[180px] h-9 text-xs sm:text-sm">
+                    <SelectValue placeholder="Sort by..." />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {sortOptions.map(opt => (
+                      <SelectItem key={opt.value} value={opt.value} className="text-xs sm:text-sm">
+                        {opt.label}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+            )}
+            
             {loadingSponsored ? (
               <div className="flex justify-center py-8 sm:py-12">
                 <Loader2 className="w-6 h-6 sm:w-8 sm:h-8 animate-spin text-primary" />
               </div>
             ) : sponsoredListings && sponsoredListings.length > 0 ? (
               <div className="space-y-3">
-                {sponsoredListings.map((listing) => (
+                {sortListings(sponsoredListings).map((listing) => (
                   <ListingCard key={listing.id} listing={listing} showRemove />
                 ))}
               </div>
