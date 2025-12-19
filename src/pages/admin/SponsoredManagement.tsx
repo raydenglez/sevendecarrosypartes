@@ -165,7 +165,7 @@ export default function SponsoredManagement() {
         <CardContent className="p-0">
           <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 p-3 sm:p-4">
             {/* Image */}
-            <div className="w-full sm:w-20 h-40 sm:h-20 rounded-lg overflow-hidden shrink-0 bg-muted">
+            <div className="w-full sm:w-24 lg:w-28 h-40 sm:h-24 lg:h-28 rounded-lg overflow-hidden shrink-0 bg-muted">
               <img
                 src={listing.images?.[0] || '/placeholder.svg'}
                 alt={listing.title}
@@ -174,10 +174,10 @@ export default function SponsoredManagement() {
             </div>
             
             {/* Content */}
-            <div className="flex-1 min-w-0 space-y-2">
+            <div className="flex-1 min-w-0 space-y-1.5 sm:space-y-2">
               <div className="flex flex-wrap items-start justify-between gap-2">
                 <div className="min-w-0 flex-1">
-                  <h3 className="font-semibold text-foreground text-sm sm:text-base line-clamp-1">{listing.title}</h3>
+                  <h3 className="font-semibold text-foreground text-sm sm:text-base lg:text-lg line-clamp-1">{listing.title}</h3>
                   <p className="text-xs sm:text-sm text-muted-foreground">
                     by {listing.profiles?.full_name || listing.profiles?.email || 'Unknown'}
                   </p>
@@ -198,8 +198,8 @@ export default function SponsoredManagement() {
                 </div>
               </div>
               
-              <div className="flex flex-wrap items-center gap-2 sm:gap-3 text-xs text-muted-foreground">
-                <span className="font-bold text-primary text-sm">
+              <div className="flex flex-wrap items-center gap-2 sm:gap-3 lg:gap-4 text-xs sm:text-sm text-muted-foreground">
+                <span className="font-bold text-primary text-sm sm:text-base">
                   ${listing.price?.toLocaleString() || 0}
                 </span>
                 <span className="flex items-center gap-1">
@@ -211,7 +211,7 @@ export default function SponsoredManagement() {
                 </Badge>
               </div>
               
-              <div className="flex flex-wrap items-center gap-2">
+              <div className="flex flex-wrap items-center gap-2 lg:gap-3">
                 {listing.sponsored_at && (
                   <p className="text-xs text-muted-foreground flex items-center gap-1">
                     <Calendar className="w-3 h-3" />
@@ -234,7 +234,7 @@ export default function SponsoredManagement() {
             </div>
             
             {/* Actions */}
-            <div className="flex flex-col sm:flex-row sm:items-center gap-2 pt-2 sm:pt-0 border-t sm:border-t-0 border-border/50">
+            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-end gap-2 pt-2 sm:pt-0 border-t sm:border-t-0 border-border/50 shrink-0">
               {showRemove || listing.is_sponsored ? (
                 <Button
                   variant="ghost"
@@ -254,7 +254,7 @@ export default function SponsoredManagement() {
                       setSelectedDurations(prev => ({ ...prev, [listing.id]: value }))
                     }
                   >
-                    <SelectTrigger className="w-full sm:w-[130px] h-9 sm:h-8 text-xs">
+                    <SelectTrigger className="w-full sm:w-[130px] lg:w-[140px] h-9 sm:h-8 text-xs">
                       <SelectValue />
                     </SelectTrigger>
                     <SelectContent>
