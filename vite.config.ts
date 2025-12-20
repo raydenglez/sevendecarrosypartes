@@ -17,8 +17,8 @@ export default defineConfig(({ mode }) => ({
       registerType: "prompt",
       includeAssets: ["favicon.ico", "robots.txt"],
       manifest: {
-        name: "CarNexo",
-        short_name: "CarNexo",
+        name: "CarNetworx",
+        short_name: "CarNetworx",
         description: "Vehicle marketplace",
         theme_color: "#FF6A00",
         background_color: "#0A0A0B",

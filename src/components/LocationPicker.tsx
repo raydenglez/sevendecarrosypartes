@@ -412,7 +412,7 @@ export function LocationPicker({
             Cancel
           </Button>
           <Button 
-            variant="carnexo" 
+            variant="carnetworx" 
             onClick={handleConfirm}
             disabled={!selectedLocation || isGeocoding}
           >

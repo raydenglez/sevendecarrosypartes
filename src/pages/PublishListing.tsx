@@ -478,7 +478,7 @@ export default function PublishListing() {
           <p className="text-muted-foreground mb-6 max-w-[280px]">
             {t('publish.signInToPublishDesc')}
           </p>
-          <Button variant="carnexo" size="lg" onClick={() => navigate('/auth')}>
+          <Button variant="carnetworx" size="lg" onClick={() => navigate('/auth')}>
             {t('publish.signInOrCreate')}
           </Button>
         </div>
@@ -913,7 +913,7 @@ export default function PublishListing() {
               {/* Publish Button */}
               <Button 
                 type="submit" 
-                variant="carnexo" 
+                variant="carnetworx" 
                 size="lg" 
                 className="w-full"
                 disabled={isSubmitting}
@@ -1091,7 +1091,7 @@ export default function PublishListing() {
               {/* Publish Button */}
               <Button 
                 type="submit" 
-                variant="carnexo" 
+                variant="carnetworx" 
                 size="lg" 
                 className="w-full"
                 disabled={isSubmitting}
@@ -1256,7 +1256,7 @@ export default function PublishListing() {
               {/* Publish Button */}
               <Button 
                 type="submit" 
-                variant="carnexo" 
+                variant="carnetworx" 
                 size="lg" 
                 className="w-full"
                 disabled={isSubmitting}

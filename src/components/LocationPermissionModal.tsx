@@ -37,7 +37,7 @@ export function LocationPermissionModal({ isOpen, onClose, onRetry }: LocationPe
           </DialogDescription>
         </DialogHeader>
         <DialogFooter className="flex-col gap-2 sm:flex-col">
-          <Button variant="carnexo" className="w-full" onClick={handleRetry}>
+          <Button variant="carnetworx" className="w-full" onClick={handleRetry}>
             {t('locationPermission.enable')}
           </Button>
           <Button variant="ghost" className="w-full" onClick={onClose}>

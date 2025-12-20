@@ -15,11 +15,11 @@ const buttonVariants = cva(
         secondary: "bg-secondary text-secondary-foreground shadow-blue hover:bg-secondary/80",
         ghost: "text-foreground hover:bg-accent hover:text-accent-foreground",
         link: "text-primary underline-offset-4 hover:underline",
-        // CarNexo specific variants
-        carnexo: "bg-gradient-orange text-primary-foreground shadow-orange hover:opacity-90",
-        carnexoSecondary: "bg-secondary text-secondary-foreground shadow-blue hover:bg-secondary/90",
-        carnexoOutline: "border border-muted bg-muted/50 text-foreground hover:bg-muted",
-        carnexoGhost: "text-muted-foreground hover:text-foreground hover:bg-muted/50",
+        // CarNetworx specific variants
+        carnetworx: "bg-gradient-orange text-primary-foreground shadow-orange hover:opacity-90",
+        carnetworxSecondary: "bg-secondary text-secondary-foreground shadow-blue hover:bg-secondary/90",
+        carnetworxOutline: "border border-muted bg-muted/50 text-foreground hover:bg-muted",
+        carnetworxGhost: "text-muted-foreground hover:text-foreground hover:bg-muted/50",
         call: "bg-muted text-foreground hover:bg-muted/80",
         contact: "bg-gradient-orange text-primary-foreground shadow-orange hover:opacity-90",
       },

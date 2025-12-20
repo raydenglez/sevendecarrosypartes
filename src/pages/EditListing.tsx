@@ -1036,7 +1036,7 @@ export default function EditListing() {
               {/* Update Button */}
               <Button 
                 type="submit" 
-                variant="carnexo" 
+                variant="carnetworx" 
                 size="lg" 
                 className="w-full"
                 disabled={isSubmitting}
@@ -1187,7 +1187,7 @@ export default function EditListing() {
 
               <Button 
                 type="submit" 
-                variant="carnexo" 
+                variant="carnetworx" 
                 size="lg" 
                 className="w-full"
                 disabled={isSubmitting}
@@ -1322,7 +1322,7 @@ export default function EditListing() {
 
               <Button 
                 type="submit" 
-                variant="carnexo" 
+                variant="carnetworx" 
                 size="lg" 
                 className="w-full"
                 disabled={isSubmitting}

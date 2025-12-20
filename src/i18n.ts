@@ -21,7 +21,7 @@ i18n
     detection: {
       order: ['localStorage', 'navigator'],
       caches: ['localStorage'],
-      lookupLocalStorage: 'carnexo-language',
+      lookupLocalStorage: 'carnetworx-language',
     },
     interpolation: {
       escapeValue: false,

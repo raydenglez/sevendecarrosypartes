@@ -10,7 +10,7 @@ interface SEOProps {
   noIndex?: boolean;
 }
 
-const BASE_URL = 'https://carnexo.app';
+const BASE_URL = 'https://carnetworx.app';
 
 const SEO = ({
   titleKey = 'seo.home.title',
@@ -44,7 +44,7 @@ const SEO = ({
       <meta property="og:description" content={description} />
       <meta property="og:image" content={imageUrl} />
       <meta property="og:locale" content={currentLang} />
-      <meta property="og:site_name" content="CarNexo" />
+      <meta property="og:site_name" content="CarNetworx" />
 
       {/* Twitter */}
       <meta name="twitter:card" content="summary_large_image" />

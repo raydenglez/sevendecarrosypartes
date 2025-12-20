@@ -245,7 +245,7 @@ export function VinScanner({ open, onClose, onVehicleDetected }: VinScannerProps
             )}
 
             <Button
-              variant="carnexo"
+              variant="carnetworx"
               size="lg"
               className="w-full"
               onClick={handleManualSubmit}

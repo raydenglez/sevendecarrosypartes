@@ -31,7 +31,7 @@ const PrivacyPolicy = () => {
           <section className="space-y-3">
             <h2 className="text-base font-semibold text-foreground">1. Introduction</h2>
             <p>
-              Welcome to CarNexo ("we," "our," or "us"). We are committed to protecting your personal information and your right to privacy. This Privacy Policy explains how we collect, use, disclose, and safeguard your information when you use our mobile application and services.
+              Welcome to CarNetworx ("we," "our," or "us"). We are committed to protecting your personal information and your right to privacy. This Privacy Policy explains how we collect, use, disclose, and safeguard your information when you use our mobile application and services.
             </p>
           </section>
 
@@ -143,7 +143,7 @@ const PrivacyPolicy = () => {
           <section className="space-y-3">
             <h2 className="text-base font-semibold text-foreground">8. Children's Privacy</h2>
             <p>
-              CarNexo is not intended for users under 18 years of age. We do not knowingly collect personal information from children under 18.
+              CarNetworx is not intended for users under 18 years of age. We do not knowingly collect personal information from children under 18.
             </p>
           </section>
 
@@ -157,7 +157,7 @@ const PrivacyPolicy = () => {
           <section className="space-y-3">
             <h2 className="text-base font-semibold text-foreground">10. Contact Us</h2>
             <p>
-              If you have questions about this Privacy Policy or our privacy practices, please contact us through the app's Help Center or email us at privacy@carnexo.app.
+              If you have questions about this Privacy Policy or our privacy practices, please contact us through the app's Help Center or email us at privacy@carnetworx.app.
             </p>
           </section>
 

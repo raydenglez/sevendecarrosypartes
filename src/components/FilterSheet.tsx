@@ -148,7 +148,7 @@ export function FilterSheet({ isOpen, onClose, filters, onApply }: FilterSheetPr
           <Button variant="outline" className="flex-1" onClick={handleReset}>
             {t('filters.reset')}
           </Button>
-          <Button variant="carnexo" className="flex-1" onClick={handleApply}>
+          <Button variant="carnetworx" className="flex-1" onClick={handleApply}>
             {t('filters.applyFilters')}
           </Button>
         </div>

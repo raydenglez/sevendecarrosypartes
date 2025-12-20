@@ -176,7 +176,7 @@ export function EditProfileModal({
               <Button type="button" variant="outline" className="flex-1" onClick={onClose} disabled={saving}>
                 Cancel
               </Button>
-              <Button type="submit" variant="carnexo" className="flex-1" disabled={saving}>
+              <Button type="submit" variant="carnetworx" className="flex-1" disabled={saving}>
                 {saving ? <Loader2 className="w-4 h-4 animate-spin mr-2" /> : null}
                 Save
               </Button>

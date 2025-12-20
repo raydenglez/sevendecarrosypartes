@@ -225,7 +225,7 @@ export default function Chat() {
             disabled={sending}
           />
           <Button
-            variant="carnexo"
+            variant="carnetworx"
             size="icon"
             onClick={handleSend}
             disabled={!inputValue.trim() || sending}

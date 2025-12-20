@@ -131,7 +131,7 @@ export default function Home() {
         <header className="sticky top-0 z-40 bg-background/95 backdrop-blur-xl safe-top">
         <div className="px-4 pt-4 pb-3 space-y-4">
           <div className="flex items-center justify-between">
-            <h1 className="text-2xl font-bold text-primary">CarNexo</h1>
+            <h1 className="text-2xl font-bold text-primary">CarNetworx</h1>
             <div className="flex items-center gap-1">
               <ThemeToggle />
               {user ? (
@@ -148,7 +148,7 @@ export default function Home() {
                 </button>
               ) : (
                 <Button 
-                  variant="carnexo" 
+                  variant="carnetworx" 
                   size="sm"
                   onClick={() => navigate('/auth')}
                 >

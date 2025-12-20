@@ -35,7 +35,7 @@ export function Map({
   // Create custom marker element
   const createMarkerElement = useCallback((listing: Listing, isSelected: boolean = false) => {
     const el = document.createElement('div');
-    el.className = 'carnexo-map-marker';
+    el.className = 'carnetworx-map-marker';
     
     const priceText = listing.type === 'service' 
       ? `$${listing.price}` 

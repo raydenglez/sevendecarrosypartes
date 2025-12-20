@@ -192,7 +192,7 @@ export default function MyListings() {
           <div className="text-center py-12">
             <p className="text-muted-foreground">{t('myListings.noListingsFound')}</p>
             <Button
-              variant="carnexo"
+              variant="carnetworx"
               className="mt-4"
               onClick={() => navigate('/publish')}
             >

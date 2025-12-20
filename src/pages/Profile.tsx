@@ -316,7 +316,7 @@ export default function Profile() {
           <p className="text-muted-foreground mb-6 max-w-[280px]">
             {t('profile.signInPromptDesc')}
           </p>
-          <Button variant="carnexo" size="lg" onClick={() => navigate('/auth')}>
+          <Button variant="carnetworx" size="lg" onClick={() => navigate('/auth')}>
             {t('auth.signInOrCreate')}
           </Button>
         </div>
@@ -416,11 +416,11 @@ export default function Profile() {
 
           {/* Action Buttons */}
           <div className="flex gap-3 mt-4">
-            <Button variant="carnexoSecondary" size="sm" className="px-6" onClick={() => setEditModalOpen(true)}>
+            <Button variant="carnetworxSecondary" size="sm" className="px-6" onClick={() => setEditModalOpen(true)}>
               <Edit className="w-4 h-4 mr-2" />
               {t('profile.editProfile')}
             </Button>
-            <Button variant="carnexoOutline" size="sm" className="px-6">
+            <Button variant="carnetworxOutline" size="sm" className="px-6">
               <Share2 className="w-4 h-4 mr-2" />
               {t('common.share')}
             </Button>

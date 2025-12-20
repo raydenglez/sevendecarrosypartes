@@ -37,7 +37,7 @@ const handler = async (req: Request): Promise<Response> => {
           Hello ${ownerName || "User"},
         </p>
         <p style="color: #374151; font-size: 16px; line-height: 1.6;">
-          We're writing to inform you that your listing has been removed from CarNexo following a review.
+          We're writing to inform you that your listing has been removed from CarNetworx following a review.
         </p>
         <div style="background-color: #F3F4F6; border-radius: 8px; padding: 16px; margin: 24px 0;">
           <p style="color: #6B7280; font-size: 14px; margin: 0 0 4px 0;">Listing title:</p>
@@ -61,13 +61,13 @@ const handler = async (req: Request): Promise<Response> => {
         </ul>
         <p style="color: #6B7280; font-size: 14px; margin-top: 32px;">
           Best regards,<br>
-          The CarNexo Team
+          The CarNetworx Team
         </p>
       </div>
     `;
 
     const emailResponse = await resend.emails.send({
-      from: "CarNexo <onboarding@resend.dev>",
+      from: "CarNetworx <onboarding@resend.dev>",
       to: [ownerEmail],
       subject: `Your listing "${listingTitle}" has been removed`,
       html,

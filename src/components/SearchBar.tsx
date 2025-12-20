@@ -39,7 +39,7 @@ export function SearchBar({
         />
       </div>
       <Button 
-        variant="carnexoOutline" 
+        variant="carnetworxOutline" 
         size="icon" 
         className="h-12 w-12 shrink-0"
         onClick={onFilter}

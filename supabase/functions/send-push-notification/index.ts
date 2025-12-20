@@ -40,7 +40,7 @@ async function sendWebPush(subscription: PushSubscription, payload: PushPayload)
     const claims = {
       aud: audience,
       exp: now + 12 * 60 * 60,
-      sub: 'mailto:noreply@carnexo.app',
+      sub: 'mailto:noreply@carnetworx.app',
     };
 
     const encodedHeader = btoa(JSON.stringify(header)).replace(/=/g, '').replace(/\+/g, '-').replace(/\//g, '_');
@@ -233,7 +233,7 @@ async function sendAPNs(deviceToken: string, payload: PushPayload): Promise<bool
   const apnsKeyId = Deno.env.get('APNS_KEY_ID');
   const apnsTeamId = Deno.env.get('APNS_TEAM_ID');
   const apnsKey = Deno.env.get('APNS_KEY');
-  const apnsBundleId = Deno.env.get('APNS_BUNDLE_ID') || 'app.lovable.carnexo';
+  const apnsBundleId = Deno.env.get('APNS_BUNDLE_ID') || 'app.lovable.carnetworx';
 
   if (!apnsKeyId || !apnsTeamId || !apnsKey) {
     console.error('APNs credentials not configured');

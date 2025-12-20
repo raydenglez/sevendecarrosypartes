@@ -31,14 +31,14 @@ const TermsConditions = () => {
           <section className="space-y-3">
             <h2 className="text-base font-semibold text-foreground">1. Acceptance of Terms</h2>
             <p>
-              By accessing or using CarNexo ("the App"), you agree to be bound by these Terms and Conditions. If you do not agree to these terms, please do not use the App.
+              By accessing or using CarNetworx ("the App"), you agree to be bound by these Terms and Conditions. If you do not agree to these terms, please do not use the App.
             </p>
           </section>
 
           <section className="space-y-3">
             <h2 className="text-base font-semibold text-foreground">2. Description of Service</h2>
             <p>
-              CarNexo is a mobile marketplace platform that connects buyers and sellers of vehicles, automotive parts, and automotive services. We provide the platform for users to list, discover, and communicate about automotive products and services. CarNexo does not participate in or guarantee any transactions between users.
+              CarNetworx is a mobile marketplace platform that connects buyers and sellers of vehicles, automotive parts, and automotive services. We provide the platform for users to list, discover, and communicate about automotive products and services. CarNetworx does not participate in or guarantee any transactions between users.
             </p>
           </section>
 
@@ -57,7 +57,7 @@ const TermsConditions = () => {
 
             <h3 className="font-medium text-foreground">Age Requirement</h3>
             <p>
-              You must be at least 18 years old to create an account and use CarNexo.
+              You must be at least 18 years old to create an account and use CarNetworx.
             </p>
           </section>
 
@@ -105,7 +105,7 @@ const TermsConditions = () => {
           <section className="space-y-3">
             <h2 className="text-base font-semibold text-foreground">6. Transactions</h2>
             <p>
-              CarNexo is a platform that facilitates connections between buyers and sellers. We are not a party to any transaction between users. All transactions are conducted directly between buyers and sellers, who are solely responsible for:
+              CarNetworx is a platform that facilitates connections between buyers and sellers. We are not a party to any transaction between users. All transactions are conducted directly between buyers and sellers, who are solely responsible for:
             </p>
             <ul className="list-disc pl-5 space-y-1">
               <li>Negotiating and agreeing on price and terms</li>
@@ -131,10 +131,10 @@ const TermsConditions = () => {
           <section className="space-y-3">
             <h2 className="text-base font-semibold text-foreground">8. Intellectual Property</h2>
             <p>
-              The CarNexo name, logo, and all related content, features, and functionality are owned by CarNexo and are protected by copyright, trademark, and other intellectual property laws.
+              The CarNetworx name, logo, and all related content, features, and functionality are owned by CarNetworx and are protected by copyright, trademark, and other intellectual property laws.
             </p>
             <p>
-              By posting content on CarNexo, you grant us a non-exclusive, worldwide, royalty-free license to use, display, and distribute your content in connection with the operation of the App.
+              By posting content on CarNetworx, you grant us a non-exclusive, worldwide, royalty-free license to use, display, and distribute your content in connection with the operation of the App.
             </p>
           </section>
 
@@ -154,14 +154,14 @@ const TermsConditions = () => {
           <section className="space-y-3">
             <h2 className="text-base font-semibold text-foreground">10. Limitation of Liability</h2>
             <p>
-              TO THE MAXIMUM EXTENT PERMITTED BY LAW, CARNEXO SHALL NOT BE LIABLE FOR ANY INDIRECT, INCIDENTAL, SPECIAL, CONSEQUENTIAL, OR PUNITIVE DAMAGES ARISING FROM YOUR USE OF THE APP OR ANY TRANSACTIONS CONDUCTED THROUGH IT.
+              TO THE MAXIMUM EXTENT PERMITTED BY LAW, CARNETWORX SHALL NOT BE LIABLE FOR ANY INDIRECT, INCIDENTAL, SPECIAL, CONSEQUENTIAL, OR PUNITIVE DAMAGES ARISING FROM YOUR USE OF THE APP OR ANY TRANSACTIONS CONDUCTED THROUGH IT.
             </p>
           </section>
 
           <section className="space-y-3">
             <h2 className="text-base font-semibold text-foreground">11. Indemnification</h2>
             <p>
-              You agree to indemnify and hold harmless CarNexo, its officers, directors, employees, and agents from any claims, damages, losses, or expenses arising from your use of the App, your listings, or your violation of these Terms.
+              You agree to indemnify and hold harmless CarNetworx, its officers, directors, employees, and agents from any claims, damages, losses, or expenses arising from your use of the App, your listings, or your violation of these Terms.
             </p>
           </section>
 
@@ -182,14 +182,14 @@ const TermsConditions = () => {
           <section className="space-y-3">
             <h2 className="text-base font-semibold text-foreground">14. Governing Law</h2>
             <p>
-              These Terms shall be governed by and construed in accordance with the laws of the jurisdiction in which CarNexo operates, without regard to conflict of law principles.
+              These Terms shall be governed by and construed in accordance with the laws of the jurisdiction in which CarNetworx operates, without regard to conflict of law principles.
             </p>
           </section>
 
           <section className="space-y-3">
             <h2 className="text-base font-semibold text-foreground">15. Contact Us</h2>
             <p>
-              If you have questions about these Terms and Conditions, please contact us through the app's Help Center or email us at legal@carnexo.app.
+              If you have questions about these Terms and Conditions, please contact us through the app's Help Center or email us at legal@carnetworx.app.
             </p>
           </section>
 

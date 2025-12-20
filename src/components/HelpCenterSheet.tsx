@@ -82,14 +82,14 @@ export function HelpCenterSheet({ open, onClose }: HelpCenterSheetProps) {
             <Button 
               variant="outline" 
               className="w-full justify-start gap-3 h-auto py-4"
-              onClick={() => window.open('mailto:support@carnexo.com', '_blank')}
+              onClick={() => window.open('mailto:support@carnetworx.com', '_blank')}
             >
               <div className="w-10 h-10 rounded-xl bg-primary/20 flex items-center justify-center">
                 <Mail className="w-5 h-5 text-primary" />
               </div>
               <div className="text-left">
                 <p className="font-medium text-foreground">{t('helpCenter.emailSupport')}</p>
-                <p className="text-sm text-muted-foreground">support@carnexo.com</p>
+                <p className="text-sm text-muted-foreground">support@carnetworx.com</p>
               </div>
             </Button>
           </div>

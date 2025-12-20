@@ -95,7 +95,7 @@ Number of Images: ${listing.images?.length || 0}
         messages: [
           {
             role: 'system',
-            content: `You are a content moderator for an automotive marketplace app called CarNexo. Your job is to analyze listings and identify potentially problematic content.
+            content: `You are a content moderator for an automotive marketplace app called CarNetworx. Your job is to analyze listings and identify potentially problematic content.
 
 Analyze the listing for these red flags:
 1. SCAM indicators: Prices that are suspiciously low for the item (e.g., luxury car for $500), urgency language, requests to contact outside the platform

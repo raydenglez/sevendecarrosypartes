@@ -114,7 +114,7 @@ export default function Favorites() {
           <p className="text-muted-foreground mb-6 max-w-[280px]">
             {t('favorites.signInPromptDesc')}
           </p>
-          <Button variant="carnexo" size="lg" onClick={() => navigate('/auth')}>
+          <Button variant="carnetworx" size="lg" onClick={() => navigate('/auth')}>
             {t('auth.signInOrCreate')}
           </Button>
         </div>

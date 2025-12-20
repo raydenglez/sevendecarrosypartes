@@ -219,7 +219,7 @@ const CarNexoLogo = ({
           className="text-primary"
           variants={animate ? letterVariants : undefined}
         >
-          Nexo
+          Networx
         </motion.span>
       </motion.div>
     </div>
