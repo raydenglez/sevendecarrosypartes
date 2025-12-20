@@ -8,6 +8,7 @@ import { HelmetProvider } from "react-helmet-async";
 import { ThemeProvider } from "next-themes";
 import { AuthProvider } from "@/hooks/useAuth";
 import { FavoritesProvider } from "@/contexts/FavoritesContext";
+import { LocationProvider } from "@/contexts/LocationContext";
 import { PWAUpdatePrompt } from "@/components/PWAUpdatePrompt";
 import Home from "./pages/Home";
 import ListingDetail from "./pages/ListingDetail";
@@ -49,8 +50,9 @@ const App = () => (
     <ThemeProvider attribute="class" defaultTheme="dark" enableSystem>
       <QueryClientProvider client={queryClient}>
       <AuthProvider>
-        <FavoritesProvider>
-          <TooltipProvider>
+        <LocationProvider>
+          <FavoritesProvider>
+            <TooltipProvider>
           <Toaster />
           <Sonner />
           <PWAUpdatePrompt />
@@ -84,9 +86,10 @@ const App = () => (
                 <Route path="*" element={<NotFound />} />
               </Routes>
             </Suspense>
-          </BrowserRouter>
-          </TooltipProvider>
-        </FavoritesProvider>
+            </BrowserRouter>
+            </TooltipProvider>
+          </FavoritesProvider>
+        </LocationProvider>
       </AuthProvider>
     </QueryClientProvider>
     </ThemeProvider>

@@ -12,6 +12,7 @@ import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from '@/co
 import { Listing } from '@/types';
 import { Badge } from '@/components/ui/badge';
 import { supabase } from '@/integrations/supabase/client';
+import { useLocation } from '@/contexts/LocationContext';
 
 export default function MapView() {
   const { t } = useTranslation();
@@ -19,14 +20,27 @@ export default function MapView() {
   const [showListings, setShowListings] = useState(false);
   const [selectedListing, setSelectedListing] = useState<Listing | null>(null);
   const [travelTime, setTravelTime] = useState<{ driving: string; walking: string; distance: string } | null>(null);
-  const [userLocation, setUserLocation] = useState<[number, number] | null>(null);
-  const [isLoadingLocation, setIsLoadingLocation] = useState(true);
   const [searchQuery, setSearchQuery] = useState('');
   const [filterType, setFilterType] = useState<'all' | 'vehicle' | 'part' | 'service'>('all');
   const [showRoute, setShowRoute] = useState(false);
-  const [mapCenter, setMapCenter] = useState<[number, number]>([-122.4194, 37.7749]);
   const [dbListings, setDbListings] = useState<Listing[]>([]);
   const [isLoadingListings, setIsLoadingListings] = useState(true);
+  
+  // Use shared location context - no more independent geolocation calls
+  const { userLocation: sharedLocation, isLoading: isLoadingLocation } = useLocation();
+  
+  // Convert shared location format to map format [lng, lat]
+  const userLocation: [number, number] | null = sharedLocation 
+    ? [sharedLocation.lng, sharedLocation.lat] 
+    : null;
+  const [mapCenter, setMapCenter] = useState<[number, number]>([-122.4194, 37.7749]);
+  
+  // Update map center when location changes
+  useEffect(() => {
+    if (userLocation) {
+      setMapCenter(userLocation);
+    }
+  }, [userLocation]);
 
   // Fetch listings from database
   useEffect(() => {
@@ -69,27 +83,6 @@ export default function MapView() {
     };
 
     fetchListings();
-  }, []);
-
-  // Get user location on mount
-  useEffect(() => {
-    if (navigator.geolocation) {
-      navigator.geolocation.getCurrentPosition(
-        (position) => {
-          const loc: [number, number] = [position.coords.longitude, position.coords.latitude];
-          setUserLocation(loc);
-          setMapCenter(loc);
-          setIsLoadingLocation(false);
-        },
-        (error) => {
-          console.log('Geolocation error:', error);
-          setIsLoadingLocation(false);
-        },
-        { enableHighAccuracy: true }
-      );
-    } else {
-      setIsLoadingLocation(false);
-    }
   }, []);
 
   // Filter listings
