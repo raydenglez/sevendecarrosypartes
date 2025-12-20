@@ -32,8 +32,8 @@ const handler = async (req: Request): Promise<Response> => {
 
     const isBan = action === "ban";
     const subject = isBan
-      ? "Your CarNexo Account Has Been Suspended"
-      : "Your CarNexo Account Has Been Restored";
+      ? "Your CarNetworx Account Has Been Suspended"
+      : "Your CarNetworx Account Has Been Restored";
 
     const html = isBan
       ? `
@@ -43,7 +43,7 @@ const handler = async (req: Request): Promise<Response> => {
             Hello ${userName || "User"},
           </p>
           <p style="color: #374151; font-size: 16px; line-height: 1.6;">
-            We're writing to inform you that your CarNexo account has been suspended due to a violation of our community guidelines.
+            We're writing to inform you that your CarNetworx account has been suspended due to a violation of our community guidelines.
           </p>
           ${reason ? `
             <div style="background-color: #FEF2F2; border-left: 4px solid #DC2626; padding: 16px; margin: 24px 0;">
@@ -64,7 +64,7 @@ const handler = async (req: Request): Promise<Response> => {
           </p>
           <p style="color: #6B7280; font-size: 14px; margin-top: 32px;">
             Best regards,<br>
-            The CarNexo Team
+            The CarNetworx Team
           </p>
         </div>
       `
@@ -75,11 +75,11 @@ const handler = async (req: Request): Promise<Response> => {
             Hello ${userName || "User"},
           </p>
           <p style="color: #374151; font-size: 16px; line-height: 1.6;">
-            Great news! Your CarNexo account has been restored and you can now access all features again.
+            Great news! Your CarNetworx account has been restored and you can now access all features again.
           </p>
           <div style="background-color: #ECFDF5; border-left: 4px solid #059669; padding: 16px; margin: 24px 0;">
             <p style="color: #065F46; margin: 0;">
-              You can now log in to your account and continue using CarNexo to browse, list, and connect with buyers and sellers.
+              You can now log in to your account and continue using CarNetworx to browse, list, and connect with buyers and sellers.
             </p>
           </div>
           <p style="color: #374151; font-size: 16px; line-height: 1.6;">
@@ -87,13 +87,13 @@ const handler = async (req: Request): Promise<Response> => {
           </p>
           <p style="color: #6B7280; font-size: 14px; margin-top: 32px;">
             Welcome back!<br>
-            The CarNexo Team
+            The CarNetworx Team
           </p>
         </div>
       `;
 
     const emailResponse = await resend.emails.send({
-      from: "CarNexo <onboarding@resend.dev>",
+      from: "CarNetworx <onboarding@resend.dev>",
       to: [email],
       subject,
       html,

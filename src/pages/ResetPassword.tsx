@@ -114,7 +114,7 @@ export default function ResetPassword() {
           </p>
 
           <Button
-            variant="carnexo"
+            variant="carnetworx"
             onClick={() => navigate('/')}
             className="w-full max-w-sm"
           >
@@ -197,7 +197,7 @@ export default function ResetPassword() {
 
           <Button
             type="submit"
-            variant="carnexo"
+            variant="carnetworx"
             size="lg"
             className="w-full mt-6"
             disabled={loading}

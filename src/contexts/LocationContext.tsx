@@ -17,8 +17,8 @@ interface LocationContextType {
 
 const LocationContext = createContext<LocationContextType | undefined>(undefined);
 
-const LOCATION_STORAGE_KEY = 'carnexo_user_location';
-const LOCATION_PERMISSION_KEY = 'carnexo_location_granted';
+const LOCATION_STORAGE_KEY = 'carnetworx_user_location';
+const LOCATION_PERMISSION_KEY = 'carnetworx_location_granted';
 const LOCATION_CACHE_DURATION = 24 * 60 * 60 * 1000; // 24 hours
 
 // Default location (San Luis, Argentina)

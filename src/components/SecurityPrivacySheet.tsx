@@ -276,7 +276,7 @@ export function SecurityPrivacySheet({ open, onClose }: SecurityPrivacySheetProp
                 </div>
 
                 <Button
-                  variant="carnexo"
+                  variant="carnetworx"
                   className="w-full"
                   onClick={handlePasswordChange}
                   disabled={loading}

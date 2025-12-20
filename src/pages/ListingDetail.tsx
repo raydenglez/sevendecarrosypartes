@@ -687,7 +687,7 @@ export default function ListingDetail() {
         <div className="flex gap-3 max-w-lg mx-auto">
           {user && listing.ownerId === user.id ? (
             <Button 
-              variant="carnexo" 
+              variant="carnetworx" 
               size="lg" 
               className="flex-1"
               onClick={() => navigate(`/listing/${id}/edit`)}

@@ -141,7 +141,7 @@ export function ImageCropModal({
             Cancel
           </Button>
           <Button 
-            variant="carnexo" 
+            variant="carnetworx" 
             onClick={handleSave} 
             disabled={!completedCrop || isProcessing}
           >

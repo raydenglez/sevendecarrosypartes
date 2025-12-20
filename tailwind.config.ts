@@ -70,12 +70,12 @@ export default {
           border: "hsl(var(--sidebar-border))",
           ring: "hsl(var(--sidebar-ring))",
         },
-        carnexo: {
-          dark: "hsl(var(--carnexo-dark))",
-          card: "hsl(var(--carnexo-card))",
-          orange: "hsl(var(--carnexo-orange))",
-          blue: "hsl(var(--carnexo-blue))",
-          green: "hsl(var(--carnexo-green))",
+        carnetworx: {
+          dark: "hsl(var(--carnetworx-dark))",
+          card: "hsl(var(--carnetworx-card))",
+          orange: "hsl(var(--carnetworx-orange))",
+          blue: "hsl(var(--carnetworx-blue))",
+          green: "hsl(var(--carnetworx-green))",
         },
       },
       borderRadius: {

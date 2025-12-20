@@ -414,7 +414,7 @@ export default function Auth() {
 
               <Button
                 type="submit"
-                variant="carnexo"
+                variant="carnetworx"
                 size="lg"
                 className="w-full h-12 rounded-xl shadow-orange"
                 disabled={loading}
@@ -569,7 +569,7 @@ export default function Auth() {
 
               <Button
                 type="submit"
-                variant="carnexo"
+                variant="carnetworx"
                 size="lg"
                 className="w-full h-12 rounded-xl shadow-orange mt-2"
                 disabled={loading || oauthLoading !== null}

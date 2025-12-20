@@ -48,7 +48,7 @@ export default function Messages() {
           <p className="text-muted-foreground mb-6 max-w-[280px]">
             {t('messages.signInPromptDesc')}
           </p>
-          <Button variant="carnexo" size="lg" onClick={() => navigate('/auth')}>
+          <Button variant="carnetworx" size="lg" onClick={() => navigate('/auth')}>
             {t('auth.signInOrCreate')}
           </Button>
         </div>
