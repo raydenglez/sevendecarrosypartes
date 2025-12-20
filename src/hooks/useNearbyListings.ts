@@ -1,5 +1,6 @@
 import { useState, useEffect, useCallback } from 'react';
 import { supabase } from '@/integrations/supabase/client';
+import { useLocation } from '@/contexts/LocationContext';
 
 interface DBListing {
   id: string;
@@ -57,106 +58,19 @@ function calculateDistance(
   return R * c;
 }
 
-const LOCATION_STORAGE_KEY = 'carnexo_user_location';
-const LOCATION_PERMISSION_KEY = 'carnexo_location_granted';
-
-function getSavedLocation(): { lat: number; lng: number } | null {
-  try {
-    const saved = localStorage.getItem(LOCATION_STORAGE_KEY);
-    if (saved) {
-      const parsed = JSON.parse(saved);
-      // Check if location is not too old (24 hours)
-      if (parsed.timestamp && Date.now() - parsed.timestamp < 24 * 60 * 60 * 1000) {
-        return { lat: parsed.lat, lng: parsed.lng };
-      }
-    }
-  } catch {
-    // Ignore parsing errors
-  }
-  return null;
-}
-
-function saveLocation(lat: number, lng: number) {
-  try {
-    localStorage.setItem(LOCATION_STORAGE_KEY, JSON.stringify({ lat, lng, timestamp: Date.now() }));
-    localStorage.setItem(LOCATION_PERMISSION_KEY, 'true');
-  } catch {
-    // Ignore storage errors
-  }
-}
-
-function hasLocationPermission(): boolean {
-  try {
-    return localStorage.getItem(LOCATION_PERMISSION_KEY) === 'true';
-  } catch {
-    return false;
-  }
-}
-
 export function useNearbyListings(segment: 'vehicles' | 'services', filters?: SearchFilters) {
   const [listings, setListings] = useState<DBListing[]>([]);
   const [loading, setLoading] = useState(true);
-  const [userLocation, setUserLocation] = useState<{ lat: number; lng: number } | null>(() => getSavedLocation());
-  const [locationDenied, setLocationDenied] = useState(false);
-  const [showLocationModal, setShowLocationModal] = useState(false);
   const [refreshKey, setRefreshKey] = useState(0);
-
-  const requestLocation = useCallback(() => {
-    const fallback = () => {
-      // Default to San Luis, Argentina if location is unavailable or delayed
-      const defaultLocation = { lat: -33.3, lng: -66.35 };
-      setUserLocation(defaultLocation);
-      setLocationDenied(true);
-      // Only show modal if user hasn't previously granted permission
-      if (!hasLocationPermission()) {
-        setShowLocationModal(true);
-      }
-    };
-
-    if (navigator.geolocation) {
-      let finished = false;
-      const timeoutId = window.setTimeout(() => {
-        if (!finished) fallback();
-      }, 8000);
-
-      navigator.geolocation.getCurrentPosition(
-        (position) => {
-          finished = true;
-          window.clearTimeout(timeoutId);
-          const newLocation = {
-            lat: position.coords.latitude,
-            lng: position.coords.longitude,
-          };
-          setUserLocation(newLocation);
-          saveLocation(newLocation.lat, newLocation.lng);
-          setLocationDenied(false);
-          setShowLocationModal(false);
-        },
-        () => {
-          finished = true;
-          window.clearTimeout(timeoutId);
-          fallback();
-        },
-        {
-          enableHighAccuracy: false,
-          timeout: 7000,
-          maximumAge: 5 * 60 * 1000,
-        }
-      );
-    } else {
-      fallback();
-    }
-  }, []);
-
-  // Get user location on mount - use cached location first, then refresh
-  useEffect(() => {
-    // If we have a saved location, use it immediately but still refresh in background
-    if (userLocation) {
-      requestLocation(); // Refresh in background
-    } else {
-      requestLocation();
-    }
-  }, [requestLocation]);
+  
+  // Use shared location context
+  const { 
+    userLocation, 
+    locationDenied, 
+    showLocationModal, 
+    setShowLocationModal, 
+    requestLocation 
+  } = useLocation();
 
   // Fetch and sort listings
   useEffect(() => {
@@ -267,6 +181,11 @@ export function useNearbyListings(segment: 'vehicles' | 'services', filters?: Se
     });
   }, []);
 
+  // Helper to force refresh location
+  const refreshLocation = useCallback(() => {
+    return requestLocation(true);
+  }, [requestLocation]);
+
   return { 
     listings, 
     loading, 
@@ -274,7 +193,7 @@ export function useNearbyListings(segment: 'vehicles' | 'services', filters?: Se
     locationDenied, 
     showLocationModal, 
     setShowLocationModal, 
-    requestLocation,
+    requestLocation: refreshLocation,
     refresh
   };
 }
