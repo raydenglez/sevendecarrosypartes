@@ -4,7 +4,6 @@ import { useTranslation } from 'react-i18next';
 import SEO from '@/components/SEO';
 import { 
   ArrowLeft, 
-  Share2, 
   Heart, 
   Gauge, 
   Settings, 
@@ -27,6 +26,7 @@ import {
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { SellerCard } from '@/components/SellerCard';
+import { ShareButton } from '@/components/ShareButton';
 import { supabase } from '@/integrations/supabase/client';
 import { cn } from '@/lib/utils';
 import { useAuth } from '@/hooks/useAuth';
@@ -337,13 +337,11 @@ export default function ListingDetail() {
                 <Pencil className="w-5 h-5" />
               </Button>
             )}
-            <Button
-              variant="ghost"
-              size="icon"
+            <ShareButton
+              title={listing.title}
+              text={`Check out ${listing.title} on CarNexo - $${listing.price.toLocaleString()}`}
               className="bg-background/20 backdrop-blur-sm hover:bg-background/40"
-            >
-              <Share2 className="w-5 h-5" />
-            </Button>
+            />
             {user && listing.ownerId !== user.id && (
               <>
                 <Button

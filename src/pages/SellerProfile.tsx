@@ -25,6 +25,9 @@ import { cn } from '@/lib/utils';
 import { ListingCard } from '@/components/ListingCard';
 import { BottomNav } from '@/components/BottomNav';
 import { ReviewsList } from '@/components/ReviewsList';
+import { ShareButton } from '@/components/ShareButton';
+import { StartConversationModal } from '@/components/StartConversationModal';
+import { useAuth } from '@/hooks/useAuth';
 import type { Listing, User } from '@/types';
 
 interface Review {
@@ -45,38 +48,25 @@ export default function SellerProfile() {
   const { t } = useTranslation();
   const { id } = useParams();
   const navigate = useNavigate();
+  const { user } = useAuth();
   const [seller, setSeller] = useState<User | null>(null);
   const [listings, setListings] = useState<Listing[]>([]);
   const [reviews, setReviews] = useState<Review[]>([]);
   const [loading, setLoading] = useState(true);
   const [activeTab, setActiveTab] = useState('listings');
   const [copied, setCopied] = useState(false);
+  const [showMessageModal, setShowMessageModal] = useState(false);
 
-  const handleShare = async () => {
-    const shareUrl = window.location.href;
-    const shareData = {
-      title: `${seller?.name} on CarNexo`,
-      text: `Check out ${seller?.name}'s profile on CarNexo - ${seller?.ratingAvg.toFixed(1)}★ rated seller`,
-      url: shareUrl,
-    };
-
-    try {
-      if (navigator.share) {
-        await navigator.share(shareData);
-      } else {
-        await navigator.clipboard.writeText(shareUrl);
-        setCopied(true);
-        toast.success(t('sellerProfile.linkCopied'));
-        setTimeout(() => setCopied(false), 2000);
-      }
-    } catch (error) {
-      if ((error as Error).name !== 'AbortError') {
-        await navigator.clipboard.writeText(shareUrl);
-        setCopied(true);
-        toast.success(t('sellerProfile.linkCopied'));
-        setTimeout(() => setCopied(false), 2000);
-      }
+  const handleMessageClick = () => {
+    if (!user) {
+      navigate('/auth');
+      return;
     }
+    if (user.id === id) {
+      toast.error(t('messages.cannotMessageSelf'));
+      return;
+    }
+    setShowMessageModal(true);
   };
 
   useEffect(() => {
@@ -257,16 +247,11 @@ export default function SellerProfile() {
             <ArrowLeft className="w-5 h-5 text-foreground" />
           </button>
           <h1 className="font-semibold text-foreground">{t('sellerProfile.title')}</h1>
-          <button 
-            onClick={handleShare}
+          <ShareButton
+            title={`${seller?.name} on CarNexo`}
+            text={`Check out ${seller?.name}'s profile on CarNexo - ${seller?.ratingAvg.toFixed(1)}★ rated seller`}
             className="w-10 h-10 rounded-full bg-card flex items-center justify-center"
-          >
-            {copied ? (
-              <Check className="w-5 h-5 text-success" />
-            ) : (
-              <Share2 className="w-5 h-5 text-foreground" />
-            )}
-          </button>
+          />
         </div>
       </div>
 
@@ -351,12 +336,22 @@ export default function SellerProfile() {
 
         {/* Contact Buttons */}
         <div className="flex gap-3 mt-6">
-          <Button className="flex-1 gap-2" variant="default">
+          <Button className="flex-1 gap-2" variant="default" onClick={handleMessageClick}>
             <MessageSquare className="w-4 h-4" />
-            Message
+            {t('listing.message')}
           </Button>
         </div>
       </div>
+
+      {/* Message Modal */}
+      {seller && (
+        <StartConversationModal
+          isOpen={showMessageModal}
+          onClose={() => setShowMessageModal(false)}
+          sellerId={seller.id}
+          sellerName={seller.name}
+        />
+      )}
 
       {/* Stats */}
       <div className="grid grid-cols-3 gap-4 px-6 py-4 border-y border-border bg-card/50">
