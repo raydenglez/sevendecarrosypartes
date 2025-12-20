@@ -342,7 +342,23 @@
     "signInPrompt": "Sign in to message sellers",
     "signInPromptDesc": "Create an account to contact sellers and negotiate deals",
     "conversationCount": "{{count}} conversation",
-    "conversationCount_other": "{{count}} conversations"
+    "conversationCount_other": "{{count}} conversations",
+    "messageTitle": "Message {{name}}",
+    "aboutListing": "About: {{title}}",
+    "startConversation": "Start a new conversation",
+    "typePlaceholder": "Write your message here...",
+    "sent": "Message sent!",
+    "sentDescription": "Your message has been delivered.",
+    "sendError": "Failed to send message. Please try again.",
+    "emptyMessage": "Please enter a message",
+    "cannotMessageSelf": "You cannot message yourself",
+    "noListingsFound": "This seller has no active listings to message about"
+  },
+  "share": {
+    "linkCopied": "Link copied to clipboard!",
+    "copyFailed": "Failed to copy link",
+    "copyLink": "Copy Link",
+    "whatsapp": "Share via WhatsApp"
   },
   "favorites": {
     "title": "Favorites",
