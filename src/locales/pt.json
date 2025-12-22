@@ -547,7 +547,10 @@
     "title": "Ativar Localização",
     "description": "O app melhora seus resultados com sua localização. Ative o GPS para descobrir veículos, peças e serviços perto de você.",
     "enable": "Ativar Localização",
-    "maybeLater": "Talvez Depois"
+    "maybeLater": "Talvez Depois",
+    "deniedTitle": "Acesso à Localização Negado",
+    "deniedDescription": "Para ativar o acesso à localização, vá em Configurações > Apps > CarNetworx > Permissões e permita o acesso à Localização.",
+    "understood": "Entendi"
   },
   "notificationSettings": {
     "title": "Configurações de Notificação",
