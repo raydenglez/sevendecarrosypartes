@@ -339,6 +339,7 @@
     "cvt": "CVT"
   },
   "chat": {
+    "typing": "{{name}} está digitando...",
     "takePhoto": "Tirar foto",
     "chooseFromGallery": "Escolher da galeria",
     "sendImage": "Enviar imagem",

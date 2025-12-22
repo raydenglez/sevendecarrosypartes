@@ -7,8 +7,10 @@ import { Input } from '@/components/ui/input';
 import { ChatBubble } from '@/components/ChatBubble';
 import { ChatImagePicker, ChatImagePreview } from '@/components/ChatImagePicker';
 import { VoiceRecordButton } from '@/components/VoiceRecordButton';
+import { TypingIndicator } from '@/components/TypingIndicator';
 import { useMessages } from '@/hooks/useMessages';
 import { useAuth } from '@/hooks/useAuth';
+import { useTypingIndicator } from '@/hooks/useTypingIndicator';
 import { supabase } from '@/integrations/supabase/client';
 
 interface ConversationDetails {
@@ -38,6 +40,28 @@ export default function Chat() {
   const [loadingConvo, setLoadingConvo] = useState(true);
   const [selectedImage, setSelectedImage] = useState<File | null>(null);
   const messagesEndRef = useRef<HTMLDivElement>(null);
+
+  // Get current user's name for typing indicator
+  const [currentUserName, setCurrentUserName] = useState<string | undefined>();
+  
+  useEffect(() => {
+    async function fetchUserName() {
+      if (!user) return;
+      const { data } = await supabase
+        .from('profiles')
+        .select('full_name')
+        .eq('id', user.id)
+        .single();
+      setCurrentUserName(data?.full_name || undefined);
+    }
+    fetchUserName();
+  }, [user]);
+
+  const { typingUsers, startTyping, stopTyping } = useTypingIndicator(
+    conversationId,
+    user?.id,
+    currentUserName
+  );
 
   useEffect(() => {
     async function fetchConversation() {
@@ -88,12 +112,22 @@ export default function Chat() {
   const handleSend = async () => {
     if (!inputValue.trim() || sending) return;
 
+    stopTyping();
     setSending(true);
     const success = await sendMessage(inputValue, 'text');
     if (success) {
       setInputValue('');
     }
     setSending(false);
+  };
+
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setInputValue(e.target.value);
+    if (e.target.value.trim()) {
+      startTyping();
+    } else {
+      stopTyping();
+    }
   };
 
   const handleSendImage = async () => {
@@ -231,6 +265,7 @@ export default function Chat() {
                 mediaDuration={msg.media_duration}
               />
             ))}
+            <TypingIndicator typingUsers={typingUsers} />
             <div ref={messagesEndRef} />
           </div>
         )}
@@ -246,7 +281,7 @@ export default function Chat() {
           
           <Input
             value={inputValue}
-            onChange={(e) => setInputValue(e.target.value)}
+            onChange={handleInputChange}
             onKeyPress={handleKeyPress}
             placeholder={t('messages.typeMessage')}
             className="flex-1"
