@@ -547,7 +547,10 @@
     "title": "Activar Ubicación",
     "description": "La app mejora sus resultados con tu ubicación. Activa el GPS para descubrir vehículos, partes y servicios cerca de ti.",
     "enable": "Activar Ubicación",
-    "maybeLater": "Quizás Después"
+    "maybeLater": "Quizás Después",
+    "deniedTitle": "Acceso de Ubicación Denegado",
+    "deniedDescription": "Para activar el acceso a la ubicación, ve a Configuración > Apps > CarNetworx > Permisos y permite el acceso a Ubicación.",
+    "understood": "Entendido"
   },
   "notificationSettings": {
     "title": "Configuración de Notificaciones",

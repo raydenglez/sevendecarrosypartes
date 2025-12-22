@@ -560,7 +560,10 @@
     "title": "Enable Location",
     "description": "The app improves its results with your location. Enable GPS to discover vehicles, parts, and services near you.",
     "enable": "Enable Location",
-    "maybeLater": "Maybe Later"
+    "maybeLater": "Maybe Later",
+    "deniedTitle": "Location Access Denied",
+    "deniedDescription": "To enable location access, go to your device Settings > Apps > CarNetworx > Permissions and allow Location access.",
+    "understood": "Got It"
   },
   "notificationSettings": {
     "title": "Notification Settings",
