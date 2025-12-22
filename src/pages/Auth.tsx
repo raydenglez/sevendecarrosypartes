@@ -254,7 +254,7 @@ export default function Auth() {
   if (confirmationPending) {
     return (
       <AuthBackground>
-        <header className="px-4 pt-4 safe-top">
+        <header className="px-4 pt-[calc(env(safe-area-inset-top)+16px)]">
           <button 
             onClick={handleBackToSignup}
             className="w-10 h-10 flex items-center justify-center text-foreground hover:bg-card/50 rounded-full transition-colors"
@@ -321,7 +321,7 @@ export default function Auth() {
   if (resetEmailSent) {
     return (
       <AuthBackground>
-        <header className="px-4 pt-4 safe-top">
+        <header className="px-4 pt-[calc(env(safe-area-inset-top)+16px)]">
           <button 
             onClick={handleBackToSignup}
             className="w-10 h-10 flex items-center justify-center text-foreground hover:bg-card/50 rounded-full transition-colors"
@@ -369,7 +369,7 @@ export default function Auth() {
   if (showForgotPassword) {
     return (
       <AuthBackground>
-        <header className="px-4 pt-4 safe-top">
+        <header className="px-4 pt-[calc(env(safe-area-inset-top)+16px)]">
           <button 
             onClick={() => setShowForgotPassword(false)}
             className="w-10 h-10 flex items-center justify-center text-foreground hover:bg-card/50 rounded-full transition-colors"
@@ -443,7 +443,7 @@ export default function Auth() {
       <SEO titleKey="seo.auth.title" descriptionKey="seo.auth.description" path="/auth" />
       <AuthBackground>
       {/* Header */}
-      <header className="px-4 pt-4 safe-top">
+      <header className="px-4 pt-[calc(env(safe-area-inset-top)+16px)]">
         <button 
           onClick={() => navigate('/')}
           className="w-10 h-10 flex items-center justify-center text-foreground hover:bg-card/50 rounded-full transition-colors"

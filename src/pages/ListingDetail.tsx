@@ -318,7 +318,7 @@ export default function ListingDetail() {
         </div>
         
         {/* Navigation */}
-        <div className="absolute top-4 left-4 right-4 flex items-center justify-between safe-top">
+        <div className="absolute top-4 left-4 right-4 flex items-center justify-between pt-[env(safe-area-inset-top)]">
           <Button
             variant="ghost"
             size="icon"
