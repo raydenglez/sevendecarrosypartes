@@ -305,8 +305,8 @@ export default function Profile() {
   if (!user) {
     return (
       <div className="min-h-screen bg-background pb-24">
-        <header className="px-4 pt-[calc(env(safe-area-inset-top)+12px)]">
-          <div className="pt-8">
+        <header className="sticky top-0 z-40 bg-background/95 backdrop-blur-xl pt-[calc(env(safe-area-inset-top)+12px)]">
+          <div className="px-4 pt-8 pb-4">
             <h1 className="text-xl font-bold text-foreground">{t('profile.myProfile')}</h1>
           </div>
         </header>
@@ -332,8 +332,8 @@ export default function Profile() {
       <SEO titleKey="seo.profile.title" descriptionKey="seo.profile.description" path="/profile" />
       <div className="min-h-screen bg-background pb-24">
       {/* Header */}
-      <header className="relative px-4 pt-[calc(env(safe-area-inset-top)+12px)] pb-6">
-        <div className="flex justify-between items-start">
+      <header className="sticky top-0 z-40 bg-background/95 backdrop-blur-xl pt-[calc(env(safe-area-inset-top)+12px)] border-b border-border">
+        <div className="px-4 pt-4 pb-4 flex justify-between items-center">
           <h1 className="text-xl font-bold text-foreground">{t('profile.myProfile')}</h1>
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
@@ -375,60 +375,60 @@ export default function Profile() {
             </DropdownMenuContent>
           </DropdownMenu>
         </div>
-
-        {/* Profile Info */}
-        <div className="flex flex-col items-center mt-6">
-          <div className="relative">
-            {profileData?.avatarUrl ? (
-              <img
-                src={profileData.avatarUrl}
-                alt={profileData?.name || 'User'}
-                className="w-24 h-24 rounded-full object-cover border-4 border-card"
-              />
-            ) : (
-              <div className="w-24 h-24 rounded-full bg-gradient-orange border-4 border-card flex items-center justify-center">
-                <span className="text-2xl font-bold text-primary-foreground">
-                  {profileData?.name?.split(' ').map(n => n[0]).join('').slice(0, 2).toUpperCase() || 'U'}
-                </span>
-              </div>
-            )}
-            <label className="absolute bottom-0 right-0 w-8 h-8 rounded-full bg-secondary flex items-center justify-center shadow-blue cursor-pointer hover:bg-secondary/80 transition-colors">
-              {uploading ? (
-                <Loader2 className="w-4 h-4 text-secondary-foreground animate-spin" />
-              ) : (
-                <Camera className="w-4 h-4 text-secondary-foreground" />
-              )}
-              <input
-                type="file"
-                accept="image/*"
-                onChange={handleFileSelect}
-                className="hidden"
-                disabled={uploading}
-              />
-            </label>
-          </div>
-          <h2 className="text-xl font-bold text-foreground mt-4">{profileData?.name || 'User'}</h2>
-          <div className="flex items-center gap-1 text-sm text-muted-foreground mt-1">
-            <MapPin className="w-4 h-4" />
-            <span>{profileData?.location.city}{profileData?.location.state ? `, ${profileData.location.state}` : ''}</span>
-          </div>
-          <p className="text-sm text-muted-foreground">
-            {t('profile.memberSince', { date: profileData?.memberSince || 'Unknown' })}
-          </p>
-
-          {/* Action Buttons */}
-          <div className="flex gap-3 mt-4">
-            <Button variant="carnetworxSecondary" size="sm" className="px-6" onClick={() => setEditModalOpen(true)}>
-              <Edit className="w-4 h-4 mr-2" />
-              {t('profile.editProfile')}
-            </Button>
-            <Button variant="carnetworxOutline" size="sm" className="px-6">
-              <Share2 className="w-4 h-4 mr-2" />
-              {t('common.share')}
-            </Button>
-          </div>
-        </div>
       </header>
+
+      {/* Profile Info */}
+      <div className="flex flex-col items-center px-4 py-6">
+        <div className="relative">
+          {profileData?.avatarUrl ? (
+            <img
+              src={profileData.avatarUrl}
+              alt={profileData?.name || 'User'}
+              className="w-24 h-24 rounded-full object-cover border-4 border-card"
+            />
+          ) : (
+            <div className="w-24 h-24 rounded-full bg-gradient-orange border-4 border-card flex items-center justify-center">
+              <span className="text-2xl font-bold text-primary-foreground">
+                {profileData?.name?.split(' ').map(n => n[0]).join('').slice(0, 2).toUpperCase() || 'U'}
+              </span>
+            </div>
+          )}
+          <label className="absolute bottom-0 right-0 w-8 h-8 rounded-full bg-secondary flex items-center justify-center shadow-blue cursor-pointer hover:bg-secondary/80 transition-colors">
+            {uploading ? (
+              <Loader2 className="w-4 h-4 text-secondary-foreground animate-spin" />
+            ) : (
+              <Camera className="w-4 h-4 text-secondary-foreground" />
+            )}
+            <input
+              type="file"
+              accept="image/*"
+              onChange={handleFileSelect}
+              className="hidden"
+              disabled={uploading}
+            />
+          </label>
+        </div>
+        <h2 className="text-xl font-bold text-foreground mt-4">{profileData?.name || 'User'}</h2>
+        <div className="flex items-center gap-1 text-sm text-muted-foreground mt-1">
+          <MapPin className="w-4 h-4" />
+          <span>{profileData?.location.city}{profileData?.location.state ? `, ${profileData.location.state}` : ''}</span>
+        </div>
+        <p className="text-sm text-muted-foreground">
+          {t('profile.memberSince', { date: profileData?.memberSince || 'Unknown' })}
+        </p>
+
+        {/* Action Buttons */}
+        <div className="flex gap-3 mt-4">
+          <Button variant="carnetworxSecondary" size="sm" className="px-6" onClick={() => setEditModalOpen(true)}>
+            <Edit className="w-4 h-4 mr-2" />
+            {t('profile.editProfile')}
+          </Button>
+          <Button variant="carnetworxOutline" size="sm" className="px-6">
+            <Share2 className="w-4 h-4 mr-2" />
+            {t('common.share')}
+          </Button>
+        </div>
+      </div>
 
       {/* Stats */}
       <div className="px-4 grid grid-cols-3 gap-3 animate-fade-in">
