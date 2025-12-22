@@ -1,11 +1,14 @@
+import { useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import { MessageSquare, Loader2, User } from 'lucide-react';
+import { MessageSquare, Loader2 } from 'lucide-react';
 import SEO from '@/components/SEO';
 import { BottomNav } from '@/components/BottomNav';
 import { Button } from '@/components/ui/button';
+import { OnlineStatusDot } from '@/components/OnlineStatusBadge';
 import { useAuth } from '@/hooks/useAuth';
 import { useConversations } from '@/hooks/useConversations';
+import { useOnlinePresence, useOnlineStatus } from '@/hooks/useOnlinePresence';
 import { cn } from '@/lib/utils';
 import { formatDistanceToNow, Locale } from 'date-fns';
 import { es, ptBR } from 'date-fns/locale';
@@ -20,6 +23,16 @@ export default function Messages() {
   const { user, loading: authLoading } = useAuth();
   const { conversations, loading: convosLoading } = useConversations();
   const { t, i18n } = useTranslation();
+
+  // Track current user's online presence
+  useOnlinePresence(user?.id);
+
+  // Get all other user IDs from conversations
+  const otherUserIds = useMemo(() => 
+    conversations.map(c => c.other_user.id),
+    [conversations]
+  );
+  const { isOnline } = useOnlineStatus(otherUserIds);
 
   const getDateLocale = () => locales[i18n.language] || undefined;
 
@@ -100,6 +113,7 @@ export default function Messages() {
                       </span>
                     </div>
                   )}
+                  <OnlineStatusDot isOnline={isOnline(conv.other_user.id)} />
                   {conv.unread_count > 0 && (
                     <span className="absolute -top-1 -right-1 w-5 h-5 rounded-full bg-primary text-primary-foreground text-xs font-bold flex items-center justify-center">
                       {conv.unread_count}

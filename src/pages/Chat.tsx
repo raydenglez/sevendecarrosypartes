@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, useMemo } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { ArrowLeft, Send, Loader2 } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
@@ -8,9 +8,11 @@ import { ChatBubble } from '@/components/ChatBubble';
 import { ChatImagePicker, ChatImagePreview } from '@/components/ChatImagePicker';
 import { VoiceRecordButton } from '@/components/VoiceRecordButton';
 import { TypingIndicator } from '@/components/TypingIndicator';
+import { OnlineStatusBadge, OnlineStatusDot } from '@/components/OnlineStatusBadge';
 import { useMessages } from '@/hooks/useMessages';
 import { useAuth } from '@/hooks/useAuth';
 import { useTypingIndicator } from '@/hooks/useTypingIndicator';
+import { useOnlinePresence, useOnlineStatus } from '@/hooks/useOnlinePresence';
 import { supabase } from '@/integrations/supabase/client';
 
 interface ConversationDetails {
@@ -62,6 +64,16 @@ export default function Chat() {
     user?.id,
     currentUserName
   );
+
+  // Track current user's online presence
+  useOnlinePresence(user?.id);
+
+  // Track other user's online status
+  const otherUserIds = useMemo(() => 
+    conversation?.other_user.id ? [conversation.other_user.id] : [], 
+    [conversation?.other_user.id]
+  );
+  const { isOnline } = useOnlineStatus(otherUserIds);
 
   useEffect(() => {
     async function fetchConversation() {
@@ -193,25 +205,33 @@ export default function Chat() {
             onClick={() => navigate(`/listing/${conversation.listing.id}`)}
           >
             {conversation.other_user.avatar_url ? (
-              <img
-                src={conversation.other_user.avatar_url}
-                alt={conversation.other_user.full_name}
-                className="w-10 h-10 rounded-full object-cover shrink-0"
-              />
+              <div className="relative shrink-0">
+                <img
+                  src={conversation.other_user.avatar_url}
+                  alt={conversation.other_user.full_name}
+                  className="w-10 h-10 rounded-full object-cover"
+                />
+                <OnlineStatusDot isOnline={isOnline(conversation.other_user.id)} />
+              </div>
             ) : (
-              <div className="w-10 h-10 rounded-full bg-secondary flex items-center justify-center shrink-0">
-                <span className="text-sm font-bold text-secondary-foreground">
-                  {conversation.other_user.full_name?.split(' ').map(n => n[0]).join('').slice(0, 2).toUpperCase() || 'U'}
-                </span>
+              <div className="relative shrink-0">
+                <div className="w-10 h-10 rounded-full bg-secondary flex items-center justify-center">
+                  <span className="text-sm font-bold text-secondary-foreground">
+                    {conversation.other_user.full_name?.split(' ').map(n => n[0]).join('').slice(0, 2).toUpperCase() || 'U'}
+                  </span>
+                </div>
+                <OnlineStatusDot isOnline={isOnline(conversation.other_user.id)} />
               </div>
             )}
             <div className="min-w-0">
               <h1 className="font-semibold text-foreground truncate">
                 {conversation.other_user.full_name || t('chat.user', 'User')}
               </h1>
-              <p className="text-xs text-muted-foreground truncate">
-                {conversation.listing.title}
-              </p>
+              <OnlineStatusBadge 
+                isOnline={isOnline(conversation.other_user.id)} 
+                showText 
+                size="sm"
+              />
             </div>
           </div>
         </div>

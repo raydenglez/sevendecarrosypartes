@@ -338,6 +338,10 @@
     "manual": "Manual",
     "cvt": "CVT"
   },
+  "status": {
+    "online": "Online",
+    "offline": "Offline"
+  },
   "chat": {
     "typing": "{{name}} está digitando...",
     "takePhoto": "Tirar foto",
