@@ -656,7 +656,7 @@ export default function Profile() {
           {t('auth.signOut')}
         </Button>
         <p className="text-center text-xs text-muted-foreground mt-3">
-          CarNexo v2.4.0 (Build 2045)
+          CarNetworx v2.4.0 (Build 2045)
         </p>
       </div>
 
