@@ -349,6 +349,10 @@
     "manual": "Manual",
     "cvt": "CVT"
   },
+  "status": {
+    "online": "Online",
+    "offline": "Offline"
+  },
   "chat": {
     "typing": "{{name}} is typing...",
     "takePhoto": "Take photo",
