@@ -1,7 +1,7 @@
 import { useRegisterSW } from 'virtual:pwa-register/react';
 import { useEffect } from 'react';
 import { toast } from 'sonner';
-import { RefreshCw } from 'lucide-react';
+import logo from '@/assets/logo.png';
 
 export const PWAUpdatePrompt = () => {
   const {
@@ -23,7 +23,7 @@ export const PWAUpdatePrompt = () => {
         {
           description: 'Click update to get the latest features and fixes.',
           duration: Infinity,
-          icon: <RefreshCw className="h-4 w-4" />,
+          icon: <img src={logo} alt="" className="h-5 w-5 rounded" />,
           action: {
             label: 'Update Now',
             onClick: () => updateServiceWorker(true),
