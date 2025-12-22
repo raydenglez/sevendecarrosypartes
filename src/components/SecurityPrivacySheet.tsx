@@ -13,13 +13,14 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Switch } from '@/components/ui/switch';
-import { KeyRound, Eye, EyeOff, Shield, Smartphone, Clock, AlertTriangle, Loader2 } from 'lucide-react';
+import { KeyRound, Eye, EyeOff, Shield, Smartphone, Clock, AlertTriangle, Loader2, MapPin } from 'lucide-react';
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { useAuth } from '@/hooks/useAuth';
 import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
+import { useLocation } from '@/contexts/LocationContext';
 
 interface PrivacySettings {
   show_phone_on_listings: boolean;
@@ -46,6 +47,7 @@ export function SecurityPrivacySheet({ open, onClose }: SecurityPrivacySheetProp
   const navigate = useNavigate();
   const { user, updatePassword, signOut } = useAuth();
   const { toast } = useToast();
+  const { locationEnabled, setLocationEnabled } = useLocation();
   const [showChangePassword, setShowChangePassword] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -357,6 +359,31 @@ export function SecurityPrivacySheet({ open, onClose }: SecurityPrivacySheetProp
                   checked={privacySettings.show_online_status}
                   onCheckedChange={(checked) => updatePrivacySetting('show_online_status', checked)}
                   disabled={privacyLoading}
+                />
+              </div>
+            </div>
+          </div>
+
+          {/* Location Settings */}
+          <div className="bg-muted/50 rounded-xl p-4 space-y-4">
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 rounded-xl bg-success/20 flex items-center justify-center">
+                <MapPin className="w-5 h-5 text-success" />
+              </div>
+              <div className="flex-1">
+                <p className="text-foreground font-medium">{t('settings.locationSettings')}</p>
+              </div>
+            </div>
+
+            <div className="space-y-3 pl-13">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-sm text-foreground">{t('settings.enableLocation')}</p>
+                  <p className="text-xs text-muted-foreground">{t('settings.enableLocationDesc')}</p>
+                </div>
+                <Switch 
+                  checked={locationEnabled}
+                  onCheckedChange={setLocationEnabled}
                 />
               </div>
             </div>
