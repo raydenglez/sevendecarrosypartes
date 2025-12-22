@@ -675,5 +675,35 @@
       "title": "Termos e Condições | CarNexo",
       "description": "Leia os termos de serviço e acordo de usuário do CarNexo para usar nosso marketplace."
     }
+  },
+  "businessCategory": {
+    "buyer": "Comprador",
+    "car_seller": "Vendedor de Carros",
+    "car_dealership": "Concessionária",
+    "mechanic_shop": "Oficina Mecânica",
+    "tires_shop": "Loja de Pneus",
+    "auto_collision": "Colisão de Autos",
+    "auto_repair_shop": "Oficina de Reparos",
+    "auto_injury_lawyer": "Advogado de Lesões",
+    "window_tinting": "Insulfilm",
+    "auto_insurance": "Seguradora de Autos",
+    "towing": "Guincho",
+    "car_wash": "Lava Jato",
+    "car_detailing": "Detalhamento de Carros",
+    "body_shop": "Funilaria",
+    "paint_shop": "Pintura Automotiva",
+    "mobile_mechanic": "Mecânico Móvel",
+    "electrician_expert": "Eletricista Automotivo",
+    "car_brokers": "Corretores de Carros",
+    "car_wrappers": "Envelopamento",
+    "atv_utv_dealer": "Revendedor ATV/UTV",
+    "dirt_bike_dealer": "Revendedor Dirt Bike",
+    "yacht_dealer": "Revendedor de Iates",
+    "car_rentals": "Aluguel de Carros",
+    "car_transport": "Transporte de Carros",
+    "rebuilt_inspection": "Inspeção Reconstruído",
+    "roadside": "Assistência na Estrada",
+    "locksmith": "Chaveiro",
+    "audio_car": "Som Automotivo"
   }
 }

@@ -31,6 +31,7 @@ import { useAuth } from '@/hooks/useAuth';
 import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
 import { EditProfileModal } from '@/components/EditProfileModal';
+import { BusinessCategoryBadge } from '@/components/BusinessCategorySelect';
 
 // Lazy load heavy modal component
 const ImageCropModal = lazy(() => import('@/components/ImageCropModal').then(m => ({ default: m.ImageCropModal })));
@@ -67,6 +68,8 @@ interface ProfileData {
   location: { city: string; state: string };
   memberSince: string;
   ratingAvg: number;
+  businessCategory: string | null;
+  bio: string | null;
 }
 
 interface UserStats {
@@ -228,6 +231,8 @@ export default function Profile() {
             },
             memberSince: new Date(profile.created_at || user.created_at).toLocaleDateString('en-US', { month: 'long', year: 'numeric' }),
             ratingAvg: profile.rating_avg || 0,
+            businessCategory: profile.business_category || null,
+            bio: profile.bio || null,
           });
         }
 
@@ -411,7 +416,22 @@ export default function Profile() {
           </label>
         </div>
         <h2 className="text-xl font-bold text-foreground mt-4">{profileData?.name || 'User'}</h2>
-        <div className="flex items-center gap-1 text-sm text-muted-foreground mt-1">
+        
+        {/* Business Category Badge */}
+        {profileData?.businessCategory && (
+          <div className="mt-2">
+            <BusinessCategoryBadge category={profileData.businessCategory} />
+          </div>
+        )}
+        
+        {/* Bio */}
+        {profileData?.bio && (
+          <p className="text-sm text-muted-foreground mt-2 text-center max-w-xs">
+            {profileData.bio}
+          </p>
+        )}
+        
+        <div className="flex items-center gap-1 text-sm text-muted-foreground mt-2">
           <MapPin className="w-4 h-4" />
           <span>{profileData?.location.city}{profileData?.location.state ? `, ${profileData.location.state}` : ''}</span>
         </div>
@@ -664,6 +684,8 @@ export default function Profile() {
             phone: profileData.phone,
             locationCity: profileData.location.city === 'Unknown' ? '' : profileData.location.city,
             locationState: profileData.location.state,
+            bio: profileData.bio || '',
+            businessCategory: profileData.businessCategory || '',
           }}
           onProfileUpdated={(data) => {
             setProfileData(prev => prev ? {
@@ -675,6 +697,8 @@ export default function Profile() {
                 city: data.locationCity || 'Unknown',
                 state: data.locationState || '',
               },
+              bio: data.bio || null,
+              businessCategory: data.businessCategory || null,
             } : null);
           }}
         />

@@ -6,6 +6,7 @@ import { getAuthRedirectUrl } from '@/lib/externalUrl';
 interface SignUpResult {
   error: Error | null;
   confirmationPending: boolean;
+  user: User | null;
 }
 
 interface AuthContextType {
@@ -65,7 +66,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     // Check if email confirmation is required (user created but not confirmed)
     const confirmationPending = !error && data?.user && !data.session;
     
-    return { error: error as Error | null, confirmationPending: !!confirmationPending };
+    return { error: error as Error | null, confirmationPending: !!confirmationPending, user: data?.user ?? null };
   };
 
   const signIn = async (email: string, password: string) => {
