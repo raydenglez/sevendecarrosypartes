@@ -349,6 +349,16 @@
     "manual": "Manual",
     "cvt": "CVT"
   },
+  "chat": {
+    "takePhoto": "Take photo",
+    "chooseFromGallery": "Choose from gallery",
+    "sendImage": "Send image",
+    "send": "Send",
+    "voiceMessage": "Voice message",
+    "holdToRecord": "Hold to record",
+    "recording": "Recording...",
+    "microphoneError": "Microphone access denied"
+  },
   "messages": {
     "title": "Messages",
     "noMessages": "No messages yet",

@@ -338,6 +338,16 @@
     "manual": "Manual",
     "cvt": "CVT"
   },
+  "chat": {
+    "takePhoto": "Tomar foto",
+    "chooseFromGallery": "Elegir de galería",
+    "sendImage": "Enviar imagen",
+    "send": "Enviar",
+    "voiceMessage": "Mensaje de voz",
+    "holdToRecord": "Mantén para grabar",
+    "recording": "Grabando...",
+    "microphoneError": "Acceso al micrófono denegado"
+  },
   "messages": {
     "title": "Mensajes",
     "noMessages": "Sin mensajes aún",

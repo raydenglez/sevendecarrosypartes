@@ -1,10 +1,12 @@
 import { useState, useEffect, useRef } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { ArrowLeft, Send, Loader2, User } from 'lucide-react';
+import { ArrowLeft, Send, Loader2 } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { ChatBubble } from '@/components/ChatBubble';
+import { ChatImagePicker, ChatImagePreview } from '@/components/ChatImagePicker';
+import { VoiceRecordButton } from '@/components/VoiceRecordButton';
 import { useMessages } from '@/hooks/useMessages';
 import { useAuth } from '@/hooks/useAuth';
 import { supabase } from '@/integrations/supabase/client';
@@ -34,6 +36,7 @@ export default function Chat() {
   const [sending, setSending] = useState(false);
   const [conversation, setConversation] = useState<ConversationDetails | null>(null);
   const [loadingConvo, setLoadingConvo] = useState(true);
+  const [selectedImage, setSelectedImage] = useState<File | null>(null);
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -86,10 +89,27 @@ export default function Chat() {
     if (!inputValue.trim() || sending) return;
 
     setSending(true);
-    const success = await sendMessage(inputValue);
+    const success = await sendMessage(inputValue, 'text');
     if (success) {
       setInputValue('');
     }
+    setSending(false);
+  };
+
+  const handleSendImage = async () => {
+    if (!selectedImage || sending) return;
+
+    setSending(true);
+    const success = await sendMessage('', 'image', selectedImage);
+    if (success) {
+      setSelectedImage(null);
+    }
+    setSending(false);
+  };
+
+  const handleSendVoice = async (blob: Blob, duration: number) => {
+    setSending(true);
+    await sendMessage('', 'voice', blob, duration);
     setSending(false);
   };
 
@@ -206,6 +226,9 @@ export default function Chat() {
                 timestamp={msg.created_at}
                 isSent={msg.sender_id === user.id}
                 status={msg.status}
+                messageType={msg.message_type}
+                mediaUrl={msg.media_url}
+                mediaDuration={msg.media_duration}
               />
             ))}
             <div ref={messagesEndRef} />
@@ -215,7 +238,12 @@ export default function Chat() {
 
       {/* Input */}
       <div className="sticky bottom-0 p-4 bg-background/95 backdrop-blur-xl border-t border-border safe-bottom">
-        <div className="flex gap-2">
+        <div className="flex gap-2 items-center">
+          <ChatImagePicker 
+            onImageSelected={setSelectedImage} 
+            disabled={sending}
+          />
+          
           <Input
             value={inputValue}
             onChange={(e) => setInputValue(e.target.value)}
@@ -224,20 +252,38 @@ export default function Chat() {
             className="flex-1"
             disabled={sending}
           />
-          <Button
-            variant="carnetworx"
-            size="icon"
-            onClick={handleSend}
-            disabled={!inputValue.trim() || sending}
-          >
-            {sending ? (
-              <Loader2 className="w-5 h-5 animate-spin" />
-            ) : (
-              <Send className="w-5 h-5" />
-            )}
-          </Button>
+          
+          {inputValue.trim() ? (
+            <Button
+              variant="carnetworx"
+              size="icon"
+              onClick={handleSend}
+              disabled={sending}
+            >
+              {sending ? (
+                <Loader2 className="w-5 h-5 animate-spin" />
+              ) : (
+                <Send className="w-5 h-5" />
+              )}
+            </Button>
+          ) : (
+            <VoiceRecordButton 
+              onVoiceMessage={handleSendVoice}
+              disabled={sending}
+            />
+          )}
         </div>
       </div>
+
+      {/* Image Preview Modal */}
+      {selectedImage && (
+        <ChatImagePreview
+          file={selectedImage}
+          onCancel={() => setSelectedImage(null)}
+          onSend={handleSendImage}
+          sending={sending}
+        />
+      )}
     </div>
   );
 }
