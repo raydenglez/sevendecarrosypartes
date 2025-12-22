@@ -29,18 +29,22 @@ export default function MapView() {
   // Use shared location context - no more independent geolocation calls
   const { userLocation: sharedLocation, isLoading: isLoadingLocation } = useLocation();
   
-  // Convert shared location format to map format [lng, lat]
-  const userLocation: [number, number] | null = sharedLocation 
-    ? [sharedLocation.lng, sharedLocation.lat] 
-    : null;
-  const [mapCenter, setMapCenter] = useState<[number, number]>([-122.4194, 37.7749]);
+  // Convert shared location format to map format [lng, lat] - memoized to prevent infinite loops
+  const userLocation: [number, number] | null = useMemo(() => 
+    sharedLocation ? [sharedLocation.lng, sharedLocation.lat] : null,
+    [sharedLocation?.lng, sharedLocation?.lat]
+  );
   
-  // Update map center when location changes
+  const [mapCenter, setMapCenter] = useState<[number, number]>([-122.4194, 37.7749]);
+  const [hasInitializedCenter, setHasInitializedCenter] = useState(false);
+  
+  // Update map center when location changes - only on initial load
   useEffect(() => {
-    if (userLocation) {
+    if (userLocation && !hasInitializedCenter) {
       setMapCenter(userLocation);
+      setHasInitializedCenter(true);
     }
-  }, [userLocation]);
+  }, [userLocation, hasInitializedCenter]);
 
   // Fetch listings from database
   useEffect(() => {
