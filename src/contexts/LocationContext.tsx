@@ -13,12 +13,15 @@ interface LocationContextType {
   setShowLocationModal: (show: boolean) => void;
   requestLocation: (forceRefresh?: boolean) => Promise<void>;
   permissionState: PermissionState | null;
+  locationEnabled: boolean;
+  setLocationEnabled: (enabled: boolean) => void;
 }
 
 const LocationContext = createContext<LocationContextType | undefined>(undefined);
 
 const LOCATION_STORAGE_KEY = 'carnetworx_user_location';
 const LOCATION_PERMISSION_KEY = 'carnetworx_location_granted';
+const LOCATION_ENABLED_KEY = 'carnetworx_location_enabled';
 const LOCATION_CACHE_DURATION = 24 * 60 * 60 * 1000; // 24 hours
 
 // Default location (San Luis, Argentina)
@@ -57,6 +60,24 @@ function hasLocationPermission(): boolean {
   }
 }
 
+function getLocationEnabled(): boolean {
+  try {
+    const stored = localStorage.getItem(LOCATION_ENABLED_KEY);
+    // Default to true if not set
+    return stored === null ? true : stored === 'true';
+  } catch {
+    return true;
+  }
+}
+
+function setLocationEnabledStorage(enabled: boolean) {
+  try {
+    localStorage.setItem(LOCATION_ENABLED_KEY, enabled ? 'true' : 'false');
+  } catch {
+    // Ignore storage errors
+  }
+}
+
 async function checkBrowserPermission(): Promise<PermissionState | null> {
   try {
     if ('permissions' in navigator) {
@@ -80,9 +101,41 @@ export function LocationProvider({ children }: LocationProviderProps) {
   const [showLocationModal, setShowLocationModal] = useState(false);
   const [permissionState, setPermissionState] = useState<PermissionState | null>(null);
   const [hasInitialized, setHasInitialized] = useState(false);
+  const [locationEnabled, setLocationEnabledState] = useState<boolean>(() => getLocationEnabled());
+
+  // Handle location enabled toggle
+  const setLocationEnabled = useCallback((enabled: boolean) => {
+    setLocationEnabledState(enabled);
+    setLocationEnabledStorage(enabled);
+    
+    if (!enabled) {
+      // Clear cached location when disabled
+      try {
+        localStorage.removeItem(LOCATION_STORAGE_KEY);
+        localStorage.removeItem(LOCATION_PERMISSION_KEY);
+      } catch {
+        // Ignore errors
+      }
+      setUserLocation(DEFAULT_LOCATION);
+      setLocationDenied(true);
+    } else {
+      // Re-request location when enabled
+      setLocationDenied(false);
+      // Will trigger a fresh location request
+    }
+  }, []);
 
   // Request location with smart permission checking
   const requestLocation = useCallback(async (forceRefresh = false) => {
+    // If location is disabled by user, use default
+    if (!locationEnabled) {
+      if (!userLocation) {
+        setUserLocation(DEFAULT_LOCATION);
+      }
+      setLocationDenied(true);
+      return;
+    }
+
     // Check for cached location first (unless force refresh)
     if (!forceRefresh) {
       const cached = getSavedLocation();
@@ -177,7 +230,7 @@ export function LocationProvider({ children }: LocationProviderProps) {
         }
       );
     });
-  }, [userLocation]);
+  }, [userLocation, locationEnabled]);
 
   // Initialize location on mount - only once
   useEffect(() => {
@@ -185,6 +238,13 @@ export function LocationProvider({ children }: LocationProviderProps) {
     setHasInitialized(true);
 
     const initLocation = async () => {
+      // If location is disabled, use default
+      if (!locationEnabled) {
+        setUserLocation(DEFAULT_LOCATION);
+        setLocationDenied(true);
+        return;
+      }
+
       const cached = getSavedLocation();
       
       if (cached) {
@@ -213,7 +273,14 @@ export function LocationProvider({ children }: LocationProviderProps) {
     };
 
     initLocation();
-  }, [hasInitialized, requestLocation]);
+  }, [hasInitialized, requestLocation, locationEnabled]);
+
+  // Re-request location when enabled changes
+  useEffect(() => {
+    if (hasInitialized && locationEnabled) {
+      requestLocation(true);
+    }
+  }, [locationEnabled, hasInitialized, requestLocation]);
 
   // Listen for permission changes
   useEffect(() => {
@@ -246,6 +313,8 @@ export function LocationProvider({ children }: LocationProviderProps) {
         setShowLocationModal,
         requestLocation,
         permissionState,
+        locationEnabled,
+        setLocationEnabled,
       }}
     >
       {children}
