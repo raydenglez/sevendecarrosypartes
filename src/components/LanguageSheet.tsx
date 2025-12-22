@@ -44,7 +44,7 @@ export function LanguageSheet({ open, onOpenChange }: LanguageSheetProps) {
         // Sync i18n with database value
         if (data.language !== i18n.language) {
           i18n.changeLanguage(data.language);
-          localStorage.setItem('carnexo-language', data.language);
+          localStorage.setItem('carnetworx-language', data.language);
         }
       }
     }
@@ -61,7 +61,7 @@ export function LanguageSheet({ open, onOpenChange }: LanguageSheetProps) {
 
     // Change i18n language immediately
     i18n.changeLanguage(languageCode);
-    localStorage.setItem('carnexo-language', languageCode);
+    localStorage.setItem('carnetworx-language', languageCode);
 
     // Save to database if user is logged in
     if (user) {
@@ -73,7 +73,7 @@ export function LanguageSheet({ open, onOpenChange }: LanguageSheetProps) {
       if (error) {
         setSelectedLanguage(previousLanguage);
         i18n.changeLanguage(previousLanguage);
-        localStorage.setItem('carnexo-language', previousLanguage);
+        localStorage.setItem('carnetworx-language', previousLanguage);
         toast({
           title: t('toast.error'),
           description: 'Failed to update language preference.',
