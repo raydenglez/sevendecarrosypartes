@@ -14,6 +14,7 @@
     "close": "Close",
     "confirm": "Confirm",
     "back": "Back",
+    "noResults": "No results found",
     "next": "Next",
     "submit": "Submit",
     "clear": "Clear",
@@ -83,8 +84,11 @@
       "invalidEmail": "Invalid email address",
       "passwordMin": "Password must be at least 6 characters",
       "nameMin": "Name must be at least 2 characters",
-      "passwordsMatch": "Passwords don't match"
+      "passwordsMatch": "Passwords don't match",
+      "categoryRequired": "Please select your business category"
     },
+    "businessCategory": "Business Category",
+    "selectCategory": "Select your category",
     "toast": {
       "failedResend": "Failed to resend",
       "emailSent": "Email sent!",
@@ -157,7 +161,10 @@
     "notFoundDesc": "This profile doesn't exist or has been removed",
     "noListings": "No listings yet",
     "viewProfile": "View {{name}}'s profile on CarNetworx",
-    "activeListings": "active listings"
+    "activeListings": "active listings",
+    "bio": "Bio",
+    "bioPlaceholder": "A few words about yourself or your business...",
+    "bioDesc": "Max 150 characters"
   },
   "settings": {
     "account": "Account",
@@ -706,5 +713,35 @@
       "title": "Terms & Conditions | CarNexo",
       "description": "Read CarNexo's terms of service and user agreement for using our marketplace."
     }
+  },
+  "businessCategory": {
+    "buyer": "Buyer",
+    "car_seller": "Car Seller",
+    "car_dealership": "Car Dealership",
+    "mechanic_shop": "Mechanic Shop",
+    "tires_shop": "Tires Shop",
+    "auto_collision": "Auto Collision",
+    "auto_repair_shop": "Auto Repair Shop",
+    "auto_injury_lawyer": "Auto Injury Lawyer",
+    "window_tinting": "Window Tinting",
+    "auto_insurance": "Auto Insurance Company",
+    "towing": "Towing",
+    "car_wash": "Car Wash",
+    "car_detailing": "Car Detailing",
+    "body_shop": "Body Shop",
+    "paint_shop": "Paint Shop",
+    "mobile_mechanic": "Mobile Mechanic",
+    "electrician_expert": "Electrician Expert",
+    "car_brokers": "Car Brokers",
+    "car_wrappers": "Car Wrappers",
+    "atv_utv_dealer": "ATV/UTV Dealer",
+    "dirt_bike_dealer": "Dirt Bike Dealer",
+    "yacht_dealer": "Yacht Dealer",
+    "car_rentals": "Car Rentals",
+    "car_transport": "Car Transport",
+    "rebuilt_inspection": "Rebuilt Inspection",
+    "roadside": "Roadside Assistance",
+    "locksmith": "Locksmith",
+    "audio_car": "Audio Car"
   }
 }

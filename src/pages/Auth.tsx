@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { z } from 'zod';
-import { Eye, EyeOff, Mail, Lock, User, ArrowLeft, MailCheck, RefreshCw } from 'lucide-react';
+import { Eye, EyeOff, Mail, Lock, User, ArrowLeft, MailCheck, RefreshCw, Briefcase } from 'lucide-react';
 import SEO from '@/components/SEO';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Button } from '@/components/ui/button';
@@ -11,6 +11,8 @@ import { Label } from '@/components/ui/label';
 import CarNexoLogo from '@/components/CarNexoLogo';
 import { useAuth } from '@/hooks/useAuth';
 import { useToast } from '@/hooks/use-toast';
+import { BusinessCategorySelect, BUSINESS_CATEGORIES } from '@/components/BusinessCategorySelect';
+import { supabase } from '@/integrations/supabase/client';
 
 // Background component with gradient - defined outside to prevent re-renders
 const AuthBackground = ({ children }: { children: React.ReactNode }) => (
@@ -44,6 +46,7 @@ export default function Auth() {
     email: z.string().trim().email({ message: t('auth.validation.invalidEmail') }),
     password: z.string().min(6, { message: t('auth.validation.passwordMin') }),
     confirmPassword: z.string(),
+    businessCategory: z.string().min(1, { message: t('auth.validation.categoryRequired') }),
   }).refine((data) => data.password === data.confirmPassword, {
     message: t('auth.validation.passwordsMatch'),
     path: ["confirmPassword"],
@@ -64,6 +67,7 @@ export default function Auth() {
     email: '',
     password: '',
     confirmPassword: '',
+    businessCategory: '',
   });
 
   // Redirect if already logged in
@@ -212,7 +216,7 @@ export default function Auth() {
           return;
         }
 
-        const { error, confirmationPending: isPending } = await signUp(formData.email, formData.password, formData.fullName);
+        const { error, confirmationPending: isPending, user: newUser } = await signUp(formData.email, formData.password, formData.fullName);
         if (error) {
           if (error.message.includes('already registered')) {
             toast({
@@ -231,6 +235,13 @@ export default function Auth() {
           setPendingEmail(formData.email);
           setConfirmationPending(true);
         } else {
+          // Update profile with business category after signup
+          if (newUser) {
+            await supabase
+              .from('profiles')
+              .update({ business_category: formData.businessCategory })
+              .eq('id', newUser.id);
+          }
           toast({
             title: t('auth.toast.accountCreated'),
             description: t('auth.toast.welcomeToCarNexo'),
@@ -567,6 +578,25 @@ export default function Auth() {
                 </div>
               )}
 
+              {!isLogin && (
+                <div className="space-y-2">
+                  <Label className="text-sm font-medium">{t('auth.businessCategory')}</Label>
+                  <BusinessCategorySelect
+                    value={formData.businessCategory}
+                    onChange={(value) => {
+                      setFormData(prev => ({ ...prev, businessCategory: value }));
+                      if (errors.businessCategory) {
+                        setErrors(prev => ({ ...prev, businessCategory: '' }));
+                      }
+                    }}
+                    error={errors.businessCategory}
+                  />
+                  {errors.businessCategory && (
+                    <p className="text-sm text-destructive">{errors.businessCategory}</p>
+                  )}
+                </div>
+              )}
+
               <Button
                 type="submit"
                 variant="carnetworx"
@@ -630,7 +660,7 @@ export default function Auth() {
                 onClick={() => {
                   setIsLogin(!isLogin);
                   setErrors({});
-                  setFormData({ fullName: '', email: '', password: '', confirmPassword: '' });
+                  setFormData({ fullName: '', email: '', password: '', confirmPassword: '', businessCategory: '' });
                 }}
                 className="text-primary font-semibold ml-1.5 hover:text-primary/80 transition-colors"
               >

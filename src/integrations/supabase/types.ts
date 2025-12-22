@@ -394,6 +394,8 @@ export type Database = {
           avatar_url: string | null
           banned_at: string | null
           banned_reason: string | null
+          bio: string | null
+          business_category: string | null
           created_at: string | null
           email: string | null
           full_name: string | null
@@ -419,6 +421,8 @@ export type Database = {
           avatar_url?: string | null
           banned_at?: string | null
           banned_reason?: string | null
+          bio?: string | null
+          business_category?: string | null
           created_at?: string | null
           email?: string | null
           full_name?: string | null
@@ -444,6 +448,8 @@ export type Database = {
           avatar_url?: string | null
           banned_at?: string | null
           banned_reason?: string | null
+          bio?: string | null
+          business_category?: string | null
           created_at?: string | null
           email?: string | null
           full_name?: string | null

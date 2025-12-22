@@ -12,6 +12,7 @@ import {
 } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
+import { Textarea } from '@/components/ui/textarea';
 import {
   Form,
   FormControl,
@@ -23,6 +24,7 @@ import {
 } from '@/components/ui/form';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
+import { BusinessCategorySelect } from '@/components/BusinessCategorySelect';
 
 const profileSchema = z.object({
   fullName: z.string().trim().min(1, 'Name is required').max(100, 'Name must be less than 100 characters'),
@@ -35,6 +37,8 @@ const profileSchema = z.object({
   phone: z.string().trim().max(20, 'Phone must be less than 20 characters').optional().or(z.literal('')),
   locationCity: z.string().trim().max(100, 'City must be less than 100 characters').optional().or(z.literal('')),
   locationState: z.string().trim().max(100, 'State must be less than 100 characters').optional().or(z.literal('')),
+  bio: z.string().trim().max(150, 'Bio must be less than 150 characters').optional().or(z.literal('')),
+  businessCategory: z.string().optional().or(z.literal('')),
 });
 
 type ProfileFormValues = z.infer<typeof profileSchema>;
@@ -49,6 +53,8 @@ interface EditProfileModalProps {
     phone: string;
     locationCity: string;
     locationState: string;
+    bio?: string;
+    businessCategory?: string;
   };
   onProfileUpdated: (data: ProfileFormValues) => void;
 }
@@ -73,6 +79,8 @@ export function EditProfileModal({
       phone: initialData.phone,
       locationCity: initialData.locationCity,
       locationState: initialData.locationState,
+      bio: initialData.bio || '',
+      businessCategory: initialData.businessCategory || '',
     },
   });
 
@@ -84,6 +92,8 @@ export function EditProfileModal({
         phone: initialData.phone,
         locationCity: initialData.locationCity,
         locationState: initialData.locationState,
+        bio: initialData.bio || '',
+        businessCategory: initialData.businessCategory || '',
       });
       setUsernameError(null);
     }
@@ -130,6 +140,8 @@ export function EditProfileModal({
           phone: values.phone || null,
           location_city: values.locationCity || null,
           location_state: values.locationState || null,
+          bio: values.bio || null,
+          business_category: values.businessCategory || null,
           updated_at: new Date().toISOString(),
         })
         .eq('id', userId);
@@ -164,7 +176,7 @@ export function EditProfileModal({
 
   return (
     <Dialog open={open} onOpenChange={(isOpen) => !isOpen && onClose()}>
-      <DialogContent className="sm:max-w-[425px]">
+      <DialogContent className="sm:max-w-[425px] max-h-[90vh] overflow-y-auto">
         <DialogHeader>
           <DialogTitle>{t('profile.editProfile')}</DialogTitle>
         </DialogHeader>
@@ -207,6 +219,41 @@ export function EditProfileModal({
                   {usernameError && (
                     <p className="text-sm font-medium text-destructive">{usernameError}</p>
                   )}
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="bio"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>{t('profile.bio')}</FormLabel>
+                  <FormControl>
+                    <Textarea 
+                      placeholder={t('profile.bioPlaceholder')} 
+                      className="resize-none h-20"
+                      maxLength={150}
+                      {...field} 
+                    />
+                  </FormControl>
+                  <FormDescription>{t('profile.bioDesc')}</FormDescription>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="businessCategory"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>{t('auth.businessCategory')}</FormLabel>
+                  <FormControl>
+                    <BusinessCategorySelect
+                      value={field.value || ''}
+                      onChange={field.onChange}
+                    />
+                  </FormControl>
                   <FormMessage />
                 </FormItem>
               )}
