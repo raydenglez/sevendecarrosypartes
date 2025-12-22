@@ -254,6 +254,9 @@ export type Database = {
           conversation_id: string
           created_at: string
           id: string
+          media_duration: number | null
+          media_url: string | null
+          message_type: Database["public"]["Enums"]["message_type"]
           sender_id: string
           status: Database["public"]["Enums"]["message_status"]
         }
@@ -262,6 +265,9 @@ export type Database = {
           conversation_id: string
           created_at?: string
           id?: string
+          media_duration?: number | null
+          media_url?: string | null
+          message_type?: Database["public"]["Enums"]["message_type"]
           sender_id: string
           status?: Database["public"]["Enums"]["message_status"]
         }
@@ -270,6 +276,9 @@ export type Database = {
           conversation_id?: string
           created_at?: string
           id?: string
+          media_duration?: number | null
+          media_url?: string | null
+          message_type?: Database["public"]["Enums"]["message_type"]
           sender_id?: string
           status?: Database["public"]["Enums"]["message_status"]
         }
@@ -839,6 +848,7 @@ export type Database = {
         | "rejected"
       listing_type: "vehicle" | "part" | "service"
       message_status: "sent" | "delivered" | "read"
+      message_type: "text" | "image" | "voice"
       moderation_action: "approved" | "rejected" | "flagged" | "pending"
       report_reason:
         | "spam"
@@ -995,6 +1005,7 @@ export const Constants = {
       ],
       listing_type: ["vehicle", "part", "service"],
       message_status: ["sent", "delivered", "read"],
+      message_type: ["text", "image", "voice"],
       moderation_action: ["approved", "rejected", "flagged", "pending"],
       report_reason: [
         "spam",

@@ -2,12 +2,17 @@ import { useState, useEffect, useCallback } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/hooks/useAuth';
 
+export type MessageType = 'text' | 'image' | 'voice';
+
 export interface Message {
   id: string;
   conversation_id: string;
   sender_id: string;
   content: string;
   status: 'sent' | 'delivered' | 'read';
+  message_type: MessageType;
+  media_url: string | null;
+  media_duration: number | null;
   created_at: string;
 }
 
@@ -82,8 +87,47 @@ export function useMessages(conversationId: string | undefined) {
     };
   }, [conversationId, user, fetchMessages]);
 
-  const sendMessage = async (content: string): Promise<boolean> => {
-    if (!conversationId || !user || !content.trim()) return false;
+  const uploadMedia = async (file: Blob, type: 'image' | 'voice'): Promise<string | null> => {
+    if (!user) return null;
+
+    const ext = type === 'image' ? 'jpg' : 'webm';
+    const path = `${user.id}/${conversationId}/${Date.now()}.${ext}`;
+
+    const { error } = await supabase.storage
+      .from('chat-media')
+      .upload(path, file, {
+        contentType: type === 'image' ? 'image/jpeg' : 'audio/webm',
+      });
+
+    if (error) {
+      console.error('Error uploading media:', error);
+      return null;
+    }
+
+    const { data: urlData } = supabase.storage
+      .from('chat-media')
+      .getPublicUrl(path);
+
+    return urlData.publicUrl;
+  };
+
+  const sendMessage = async (
+    content: string,
+    type: MessageType = 'text',
+    mediaBlob?: Blob,
+    mediaDuration?: number
+  ): Promise<boolean> => {
+    if (!conversationId || !user) return false;
+    if (type === 'text' && !content.trim()) return false;
+    if ((type === 'image' || type === 'voice') && !mediaBlob) return false;
+
+    let mediaUrl: string | null = null;
+
+    // Upload media if needed
+    if (mediaBlob && (type === 'image' || type === 'voice')) {
+      mediaUrl = await uploadMedia(mediaBlob, type);
+      if (!mediaUrl) return false;
+    }
 
     // Get recipient ID before sending
     const { data: conversation } = await supabase
@@ -101,7 +145,10 @@ export function useMessages(conversationId: string | undefined) {
       .insert({
         conversation_id: conversationId,
         sender_id: user.id,
-        content: content.trim(),
+        content: content.trim() || (type === 'image' ? '📷 Image' : '🎤 Voice message'),
+        message_type: type,
+        media_url: mediaUrl,
+        media_duration: mediaDuration || null,
       });
 
     if (error) {
@@ -125,13 +172,18 @@ export function useMessages(conversationId: string | undefined) {
         .single();
 
       const senderName = senderProfile?.full_name || 'Someone';
+      const notificationBody = type === 'text' 
+        ? content.trim().slice(0, 100)
+        : type === 'image' 
+        ? '📷 Sent an image'
+        : '🎤 Sent a voice message';
 
       // Fire and forget - don't wait for push notification
       supabase.functions.invoke('send-push-notification', {
         body: {
           userId: recipientId,
           title: `Message from ${senderName}`,
-          body: content.trim().slice(0, 100),
+          body: notificationBody,
           conversationId,
         },
       }).catch(console.error);
