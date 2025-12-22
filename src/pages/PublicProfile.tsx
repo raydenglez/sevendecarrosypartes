@@ -237,12 +237,19 @@ export default function PublicProfile() {
   const partsCount = listings.filter(l => l.type === 'part').length;
   const servicesCount = listings.filter(l => l.type === 'service').length;
 
+  const profileTitle = `${profile.full_name || cleanUsername} (@${cleanUsername}) | CarNetworx`;
+  const profileDescription = profile.location_city 
+    ? `${t('profile.viewProfile', { name: profile.full_name || cleanUsername })} - ${profile.location_city}${profile.location_state ? `, ${profile.location_state}` : ''}. ${listings.length} ${t('profile.activeListings')}.`
+    : `${t('profile.viewProfile', { name: profile.full_name || cleanUsername })}. ${listings.length} ${t('profile.activeListings')}.`;
+
   return (
     <>
       <SEO 
-        titleKey="seo.publicProfile.title"
-        descriptionKey="seo.publicProfile.description"
+        title={profileTitle}
+        description={profileDescription}
         path={`/profile/@${cleanUsername}`}
+        image={profile.avatar_url || '/pwa-192x192.png'}
+        type="profile"
       />
       <div className="min-h-screen bg-background pb-8">
         {/* Header */}

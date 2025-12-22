@@ -4,17 +4,21 @@ import { useTranslation } from 'react-i18next';
 interface SEOProps {
   titleKey?: string;
   descriptionKey?: string;
+  title?: string;
+  description?: string;
   path?: string;
   image?: string;
-  type?: 'website' | 'article' | 'product';
+  type?: 'website' | 'article' | 'product' | 'profile';
   noIndex?: boolean;
 }
 
 const BASE_URL = 'https://carnetworx.app';
 
 const SEO = ({
-  titleKey = 'seo.home.title',
-  descriptionKey = 'seo.home.description',
+  titleKey,
+  descriptionKey,
+  title: directTitle,
+  description: directDescription,
   path = '',
   image = '/pwa-192x192.png',
   type = 'website',
@@ -22,8 +26,8 @@ const SEO = ({
 }: SEOProps) => {
   const { t, i18n } = useTranslation();
 
-  const title = t(titleKey);
-  const description = t(descriptionKey);
+  const title = directTitle || (titleKey ? t(titleKey) : t('seo.home.title'));
+  const description = directDescription || (descriptionKey ? t(descriptionKey) : t('seo.home.description'));
   const canonicalUrl = `${BASE_URL}${path}`;
   const imageUrl = image.startsWith('http') ? image : `${BASE_URL}${image}`;
   const currentLang = i18n.language;
@@ -43,6 +47,8 @@ const SEO = ({
       <meta property="og:title" content={title} />
       <meta property="og:description" content={description} />
       <meta property="og:image" content={imageUrl} />
+      <meta property="og:image:width" content="1200" />
+      <meta property="og:image:height" content="630" />
       <meta property="og:locale" content={currentLang} />
       <meta property="og:site_name" content="CarNetworx" />
 

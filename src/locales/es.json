@@ -141,7 +141,9 @@
     "vehicles": "Vehículos",
     "parts": "Partes",
     "servicesOffered": "Servicios Ofrecidos",
-    "appointmentManagement": "Gestión de citas y consultas"
+    "appointmentManagement": "Gestión de citas y consultas",
+    "viewProfile": "Ver el perfil de {{name}} en CarNetworx",
+    "activeListings": "anuncios activos"
   },
   "settings": {
     "account": "Cuenta",

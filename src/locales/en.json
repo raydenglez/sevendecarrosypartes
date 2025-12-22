@@ -155,7 +155,9 @@
     "setUsernameDesc": "Add a username to your profile to share it with others",
     "notFound": "Profile not found",
     "notFoundDesc": "This profile doesn't exist or has been removed",
-    "noListings": "No listings yet"
+    "noListings": "No listings yet",
+    "viewProfile": "View {{name}}'s profile on CarNetworx",
+    "activeListings": "active listings"
   },
   "settings": {
     "account": "Account",
