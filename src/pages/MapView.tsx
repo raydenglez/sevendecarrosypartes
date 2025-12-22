@@ -140,51 +140,58 @@ export default function MapView() {
     <div className="h-screen flex flex-col bg-background">
       {/* Header */}
       <div className="absolute top-0 left-0 right-0 z-10 p-4 pt-[calc(env(safe-area-inset-top)+16px)]">
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-3">
           <Button
             variant="ghost"
             size="icon"
             onClick={() => navigate(-1)}
-            className="w-10 h-10 rounded-full bg-card/90 backdrop-blur-sm shadow-card hover:bg-card shrink-0"
+            className="w-12 h-12 rounded-xl bg-card/90 backdrop-blur-md shadow-card hover:bg-card hover:shadow-elevated transition-all duration-300 shrink-0 border border-border/30"
           >
             <ArrowLeft className="w-5 h-5" />
           </Button>
           
           {/* Search Bar */}
-          <div className="flex-1 relative">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
-            <Input
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              placeholder={t('map.searchLocations')}
-              className="pl-10 bg-card/90 backdrop-blur-sm border-0 shadow-card"
-            />
-            {searchQuery && (
-              <button 
-                onClick={() => setSearchQuery('')}
-                className="absolute right-3 top-1/2 -translate-y-1/2"
-              >
-                <X className="w-4 h-4 text-muted-foreground" />
-              </button>
-            )}
+          <div className="flex-1 relative group">
+            <div className="absolute -inset-0.5 bg-gradient-to-r from-primary/20 via-transparent to-primary/20 rounded-xl blur opacity-0 group-focus-within:opacity-60 transition-opacity duration-300" />
+            <div className="relative">
+              <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
+              <Input
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                placeholder={t('map.searchLocations')}
+                className="pl-12 pr-10 h-12 bg-card/90 backdrop-blur-md border border-border/30 shadow-card rounded-xl focus:border-primary/50 focus:shadow-orange/20 transition-all duration-300"
+              />
+              {searchQuery && (
+                <button 
+                  onClick={() => setSearchQuery('')}
+                  className="absolute right-4 top-1/2 -translate-y-1/2 w-6 h-6 rounded-full bg-muted hover:bg-muted-foreground/20 flex items-center justify-center transition-colors"
+                >
+                  <X className="w-4 h-4 text-muted-foreground" />
+                </button>
+              )}
+            </div>
           </div>
           
           <Button
             variant="ghost"
             size="icon"
-            className="w-10 h-10 rounded-full bg-card/90 backdrop-blur-sm shadow-card hover:bg-card shrink-0"
+            className="w-12 h-12 rounded-xl bg-card/90 backdrop-blur-md shadow-card hover:bg-card hover:shadow-elevated transition-all duration-300 shrink-0 border border-border/30"
           >
             <Layers className="w-5 h-5" />
           </Button>
         </div>
 
         {/* Filter Pills */}
-        <div className="flex gap-2 mt-3 overflow-x-auto hide-scrollbar">
+        <div className="flex gap-2 mt-4 overflow-x-auto hide-scrollbar pb-1">
           {(['all', 'vehicle', 'service', 'part'] as const).map((type) => (
             <Badge
               key={type}
               variant={filterType === type ? 'default' : 'secondary'}
-              className={`cursor-pointer shrink-0 ${filterType === type ? 'bg-primary text-primary-foreground' : 'bg-card/90 backdrop-blur-sm'}`}
+              className={`cursor-pointer shrink-0 px-4 py-2 text-sm font-medium rounded-xl transition-all duration-300 ${
+                filterType === type 
+                  ? 'bg-primary text-primary-foreground shadow-orange scale-105' 
+                  : 'bg-card/90 backdrop-blur-md text-foreground border border-border/30 hover:bg-card hover:border-primary/30'
+              }`}
               onClick={() => setFilterType(type)}
             >
               {t(`map.filterTypes.${type}`)}
@@ -235,15 +242,18 @@ export default function MapView() {
         <Sheet open={showListings} onOpenChange={setShowListings}>
           <SheetTrigger asChild>
             <Button
-              className="absolute bottom-6 left-1/2 -translate-x-1/2 z-10 rounded-full shadow-orange safe-bottom leading-none"
+              className="absolute bottom-6 left-1/2 -translate-x-1/2 z-10 rounded-xl px-6 h-14 shadow-orange safe-bottom leading-none group transition-all duration-300 hover:scale-105"
+              variant="carnetworx"
             >
-              <List className="w-4 h-4 mr-2" />
-              {t('map.viewListings', { count: filteredListings.length })}
+              <div className="w-10 h-10 rounded-lg bg-primary-foreground/20 flex items-center justify-center mr-3">
+                <List className="w-5 h-5" />
+              </div>
+              <span className="font-semibold">{t('map.viewListings', { count: filteredListings.length })}</span>
             </Button>
           </SheetTrigger>
-          <SheetContent side="bottom" className="h-[70vh] rounded-t-3xl">
+          <SheetContent side="bottom" className="h-[70vh] rounded-t-3xl border-t border-border/50">
             <SheetHeader>
-              <SheetTitle>{t('map.nearbyListings')}</SheetTitle>
+              <SheetTitle className="text-xl">{t('map.nearbyListings')}</SheetTitle>
             </SheetHeader>
             <div className="mt-4 space-y-4 overflow-y-auto h-[calc(100%-4rem)] hide-scrollbar pb-6">
               {filteredListings.map((listing) => (
@@ -256,7 +266,7 @@ export default function MapView() {
                       setMapCenter([listing.location.lng, listing.location.lat]);
                     }
                   }}
-                  className="cursor-pointer"
+                  className="cursor-pointer transition-transform duration-200 hover:scale-[1.02] active:scale-[0.98]"
                 >
                   <ListingCard listing={listing} variant="list" />
                 </div>
@@ -272,9 +282,9 @@ export default function MapView() {
           variant="ghost"
           size="icon"
           onClick={() => setMapCenter(userLocation)}
-          className="absolute bottom-20 right-4 z-10 w-12 h-12 rounded-full bg-card/90 backdrop-blur-sm shadow-card hover:bg-card"
+          className="absolute bottom-24 right-4 z-10 w-14 h-14 rounded-xl bg-card/90 backdrop-blur-md shadow-card hover:bg-card hover:shadow-elevated border border-border/30 transition-all duration-300 hover:scale-105 group"
         >
-          <Navigation className="w-5 h-5" />
+          <Navigation className="w-6 h-6 text-primary transition-transform group-hover:scale-110" />
         </Button>
       )}
     </div>
