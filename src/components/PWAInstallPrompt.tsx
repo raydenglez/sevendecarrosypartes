@@ -10,7 +10,7 @@ import {
   DrawerDescription,
   DrawerFooter,
 } from '@/components/ui/drawer';
-import CarNexoLogo from '@/components/CarNexoLogo';
+import logo from '@/assets/logo.png';
 
 interface BeforeInstallPromptEvent extends Event {
   prompt: () => Promise<void>;
@@ -123,8 +123,8 @@ export const PWAInstallPrompt = () => {
           </button>
           
           <div className="flex flex-col items-center gap-4 pt-2">
-            <div className="w-20 h-20 rounded-2xl overflow-hidden bg-background shadow-lg border border-border flex items-center justify-center">
-              <CarNexoLogo size="md" showIcon={true} animate={false} />
+            <div className="w-20 h-20 rounded-2xl overflow-hidden shadow-lg border border-border">
+              <img src={logo} alt="CarNetworx" className="w-full h-full object-cover" />
             </div>
             <div className="text-center">
               <DrawerTitle className="text-xl font-bold">
