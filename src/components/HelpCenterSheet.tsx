@@ -3,6 +3,7 @@ import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/
 import { Button } from '@/components/ui/button';
 import { HelpCircle, Mail } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
+import { openExternalUrl } from '@/lib/externalUrl';
 
 interface HelpCenterSheetProps {
   open: boolean;
@@ -82,7 +83,7 @@ export function HelpCenterSheet({ open, onClose }: HelpCenterSheetProps) {
             <Button 
               variant="outline" 
               className="w-full justify-start gap-3 h-auto py-4"
-              onClick={() => window.open('mailto:support@carnetworx.com', '_blank')}
+              onClick={() => openExternalUrl('mailto:support@carnetworx.com')}
             >
               <div className="w-10 h-10 rounded-xl bg-primary/20 flex items-center justify-center">
                 <Mail className="w-5 h-5 text-primary" />

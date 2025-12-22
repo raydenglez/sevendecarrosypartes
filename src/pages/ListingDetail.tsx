@@ -29,6 +29,7 @@ import { SellerCard } from '@/components/SellerCard';
 import { ShareButton } from '@/components/ShareButton';
 import { supabase } from '@/integrations/supabase/client';
 import { cn } from '@/lib/utils';
+import { openExternalUrl } from '@/lib/externalUrl';
 import { useAuth } from '@/hooks/useAuth';
 import { getOrCreateConversation } from '@/hooks/useConversations';
 import { useToast } from '@/hooks/use-toast';
@@ -485,7 +486,7 @@ export default function ListingDetail() {
             <h2 className="text-lg font-bold text-foreground">{t('listing.location')}</h2>
             {listing.location.lat !== 0 && listing.location.lng !== 0 && (
               <button 
-                onClick={() => window.open(`https://www.google.com/maps/search/?api=1&query=${listing.location.lat},${listing.location.lng}`, '_blank')}
+                onClick={() => openExternalUrl(`https://www.google.com/maps/search/?api=1&query=${listing.location.lat},${listing.location.lng}`)}
                 className="text-sm text-primary font-medium flex items-center gap-1 hover:underline"
               >
                 {t('listing.viewOnMap')}

@@ -4,6 +4,12 @@ const config: CapacitorConfig = {
   appId: 'app.carnetworx',
   appName: 'CarNetworx',
   webDir: 'dist',
+  android: {
+    allowMixedContent: true,
+  },
+  ios: {
+    allowsLinkPreview: false,
+  },
   plugins: {
     PushNotifications: {
       presentationOptions: ['badge', 'sound', 'alert'],

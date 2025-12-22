@@ -4,6 +4,7 @@ import { Listing } from '@/types';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { cn } from '@/lib/utils';
+import { openExternalUrl } from '@/lib/externalUrl';
 
 interface MapBusinessCardProps {
   listing: Listing;
@@ -38,18 +39,13 @@ export function MapBusinessCard({
     }
   };
 
-  const openInMaps = () => {
+  const openInMaps = async () => {
     const { lat, lng } = listing.location;
     const label = encodeURIComponent(listing.title);
     
-    // Try Google Maps first, fallback to Apple Maps
-    const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
-    
-    if (isIOS) {
-      window.open(`maps://maps.google.com/maps?daddr=${lat},${lng}&amp;ll=`);
-    } else {
-      window.open(`https://www.google.com/maps/dir/?api=1&destination=${lat},${lng}&destination_place_id=${label}`, '_blank');
-    }
+    // Use Google Maps URL for all platforms
+    const mapsUrl = `https://www.google.com/maps/dir/?api=1&destination=${lat},${lng}&destination_place_id=${label}`;
+    await openExternalUrl(mapsUrl);
   };
 
   return (
