@@ -350,6 +350,7 @@
     "cvt": "CVT"
   },
   "chat": {
+    "typing": "{{name}} is typing...",
     "takePhoto": "Take photo",
     "chooseFromGallery": "Choose from gallery",
     "sendImage": "Send image",
