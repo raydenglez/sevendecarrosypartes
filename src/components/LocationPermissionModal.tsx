@@ -20,8 +20,27 @@ export function LocationPermissionModal({ isOpen, onClose, onRetry }: LocationPe
   const { t } = useTranslation();
 
   const handleRetry = () => {
-    onRetry();
-    onClose();
+    // Directly call geolocation API to trigger the native permission prompt
+    if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(
+        () => {
+          // Success - permission granted, trigger the refresh
+          onRetry();
+          onClose();
+        },
+        () => {
+          // User denied or error - still close the modal
+          onClose();
+        },
+        {
+          enableHighAccuracy: false,
+          timeout: 10000,
+          maximumAge: 0,
+        }
+      );
+    } else {
+      onClose();
+    }
   };
 
   return (
