@@ -19,8 +19,11 @@
     "clear": "Clear",
     "apply": "Apply",
     "goBack": "Go Back",
+    "goHome": "Go Home",
     "mi": "mi",
-    "miAway": "mi away"
+    "miAway": "mi away",
+    "copied": "Copied!",
+    "linkCopied": "Link copied to clipboard"
   },
   "nav": {
     "home": "Explore",
@@ -140,8 +143,19 @@
     "listed": "LISTED",
     "vehicles": "Vehicles",
     "parts": "Parts",
+    "services": "Services",
+    "listings": "Listings",
     "servicesOffered": "Services Offered",
-    "appointmentManagement": "Appointment and inquiry management"
+    "appointmentManagement": "Appointment and inquiry management",
+    "username": "Username",
+    "usernamePlaceholder": "johndoe",
+    "usernameDesc": "Used for your shareable profile link",
+    "usernameTaken": "This username is already taken",
+    "setUsernameFirst": "Set a username first",
+    "setUsernameDesc": "Add a username to your profile to share it with others",
+    "notFound": "Profile not found",
+    "notFoundDesc": "This profile doesn't exist or has been removed",
+    "noListings": "No listings yet"
   },
   "settings": {
     "account": "Account",
@@ -630,6 +644,10 @@
     "profile": {
       "title": "My Profile | CarNexo",
       "description": "Manage your CarNexo profile, view your listings, and update your account settings."
+    },
+    "publicProfile": {
+      "title": "Profile | CarNetworx",
+      "description": "View this seller's profile and listings on CarNetworx"
     },
     "publish": {
       "title": "Publish a Listing | CarNexo",

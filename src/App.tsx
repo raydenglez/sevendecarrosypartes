@@ -15,6 +15,7 @@ import { PWAUpdatePrompt } from "@/components/PWAUpdatePrompt";
 import Home from "./pages/Home";
 import ListingDetail from "./pages/ListingDetail";
 import Profile from "./pages/Profile";
+import PublicProfile from "./pages/PublicProfile";
 import Favorites from "./pages/Favorites";
 import Messages from "./pages/Messages";
 import Auth from "./pages/Auth";
@@ -80,6 +81,7 @@ export default function App() {
                         <Route path="/auth" element={<Auth />} />
                         <Route path="/listing/:id" element={<ListingDetail />} />
                         <Route path="/profile" element={<Profile />} />
+                        <Route path="/profile/:username" element={<PublicProfile />} />
                         <Route path="/publish" element={<PublishListing />} />
                         <Route path="/listing/:id/edit" element={<EditListing />} />
                         <Route path="/favorites" element={<Favorites />} />
