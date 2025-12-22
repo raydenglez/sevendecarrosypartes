@@ -128,8 +128,8 @@ export default function Home() {
       <div className="min-h-screen bg-background pb-24">
       <PullToRefresh onRefresh={refresh} className="min-h-full">
         {/* Header */}
-        <header className="sticky top-0 z-40 bg-background/95 backdrop-blur-xl pt-[env(safe-area-inset-top)]">
-        <div className="px-4 pt-6 pb-3 space-y-4">
+        <header className="sticky top-0 z-40 bg-background/95 backdrop-blur-xl pt-[calc(env(safe-area-inset-top)+12px)]">
+        <div className="px-4 pt-8 pb-3 space-y-4">
           <div className="flex items-center justify-between">
             <h1 className="text-2xl font-bold text-primary">CarNetworx</h1>
             <div className="flex items-center gap-1">
