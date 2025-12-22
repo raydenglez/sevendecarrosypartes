@@ -708,5 +708,18 @@
     "roadside": "Assistência na Estrada",
     "locksmith": "Chaveiro",
     "audio_car": "Som Automotivo"
+  },
+  "pwa": {
+    "installTitle": "Instalar CarNetworx",
+    "installDescription": "Adicione à tela inicial para a melhor experiência",
+    "benefit1": "Acesso rápido da sua tela inicial",
+    "benefit2": "Carregamento mais rápido e suporte offline",
+    "benefit3": "Receba notificações instantâneas",
+    "installButton": "Instalar App",
+    "notNow": "Agora não",
+    "iosInstructions": "Para instalar, use o menu de compartilhar do navegador:",
+    "iosStep1": "Toque em",
+    "iosStep2": "depois \"Adicionar à Tela de Início\"",
+    "gotIt": "Entendi"
   }
 }

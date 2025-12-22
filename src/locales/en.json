@@ -746,5 +746,18 @@
     "roadside": "Roadside Assistance",
     "locksmith": "Locksmith",
     "audio_car": "Audio Car"
+  },
+  "pwa": {
+    "installTitle": "Install CarNetworx",
+    "installDescription": "Add to your home screen for the best experience",
+    "benefit1": "Quick access from your home screen",
+    "benefit2": "Faster loading and offline support",
+    "benefit3": "Get instant notifications",
+    "installButton": "Install App",
+    "notNow": "Not now",
+    "iosInstructions": "To install, use your browser's share menu:",
+    "iosStep1": "Tap",
+    "iosStep2": "then \"Add to Home Screen\"",
+    "gotIt": "Got it"
   }
 }

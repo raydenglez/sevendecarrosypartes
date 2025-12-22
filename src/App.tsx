@@ -12,6 +12,7 @@ import { AuthProvider } from "@/hooks/useAuth";
 import { FavoritesProvider } from "@/contexts/FavoritesContext";
 import { LocationProvider } from "@/contexts/LocationContext";
 import { PWAUpdatePrompt } from "@/components/PWAUpdatePrompt";
+import { PWAInstallPrompt } from "@/components/PWAInstallPrompt";
 import Home from "./pages/Home";
 import ListingDetail from "./pages/ListingDetail";
 import Profile from "./pages/Profile";
@@ -74,6 +75,7 @@ export default function App() {
                   <Toaster />
                   <Sonner />
                   <PWAUpdatePrompt />
+                  <PWAInstallPrompt />
                   <BrowserRouter>
                     <Suspense fallback={<PageLoader />}>
                       <Routes>
