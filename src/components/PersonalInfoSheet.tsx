@@ -219,7 +219,7 @@ export function PersonalInfoSheet({ open, onClose, profileData, onUpdate }: Pers
           {/* Info Note */}
           <div className="bg-secondary/10 rounded-xl p-4 border border-secondary/20">
             <p className="text-sm text-muted-foreground">
-              Your personal information is used to enhance your CarNexo experience and help buyers/sellers contact you.
+              Your personal information is used to enhance your CarNetworx experience and help buyers/sellers contact you.
             </p>
           </div>
         </div>

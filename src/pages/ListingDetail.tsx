@@ -340,7 +340,7 @@ export default function ListingDetail() {
             )}
             <ShareButton
               title={listing.title}
-              text={`Check out ${listing.title} on CarNexo - $${listing.price.toLocaleString()}`}
+              text={`Check out ${listing.title} on CarNetworx - $${listing.price.toLocaleString()}`}
               className="bg-background/20 backdrop-blur-sm hover:bg-background/40"
             />
             {user && listing.ownerId !== user.id && (

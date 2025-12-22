@@ -248,8 +248,8 @@ export default function SellerProfile() {
           </button>
           <h1 className="font-semibold text-foreground">{t('sellerProfile.title')}</h1>
           <ShareButton
-            title={`${seller?.name} on CarNexo`}
-            text={`Check out ${seller?.name}'s profile on CarNexo - ${seller?.ratingAvg.toFixed(1)}★ rated seller`}
+            title={`${seller?.name} on CarNetworx`}
+            text={`Check out ${seller?.name}'s profile on CarNetworx - ${seller?.ratingAvg.toFixed(1)}★ rated seller`}
             className="w-10 h-10 rounded-full bg-card flex items-center justify-center"
           />
         </div>
