@@ -403,6 +403,7 @@ export type Database = {
           show_phone_on_listings: boolean | null
           updated_at: string | null
           user_type: Database["public"]["Enums"]["user_type"] | null
+          username: string | null
         }
         Insert: {
           allow_messages_from_anyone?: boolean | null
@@ -427,6 +428,7 @@ export type Database = {
           show_phone_on_listings?: boolean | null
           updated_at?: string | null
           user_type?: Database["public"]["Enums"]["user_type"] | null
+          username?: string | null
         }
         Update: {
           allow_messages_from_anyone?: boolean | null
@@ -451,6 +453,7 @@ export type Database = {
           show_phone_on_listings?: boolean | null
           updated_at?: string | null
           user_type?: Database["public"]["Enums"]["user_type"] | null
+          username?: string | null
         }
         Relationships: []
       }
@@ -733,6 +736,7 @@ export type Database = {
           rating_avg: number | null
           rating_count: number | null
           user_type: Database["public"]["Enums"]["user_type"] | null
+          username: string | null
         }
         Insert: {
           avatar_url?: string | null
@@ -745,6 +749,7 @@ export type Database = {
           rating_avg?: number | null
           rating_count?: number | null
           user_type?: Database["public"]["Enums"]["user_type"] | null
+          username?: string | null
         }
         Update: {
           avatar_url?: string | null
@@ -757,6 +762,7 @@ export type Database = {
           rating_avg?: number | null
           rating_count?: number | null
           user_type?: Database["public"]["Enums"]["user_type"] | null
+          username?: string | null
         }
         Relationships: []
       }

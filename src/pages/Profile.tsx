@@ -61,6 +61,7 @@ import {
 
 interface ProfileData {
   name: string;
+  username: string | null;
   avatarUrl: string;
   phone: string;
   location: { city: string; state: string };
@@ -218,6 +219,7 @@ export default function Profile() {
         if (profile) {
           setProfileData({
             name: profile.full_name || user.email?.split('@')[0] || 'User',
+            username: profile.username,
             avatarUrl: profile.avatar_url || '',
             phone: profile.phone || '',
             location: {
@@ -423,7 +425,46 @@ export default function Profile() {
             <Edit className="w-4 h-4 mr-2" />
             {t('profile.editProfile')}
           </Button>
-          <Button variant="carnetworxOutline" size="sm" className="px-6">
+          <Button 
+            variant="carnetworxOutline" 
+            size="sm" 
+            className="px-6"
+            onClick={async () => {
+              if (!profileData?.username) {
+                toast({
+                  title: t('profile.setUsernameFirst'),
+                  description: t('profile.setUsernameDesc'),
+                });
+                setEditModalOpen(true);
+                return;
+              }
+              const shareUrl = `${window.location.origin}/profile/@${profileData.username}`;
+              const shareData = {
+                title: profileData.name,
+                text: `Check out ${profileData.name}'s profile on CarNetworx`,
+                url: shareUrl,
+              };
+              try {
+                if (navigator.share && navigator.canShare(shareData)) {
+                  await navigator.share(shareData);
+                } else {
+                  await navigator.clipboard.writeText(shareUrl);
+                  toast({
+                    title: t('common.copied'),
+                    description: t('common.linkCopied'),
+                  });
+                }
+              } catch (error) {
+                if ((error as Error).name !== 'AbortError') {
+                  await navigator.clipboard.writeText(shareUrl);
+                  toast({
+                    title: t('common.copied'),
+                    description: t('common.linkCopied'),
+                  });
+                }
+              }
+            }}
+          >
             <Share2 className="w-4 h-4 mr-2" />
             {t('common.share')}
           </Button>
@@ -619,6 +660,7 @@ export default function Profile() {
           userId={user.id}
           initialData={{
             fullName: profileData.name,
+            username: profileData.username || '',
             phone: profileData.phone,
             locationCity: profileData.location.city === 'Unknown' ? '' : profileData.location.city,
             locationState: profileData.location.state,
@@ -627,6 +669,7 @@ export default function Profile() {
             setProfileData(prev => prev ? {
               ...prev,
               name: data.fullName,
+              username: data.username || null,
               phone: data.phone || '',
               location: {
                 city: data.locationCity || 'Unknown',
