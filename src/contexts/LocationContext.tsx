@@ -230,7 +230,8 @@ export function LocationProvider({ children }: LocationProviderProps) {
         }
       );
     });
-  }, [userLocation, locationEnabled]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   // Initialize location on mount - only once
   useEffect(() => {
@@ -238,8 +239,11 @@ export function LocationProvider({ children }: LocationProviderProps) {
     setHasInitialized(true);
 
     const initLocation = async () => {
+      // Read current enabled state directly from storage to avoid stale closure
+      const isEnabled = getLocationEnabled();
+      
       // If location is disabled, use default
-      if (!locationEnabled) {
+      if (!isEnabled) {
         setUserLocation(DEFAULT_LOCATION);
         setLocationDenied(true);
         return;
@@ -273,13 +277,16 @@ export function LocationProvider({ children }: LocationProviderProps) {
     };
 
     initLocation();
-  }, [hasInitialized, requestLocation, locationEnabled]);
+  }, [hasInitialized, requestLocation]);
 
-  // Re-request location when enabled changes
+  // Re-request location when enabled changes (separate from initialization)
+  const prevLocationEnabled = React.useRef(locationEnabled);
   useEffect(() => {
-    if (hasInitialized && locationEnabled) {
+    // Only trigger if this is a change from the previous value, not initial mount
+    if (hasInitialized && locationEnabled && !prevLocationEnabled.current) {
       requestLocation(true);
     }
+    prevLocationEnabled.current = locationEnabled;
   }, [locationEnabled, hasInitialized, requestLocation]);
 
   // Listen for permission changes
