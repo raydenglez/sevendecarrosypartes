@@ -616,64 +616,64 @@
   },
   "seo": {
     "home": {
-      "title": "CarNexo - Compra y Vende Vehículos, Partes y Servicios Cerca de Ti",
+      "title": "CarNetworx - Compra y Vende Vehículos, Partes y Servicios Cerca de Ti",
       "description": "Encuentra vehículos, autopartes y servicios automotrices cerca de ti. Explora anuncios, contacta vendedores y descubre mecánicos y lavados de autos confiables."
     },
     "auth": {
-      "title": "Iniciar Sesión o Crear Cuenta | CarNexo",
-      "description": "Inicia sesión o crea una cuenta en CarNexo para publicar anuncios, guardar favoritos y enviar mensajes a vendedores."
+      "title": "Iniciar Sesión o Crear Cuenta | CarNetworx",
+      "description": "Inicia sesión o crea una cuenta en CarNetworx para publicar anuncios, guardar favoritos y enviar mensajes a vendedores."
     },
     "favorites": {
-      "title": "Mis Favoritos | CarNexo",
+      "title": "Mis Favoritos | CarNetworx",
       "description": "Ve tus vehículos, partes y servicios guardados. Mantén un registro de los anuncios que te interesan."
     },
     "messages": {
-      "title": "Mensajes | CarNexo",
+      "title": "Mensajes | CarNetworx",
       "description": "Chatea con vendedores y compradores. Negocia ofertas y haz preguntas sobre anuncios."
     },
     "profile": {
-      "title": "Mi Perfil | CarNexo",
-      "description": "Administra tu perfil de CarNexo, ve tus anuncios y actualiza la configuración de tu cuenta."
+      "title": "Mi Perfil | CarNetworx",
+      "description": "Administra tu perfil de CarNetworx, ve tus anuncios y actualiza la configuración de tu cuenta."
     },
     "publish": {
-      "title": "Publicar un Anuncio | CarNexo",
+      "title": "Publicar un Anuncio | CarNetworx",
       "description": "Publica tu vehículo, autopartes o servicios automotrices. Llega a compradores cerca de ti."
     },
     "map": {
-      "title": "Vista de Mapa - Anuncios Cercanos | CarNexo",
+      "title": "Vista de Mapa - Anuncios Cercanos | CarNetworx",
       "description": "Explora vehículos, partes y servicios en un mapa interactivo. Encuentra anuncios más cercanos a ti."
     },
     "featured": {
-      "title": "Anuncios Destacados | CarNexo",
+      "title": "Anuncios Destacados | CarNetworx",
       "description": "Explora vehículos premium y destacados y servicios de vendedores mejor calificados cerca de ti."
     },
     "myListings": {
-      "title": "Mis Anuncios | CarNexo",
+      "title": "Mis Anuncios | CarNetworx",
       "description": "Administra tus vehículos, partes y servicios publicados. Edita, actualiza o elimina tus anuncios."
     },
     "listing": {
-      "title": "{{title}} | CarNexo",
+      "title": "{{title}} | CarNetworx",
       "description": "Ve detalles, fotos y contacta al vendedor de {{title}}."
     },
     "seller": {
-      "title": "{{name}} - Perfil del Vendedor | CarNexo",
-      "description": "Ve los anuncios, calificaciones y reseñas de {{name}} en CarNexo."
+      "title": "{{name}} - Perfil del Vendedor | CarNetworx",
+      "description": "Ve los anuncios, calificaciones y reseñas de {{name}} en CarNetworx."
     },
     "resetPassword": {
-      "title": "Restablecer Contraseña | CarNexo",
-      "description": "Restablece la contraseña de tu cuenta CarNexo de forma segura."
+      "title": "Restablecer Contraseña | CarNetworx",
+      "description": "Restablece la contraseña de tu cuenta CarNetworx de forma segura."
     },
     "notFound": {
-      "title": "Página No Encontrada | CarNexo",
-      "description": "La página que buscas no existe. Vuelve a la página principal de CarNexo."
+      "title": "Página No Encontrada | CarNetworx",
+      "description": "La página que buscas no existe. Vuelve a la página principal de CarNetworx."
     },
     "privacyPolicy": {
-      "title": "Política de Privacidad | CarNexo",
-      "description": "Conoce cómo CarNexo recopila, usa y protege tu información personal."
+      "title": "Política de Privacidad | CarNetworx",
+      "description": "Conoce cómo CarNetworx recopila, usa y protege tu información personal."
     },
     "termsConditions": {
-      "title": "Términos y Condiciones | CarNexo",
-      "description": "Lee los términos de servicio y acuerdo de usuario de CarNexo para usar nuestro mercado."
+      "title": "Términos y Condiciones | CarNetworx",
+      "description": "Lee los términos de servicio y acuerdo de usuario de CarNetworx para usar nuestro mercado."
     }
   },
   "businessCategory": {
