@@ -742,6 +742,8 @@ export type Database = {
       public_profiles: {
         Row: {
           avatar_url: string | null
+          bio: string | null
+          business_category: string | null
           created_at: string | null
           full_name: string | null
           id: string | null
@@ -755,6 +757,8 @@ export type Database = {
         }
         Insert: {
           avatar_url?: string | null
+          bio?: string | null
+          business_category?: string | null
           created_at?: string | null
           full_name?: string | null
           id?: string | null
@@ -768,6 +772,8 @@ export type Database = {
         }
         Update: {
           avatar_url?: string | null
+          bio?: string | null
+          business_category?: string | null
           created_at?: string | null
           full_name?: string | null
           id?: string | null
