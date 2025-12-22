@@ -581,7 +581,7 @@ export default function EditListing() {
   return (
     <div className="min-h-screen bg-background pb-8">
       {/* Header */}
-      <header className="sticky top-0 z-40 bg-background/95 backdrop-blur-xl border-b border-border safe-top">
+      <header className="sticky top-0 z-40 bg-background/95 backdrop-blur-xl border-b border-border pt-[calc(env(safe-area-inset-top)+12px)]">
         <div className="flex items-center justify-between px-4 h-14">
           <Button variant="ghost" size="icon" onClick={() => navigate(-1)}>
             <X className="w-5 h-5" />

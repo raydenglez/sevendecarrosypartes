@@ -96,7 +96,7 @@ export default function ResetPassword() {
   if (success) {
     return (
       <div className="min-h-screen bg-background flex flex-col">
-        <header className="px-4 pt-4 safe-top">
+        <header className="px-4 pt-[calc(env(safe-area-inset-top)+12px)]">
           <div className="w-10 h-10" />
         </header>
 
@@ -127,7 +127,7 @@ export default function ResetPassword() {
 
   return (
     <div className="min-h-screen bg-background flex flex-col">
-      <header className="px-4 pt-4 safe-top">
+      <header className="px-4 pt-[calc(env(safe-area-inset-top)+12px)]">
         <button 
           onClick={() => navigate('/auth')}
           className="w-10 h-10 flex items-center justify-center text-foreground"
