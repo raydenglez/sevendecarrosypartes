@@ -9,6 +9,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
+import { openExternalUrl } from '@/lib/externalUrl';
 
 interface ShareButtonProps {
   title: string;
@@ -58,9 +59,9 @@ export function ShareButton({
     }
   };
 
-  const handleWhatsAppShare = () => {
+  const handleWhatsAppShare = async () => {
     const whatsappUrl = `https://wa.me/?text=${encodeURIComponent(`${text}\n${shareUrl}`)}`;
-    window.open(whatsappUrl, '_blank');
+    await openExternalUrl(whatsappUrl);
   };
 
   // Use native share if available

@@ -1,6 +1,7 @@
 import { useState, useEffect, createContext, useContext, ReactNode } from 'react';
 import { User, Session, Provider } from '@supabase/supabase-js';
 import { supabase } from '@/integrations/supabase/client';
+import { getAuthRedirectUrl } from '@/lib/externalUrl';
 
 interface SignUpResult {
   error: Error | null;
@@ -48,7 +49,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }, []);
 
   const signUp = async (email: string, password: string, fullName: string): Promise<SignUpResult> => {
-    const redirectUrl = `${window.location.origin}/`;
+    const redirectUrl = getAuthRedirectUrl('/');
     
     const { data, error } = await supabase.auth.signUp({
       email,
@@ -84,7 +85,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     const { error } = await supabase.auth.signInWithOAuth({
       provider,
       options: {
-        redirectTo: `${window.location.origin}/`,
+        redirectTo: getAuthRedirectUrl('/'),
       },
     });
     
@@ -92,7 +93,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   };
 
   const resendConfirmationEmail = async (email: string) => {
-    const redirectUrl = `${window.location.origin}/`;
+    const redirectUrl = getAuthRedirectUrl('/');
     
     const { error } = await supabase.auth.resend({
       type: 'signup',
@@ -106,7 +107,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   };
 
   const resetPassword = async (email: string) => {
-    const redirectUrl = `${window.location.origin}/reset-password`;
+    const redirectUrl = getAuthRedirectUrl('/reset-password');
     
     const { error } = await supabase.auth.resetPasswordForEmail(email, {
       redirectTo: redirectUrl,
