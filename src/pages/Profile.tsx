@@ -305,8 +305,10 @@ export default function Profile() {
   if (!user) {
     return (
       <div className="min-h-screen bg-background pb-24">
-        <header className="px-4 pt-4 safe-top">
-          <h1 className="text-xl font-bold text-foreground">{t('profile.myProfile')}</h1>
+        <header className="px-4 pt-[calc(env(safe-area-inset-top)+12px)]">
+          <div className="pt-8">
+            <h1 className="text-xl font-bold text-foreground">{t('profile.myProfile')}</h1>
+          </div>
         </header>
         <div className="flex flex-col items-center justify-center px-6 py-20 text-center">
           <div className="w-20 h-20 rounded-full bg-muted flex items-center justify-center mb-4">
@@ -330,7 +332,7 @@ export default function Profile() {
       <SEO titleKey="seo.profile.title" descriptionKey="seo.profile.description" path="/profile" />
       <div className="min-h-screen bg-background pb-24">
       {/* Header */}
-      <header className="relative px-4 pt-4 pb-6 safe-top">
+      <header className="relative px-4 pt-[calc(env(safe-area-inset-top)+12px)] pb-6">
         <div className="flex justify-between items-start">
           <h1 className="text-xl font-bold text-foreground">{t('profile.myProfile')}</h1>
           <DropdownMenu>

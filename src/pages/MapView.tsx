@@ -139,7 +139,7 @@ export default function MapView() {
   return (
     <div className="h-screen flex flex-col bg-background">
       {/* Header */}
-      <div className="absolute top-0 left-0 right-0 z-10 p-4 safe-top">
+      <div className="absolute top-0 left-0 right-0 z-10 p-4 pt-[calc(env(safe-area-inset-top)+16px)]">
         <div className="flex items-center gap-2">
           <Button
             variant="ghost"

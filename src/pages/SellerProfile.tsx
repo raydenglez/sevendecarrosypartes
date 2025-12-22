@@ -238,7 +238,7 @@ export default function SellerProfile() {
   return (
     <div className="min-h-screen bg-background pb-24">
       {/* Header */}
-      <div className="sticky top-0 z-50 bg-background/95 backdrop-blur-sm border-b border-border">
+      <div className="sticky top-0 z-50 bg-background/95 backdrop-blur-sm border-b border-border pt-[calc(env(safe-area-inset-top)+12px)]">
         <div className="flex items-center justify-between p-4">
           <button 
             onClick={() => navigate(-1)}

@@ -35,8 +35,8 @@ export default function Messages() {
   if (!user) {
     return (
       <div className="min-h-screen bg-background pb-24">
-        <header className="sticky top-0 z-40 bg-background/95 backdrop-blur-xl safe-top">
-          <div className="px-4 py-4">
+        <header className="sticky top-0 z-40 bg-background/95 backdrop-blur-xl pt-[calc(env(safe-area-inset-top)+12px)]">
+          <div className="px-4 pt-8 pb-4">
             <h1 className="text-xl font-bold text-foreground">{t('messages.title')}</h1>
           </div>
         </header>
@@ -61,8 +61,8 @@ export default function Messages() {
     <>
       <SEO titleKey="seo.messages.title" descriptionKey="seo.messages.description" path="/messages" />
       <div className="min-h-screen bg-background pb-24">
-      <header className="sticky top-0 z-40 bg-background/95 backdrop-blur-xl safe-top">
-        <div className="px-4 py-4">
+      <header className="sticky top-0 z-40 bg-background/95 backdrop-blur-xl pt-[calc(env(safe-area-inset-top)+12px)]">
+        <div className="px-4 pt-8 pb-4">
           <h1 className="text-xl font-bold text-foreground">{t('messages.title')}</h1>
           <p className="text-sm text-muted-foreground mt-1">
             {t('messages.conversationCount', { count: conversations.length })}

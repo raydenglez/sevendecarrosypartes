@@ -80,8 +80,8 @@ export default function Favorites() {
   if (isLoading) {
     return (
       <div className="min-h-screen bg-background pb-24">
-        <header className="sticky top-0 z-40 bg-background/95 backdrop-blur-xl safe-top">
-          <div className="px-4 py-4">
+        <header className="sticky top-0 z-40 bg-background/95 backdrop-blur-xl pt-[calc(env(safe-area-inset-top)+12px)]">
+          <div className="px-4 pt-8 pb-4">
             <h1 className="text-xl font-bold text-foreground">{t('favorites.title')}</h1>
           </div>
         </header>
@@ -101,8 +101,8 @@ export default function Favorites() {
   if (!user) {
     return (
       <div className="min-h-screen bg-background pb-24">
-        <header className="sticky top-0 z-40 bg-background/95 backdrop-blur-xl safe-top">
-          <div className="px-4 py-4">
+        <header className="sticky top-0 z-40 bg-background/95 backdrop-blur-xl pt-[calc(env(safe-area-inset-top)+12px)]">
+          <div className="px-4 pt-8 pb-4">
             <h1 className="text-xl font-bold text-foreground">{t('favorites.title')}</h1>
           </div>
         </header>
@@ -127,8 +127,8 @@ export default function Favorites() {
     <>
       <SEO titleKey="seo.favorites.title" descriptionKey="seo.favorites.description" path="/favorites" />
       <div className="min-h-screen bg-background pb-24">
-      <header className="sticky top-0 z-40 bg-background/95 backdrop-blur-xl safe-top">
-        <div className="px-4 py-4">
+      <header className="sticky top-0 z-40 bg-background/95 backdrop-blur-xl pt-[calc(env(safe-area-inset-top)+12px)]">
+        <div className="px-4 pt-8 pb-4">
           <h1 className="text-xl font-bold text-foreground">{t('favorites.title')}</h1>
           <p className="text-sm text-muted-foreground mt-1">
             {t('favorites.savedCount', { count: listings.length })}

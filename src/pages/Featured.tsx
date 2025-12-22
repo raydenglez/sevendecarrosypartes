@@ -51,8 +51,8 @@ export default function Featured() {
   return (
     <div className="min-h-screen bg-background pb-24">
       {/* Header */}
-      <header className="sticky top-0 z-40 bg-background/95 backdrop-blur-xl safe-top border-b border-border">
-        <div className="px-4 py-4 flex items-center gap-3">
+      <header className="sticky top-0 z-40 bg-background/95 backdrop-blur-xl pt-[calc(env(safe-area-inset-top)+12px)] border-b border-border">
+        <div className="px-4 pt-4 pb-4 flex items-center gap-3">
           <button 
             onClick={() => navigate(-1)}
             className="w-10 h-10 flex items-center justify-center text-foreground hover:bg-muted rounded-full transition-colors"
