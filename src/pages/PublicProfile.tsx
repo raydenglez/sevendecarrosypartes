@@ -21,6 +21,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
 import { cn } from '@/lib/utils';
 import { useFavoritesContext } from '@/contexts/FavoritesContext';
+import { BusinessCategoryBadge } from '@/components/BusinessCategorySelect';
 
 interface PublicProfileData {
   id: string;
@@ -34,6 +35,8 @@ interface PublicProfileData {
   is_verified: boolean | null;
   created_at: string | null;
   user_type: string | null;
+  business_category: string | null;
+  bio: string | null;
 }
 
 interface Listing {
@@ -285,8 +288,22 @@ export default function PublicProfile() {
           
           <h2 className="text-xl font-bold text-foreground mt-4">{profile.full_name || 'User'}</h2>
           
+          {/* Business Category Badge */}
+          {profile.business_category && (
+            <div className="mt-2">
+              <BusinessCategoryBadge category={profile.business_category} />
+            </div>
+          )}
+          
+          {/* Bio */}
+          {profile.bio && (
+            <p className="text-sm text-muted-foreground mt-2 text-center max-w-xs">
+              {profile.bio}
+            </p>
+          )}
+          
           {profile.location_city && (
-            <div className="flex items-center gap-1 text-sm text-muted-foreground mt-1">
+            <div className="flex items-center gap-1 text-sm text-muted-foreground mt-2">
               <MapPin className="w-4 h-4" />
               <span>{profile.location_city}{profile.location_state ? `, ${profile.location_state}` : ''}</span>
             </div>
