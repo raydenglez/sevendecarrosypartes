@@ -322,21 +322,21 @@ export default function AdminNotifications() {
         </div>
 
         <Tabs defaultValue="compose" className="space-y-4">
-          <TabsList>
-            <TabsTrigger value="compose" className="flex items-center gap-2">
+          <TabsList className="w-full grid grid-cols-3 h-auto p-1">
+            <TabsTrigger value="compose" className="flex items-center justify-center gap-1.5 px-2 py-2 text-xs sm:text-sm">
               <Bell className="h-4 w-4" />
-              Compose
+              <span className="hidden xs:inline">Compose</span>
             </TabsTrigger>
-            <TabsTrigger value="templates" className="flex items-center gap-2">
+            <TabsTrigger value="templates" className="flex items-center justify-center gap-1.5 px-2 py-2 text-xs sm:text-sm">
               <FileText className="h-4 w-4" />
-              Templates
+              <span className="hidden xs:inline">Templates</span>
               {templates && templates.length > 0 && (
-                <Badge variant="secondary" className="ml-1">{templates.length}</Badge>
+                <Badge variant="secondary" className="ml-1 hidden sm:inline-flex">{templates.length}</Badge>
               )}
             </TabsTrigger>
-            <TabsTrigger value="history" className="flex items-center gap-2">
+            <TabsTrigger value="history" className="flex items-center justify-center gap-1.5 px-2 py-2 text-xs sm:text-sm">
               <Clock className="h-4 w-4" />
-              History
+              <span className="hidden xs:inline">History</span>
             </TabsTrigger>
           </TabsList>
 
@@ -494,12 +494,12 @@ export default function AdminNotifications() {
                   </div>
                 )}
 
-                <div className="flex gap-2">
+                <div className="flex flex-col sm:flex-row gap-2">
                   <Button
                     variant="outline"
                     onClick={saveCurrentAsTemplate}
                     disabled={!title.trim() || !body.trim()}
-                    className="flex-shrink-0"
+                    className="w-full sm:w-auto"
                   >
                     <Save className="mr-2 h-4 w-4" />
                     Save as Template
@@ -557,7 +557,7 @@ export default function AdminNotifications() {
           {/* Templates Tab */}
           <TabsContent value="templates">
             <Card>
-              <CardHeader className="flex flex-row items-center justify-between">
+              <CardHeader className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
                 <div>
                   <CardTitle className="flex items-center gap-2">
                     <FileText className="h-5 w-5" />
@@ -572,7 +572,7 @@ export default function AdminNotifications() {
                   if (!open) resetTemplateForm();
                 }}>
                   <DialogTrigger asChild>
-                    <Button size="sm">
+                    <Button size="sm" className="w-full sm:w-auto">
                       <Plus className="mr-2 h-4 w-4" />
                       New Template
                     </Button>
@@ -654,10 +654,10 @@ export default function AdminNotifications() {
                     {templates.map((template) => (
                       <div
                         key={template.id}
-                        className="flex items-start justify-between p-4 rounded-lg border bg-card hover:bg-muted/50 transition-colors"
+                        className="flex flex-col sm:flex-row sm:items-start justify-between gap-3 p-4 rounded-lg border bg-card hover:bg-muted/50 transition-colors"
                       >
                         <div className="flex-1 min-w-0">
-                          <div className="flex items-center gap-2 mb-1">
+                          <div className="flex flex-wrap items-center gap-2 mb-1">
                             <h4 className="font-medium truncate">{template.name}</h4>
                             <Badge variant="secondary" className="text-xs">
                               {targetLabels[template.target_audience as BroadcastTarget]}
@@ -666,11 +666,12 @@ export default function AdminNotifications() {
                           <p className="text-sm font-medium text-foreground truncate">{template.title}</p>
                           <p className="text-sm text-muted-foreground line-clamp-2">{template.body}</p>
                         </div>
-                        <div className="flex items-center gap-1 ml-4 flex-shrink-0">
+                        <div className="flex items-center gap-2 sm:ml-4 flex-shrink-0">
                           <Button
                             size="sm"
                             variant="outline"
                             onClick={() => useTemplate(template)}
+                            className="flex-1 sm:flex-none"
                           >
                             Use
                           </Button>
@@ -733,76 +734,132 @@ export default function AdminNotifications() {
                     <Loader2 className="h-6 w-6 animate-spin text-muted-foreground" />
                   </div>
                 ) : broadcasts && broadcasts.length > 0 ? (
-                  <div className="overflow-x-auto">
-                    <Table>
-                      <TableHeader>
-                        <TableRow>
-                          <TableHead>Date</TableHead>
-                          <TableHead>Title</TableHead>
-                          <TableHead>Audience</TableHead>
-                          <TableHead>Sent</TableHead>
-                          <TableHead>Failed</TableHead>
-                          <TableHead>Status</TableHead>
-                          <TableHead></TableHead>
-                        </TableRow>
-                      </TableHeader>
-                      <TableBody>
-                        {broadcasts.map((broadcast) => {
-                          const statusInfo = statusConfig[broadcast.status];
-                          const StatusIcon = statusInfo.icon;
-                          
-                          return (
-                            <TableRow key={broadcast.id}>
-                              <TableCell className="whitespace-nowrap">
-                                <div>
+                  <>
+                    {/* Mobile Card View */}
+                    <div className="space-y-3 md:hidden">
+                      {broadcasts.map((broadcast) => {
+                        const statusInfo = statusConfig[broadcast.status];
+                        const StatusIcon = statusInfo.icon;
+                        
+                        return (
+                          <div key={broadcast.id} className="p-4 rounded-lg border bg-card space-y-3">
+                            <div className="flex items-start justify-between gap-2">
+                              <div className="flex-1 min-w-0">
+                                <p className="font-medium truncate">{broadcast.title}</p>
+                                <p className="text-xs text-muted-foreground">
                                   {format(new Date(broadcast.created_at), 'MMM d, yyyy HH:mm')}
-                                  {broadcast.scheduled_for && broadcast.status === 'scheduled' && (
-                                    <div className="text-xs text-blue-600">
-                                      <Timer className="inline-block mr-1 h-3 w-3" />
-                                      {format(new Date(broadcast.scheduled_for), 'MMM d, HH:mm')}
-                                    </div>
-                                  )}
-                                </div>
-                              </TableCell>
-                              <TableCell className="max-w-[200px] truncate" title={broadcast.title}>
-                                {broadcast.title}
-                              </TableCell>
-                              <TableCell>
-                                <Badge variant="secondary">
-                                  {targetLabels[broadcast.target_audience]}
-                                </Badge>
-                              </TableCell>
-                              <TableCell className="text-green-600 font-medium">
-                                {broadcast.sent_count}
-                              </TableCell>
-                              <TableCell className="text-destructive font-medium">
-                                {broadcast.failed_count}
-                              </TableCell>
-                              <TableCell>
-                                <Badge className={statusInfo.className}>
-                                  <StatusIcon className="mr-1 h-3 w-3" />
-                                  {statusInfo.label}
-                                </Badge>
-                              </TableCell>
-                              <TableCell>
-                                {broadcast.status === 'scheduled' && (
-                                  <Button
-                                    variant="ghost"
-                                    size="sm"
-                                    className="text-destructive hover:text-destructive"
-                                    onClick={() => cancelScheduled.mutate(broadcast.id)}
-                                    disabled={cancelScheduled.isPending}
-                                  >
-                                    Cancel
-                                  </Button>
+                                </p>
+                                {broadcast.scheduled_for && broadcast.status === 'scheduled' && (
+                                  <p className="text-xs text-blue-600 flex items-center gap-1 mt-1">
+                                    <Timer className="h-3 w-3" />
+                                    Scheduled: {format(new Date(broadcast.scheduled_for), 'MMM d, HH:mm')}
+                                  </p>
                                 )}
-                              </TableCell>
-                            </TableRow>
-                          );
-                        })}
-                      </TableBody>
-                    </Table>
-                  </div>
+                              </div>
+                              <Badge className={cn(statusInfo.className, "flex-shrink-0")}>
+                                <StatusIcon className="mr-1 h-3 w-3" />
+                                {statusInfo.label}
+                              </Badge>
+                            </div>
+                            <div className="flex items-center justify-between text-sm">
+                              <Badge variant="secondary">
+                                {targetLabels[broadcast.target_audience]}
+                              </Badge>
+                              <div className="flex items-center gap-3">
+                                <span className="text-green-600 font-medium">{broadcast.sent_count} sent</span>
+                                {broadcast.failed_count > 0 && (
+                                  <span className="text-destructive font-medium">{broadcast.failed_count} failed</span>
+                                )}
+                              </div>
+                            </div>
+                            {broadcast.status === 'scheduled' && (
+                              <Button
+                                variant="outline"
+                                size="sm"
+                                className="w-full text-destructive hover:text-destructive"
+                                onClick={() => cancelScheduled.mutate(broadcast.id)}
+                                disabled={cancelScheduled.isPending}
+                              >
+                                Cancel Scheduled
+                              </Button>
+                            )}
+                          </div>
+                        );
+                      })}
+                    </div>
+
+                    {/* Desktop Table View */}
+                    <div className="hidden md:block overflow-x-auto">
+                      <Table>
+                        <TableHeader>
+                          <TableRow>
+                            <TableHead>Date</TableHead>
+                            <TableHead>Title</TableHead>
+                            <TableHead>Audience</TableHead>
+                            <TableHead>Sent</TableHead>
+                            <TableHead>Failed</TableHead>
+                            <TableHead>Status</TableHead>
+                            <TableHead></TableHead>
+                          </TableRow>
+                        </TableHeader>
+                        <TableBody>
+                          {broadcasts.map((broadcast) => {
+                            const statusInfo = statusConfig[broadcast.status];
+                            const StatusIcon = statusInfo.icon;
+                            
+                            return (
+                              <TableRow key={broadcast.id}>
+                                <TableCell className="whitespace-nowrap">
+                                  <div>
+                                    {format(new Date(broadcast.created_at), 'MMM d, yyyy HH:mm')}
+                                    {broadcast.scheduled_for && broadcast.status === 'scheduled' && (
+                                      <div className="text-xs text-blue-600">
+                                        <Timer className="inline-block mr-1 h-3 w-3" />
+                                        {format(new Date(broadcast.scheduled_for), 'MMM d, HH:mm')}
+                                      </div>
+                                    )}
+                                  </div>
+                                </TableCell>
+                                <TableCell className="max-w-[200px] truncate" title={broadcast.title}>
+                                  {broadcast.title}
+                                </TableCell>
+                                <TableCell>
+                                  <Badge variant="secondary">
+                                    {targetLabels[broadcast.target_audience]}
+                                  </Badge>
+                                </TableCell>
+                                <TableCell className="text-green-600 font-medium">
+                                  {broadcast.sent_count}
+                                </TableCell>
+                                <TableCell className="text-destructive font-medium">
+                                  {broadcast.failed_count}
+                                </TableCell>
+                                <TableCell>
+                                  <Badge className={statusInfo.className}>
+                                    <StatusIcon className="mr-1 h-3 w-3" />
+                                    {statusInfo.label}
+                                  </Badge>
+                                </TableCell>
+                                <TableCell>
+                                  {broadcast.status === 'scheduled' && (
+                                    <Button
+                                      variant="ghost"
+                                      size="sm"
+                                      className="text-destructive hover:text-destructive"
+                                      onClick={() => cancelScheduled.mutate(broadcast.id)}
+                                      disabled={cancelScheduled.isPending}
+                                    >
+                                      Cancel
+                                    </Button>
+                                  )}
+                                </TableCell>
+                              </TableRow>
+                            );
+                          })}
+                        </TableBody>
+                      </Table>
+                    </div>
+                  </>
                 ) : (
                   <div className="text-center py-8 text-muted-foreground">
                     <Bell className="h-12 w-12 mx-auto mb-3 opacity-50" />
