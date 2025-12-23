@@ -12,7 +12,8 @@ import {
   Loader2,
   Menu,
   X,
-  Megaphone
+  Megaphone,
+  Bell
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
@@ -27,6 +28,7 @@ const navItems = [
   { path: '/admin/moderation', icon: Shield, label: 'Moderation' },
   { path: '/admin/reports', icon: Flag, label: 'Reports' },
   { path: '/admin/sponsored', icon: Megaphone, label: 'Sponsored' },
+  { path: '/admin/notifications', icon: Bell, label: 'Notifications' },
   { path: '/admin/users', icon: Users, label: 'Users' },
   { path: '/admin/history', icon: History, label: 'History' },
 ];
