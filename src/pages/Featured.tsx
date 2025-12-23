@@ -50,6 +50,11 @@ export default function Featured() {
 
   return (
     <div className="min-h-screen bg-background pb-24">
+      <SEO
+        titleKey="seo.featured.title"
+        descriptionKey="seo.featured.description"
+        path="/featured"
+      />
       {/* Header */}
       <header className="sticky top-0 z-40 bg-background/95 backdrop-blur-xl pt-[calc(env(safe-area-inset-top)+12px)] border-b border-border">
         <div className="px-4 pt-4 pb-4 flex items-center gap-3">
