@@ -11,13 +11,18 @@ import {
   ChevronLeft,
   Loader2,
   Menu,
-  X,
   Megaphone,
-  Bell
+  Bell,
+  MoreHorizontal
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
 import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from '@/components/ui/popover';
 
 interface AdminLayoutProps {
   children: ReactNode;
@@ -32,6 +37,103 @@ const navItems = [
   { path: '/admin/users', icon: Users, label: 'Users' },
   { path: '/admin/history', icon: History, label: 'History' },
 ];
+
+// Primary nav items for bottom bar (limited to 4 for mobile)
+const primaryNavItems = [
+  { path: '/admin', icon: LayoutDashboard, label: 'Overview', exact: true },
+  { path: '/admin/moderation', icon: Shield, label: 'Moderation' },
+  { path: '/admin/reports', icon: Flag, label: 'Reports' },
+  { path: '/admin/notifications', icon: Bell, label: 'Alerts' },
+];
+
+// Secondary nav items shown in "More" menu
+const secondaryNavItems = [
+  { path: '/admin/sponsored', icon: Megaphone, label: 'Sponsored' },
+  { path: '/admin/users', icon: Users, label: 'Users' },
+  { path: '/admin/history', icon: History, label: 'History' },
+];
+
+function MobileBottomNav() {
+  const location = useLocation();
+  const [moreOpen, setMoreOpen] = useState(false);
+  
+  const isSecondaryActive = secondaryNavItems.some(item => 
+    location.pathname.startsWith(item.path)
+  );
+
+  return (
+    <nav className="lg:hidden fixed bottom-0 left-0 right-0 bg-card/95 backdrop-blur-xl border-t border-border safe-bottom z-40">
+      <div className="flex justify-around items-center h-16 max-w-lg mx-auto">
+        {primaryNavItems.map((item) => {
+          const isActive = item.exact 
+            ? location.pathname === item.path
+            : location.pathname.startsWith(item.path);
+          
+          return (
+            <Link
+              key={item.path}
+              to={item.path}
+              className={cn(
+                'flex flex-col items-center justify-center gap-1 min-w-[64px] min-h-[48px] py-2 px-2 rounded-lg transition-all touch-manipulation',
+                isActive
+                  ? 'text-primary'
+                  : 'text-muted-foreground active:scale-95'
+              )}
+            >
+              <item.icon className={cn('h-5 w-5', isActive && 'text-primary')} />
+              <span className="text-[10px] font-medium">{item.label}</span>
+            </Link>
+          );
+        })}
+        
+        {/* More menu for secondary items */}
+        <Popover open={moreOpen} onOpenChange={setMoreOpen}>
+          <PopoverTrigger asChild>
+            <button
+              className={cn(
+                'flex flex-col items-center justify-center gap-1 min-w-[64px] min-h-[48px] py-2 px-2 rounded-lg transition-all touch-manipulation',
+                isSecondaryActive || moreOpen
+                  ? 'text-primary'
+                  : 'text-muted-foreground active:scale-95'
+              )}
+            >
+              <MoreHorizontal className={cn('h-5 w-5', (isSecondaryActive || moreOpen) && 'text-primary')} />
+              <span className="text-[10px] font-medium">More</span>
+            </button>
+          </PopoverTrigger>
+          <PopoverContent 
+            side="top" 
+            align="end" 
+            className="w-48 p-2 mb-2"
+            sideOffset={8}
+          >
+            <div className="space-y-1">
+              {secondaryNavItems.map((item) => {
+                const isActive = location.pathname.startsWith(item.path);
+                return (
+                  <Link
+                    key={item.path}
+                    to={item.path}
+                    onClick={() => setMoreOpen(false)}
+                    className={cn(
+                      'flex items-center gap-3 px-3 py-2.5 rounded-lg transition-colors touch-manipulation',
+                      isActive
+                        ? 'bg-primary text-primary-foreground'
+                        : 'text-foreground hover:bg-muted active:bg-muted'
+                    )}
+                  >
+                    <item.icon className="h-5 w-5 flex-shrink-0" />
+                    <span className="font-medium">{item.label}</span>
+                  </Link>
+                );
+              })}
+            </div>
+          </PopoverContent>
+        </Popover>
+      </div>
+    </nav>
+  );
+}
 
 function NavContent({ onNavigate }: { onNavigate?: () => void }) {
   const location = useLocation();
@@ -214,31 +316,7 @@ export function AdminLayout({ children }: AdminLayoutProps) {
       </div>
 
       {/* Mobile Bottom Navigation */}
-      <nav className="lg:hidden fixed bottom-0 left-0 right-0 bg-card border-t border-border safe-bottom z-40">
-        <div className="flex justify-around items-center py-2">
-          {navItems.map((item) => {
-            const isActive = item.exact 
-              ? location.pathname === item.path
-              : location.pathname.startsWith(item.path);
-            
-            return (
-              <Link
-                key={item.path}
-                to={item.path}
-                className={cn(
-                  'flex flex-col items-center gap-1 px-3 py-1.5 rounded-lg transition-colors min-w-[60px]',
-                  isActive
-                    ? 'text-primary'
-                    : 'text-muted-foreground'
-                )}
-              >
-                <item.icon className="h-5 w-5" />
-                <span className="text-[10px] font-medium">{item.label}</span>
-              </Link>
-            );
-          })}
-        </div>
-      </nav>
+      <MobileBottomNav />
     </div>
   );
 }
