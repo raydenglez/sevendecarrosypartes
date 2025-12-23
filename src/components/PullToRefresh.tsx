@@ -1,18 +1,7 @@
-import { useState, useRef, useCallback, ReactNode, useEffect } from 'react';
+import { useState, useRef, useCallback, ReactNode } from 'react';
 import { Loader2, ArrowDown } from 'lucide-react';
 import { cn } from '@/lib/utils';
-
-// Haptic feedback utility
-const triggerHaptic = (type: 'light' | 'medium' | 'heavy' = 'light') => {
-  if ('vibrate' in navigator) {
-    const patterns = {
-      light: 10,
-      medium: 20,
-      heavy: 30,
-    };
-    navigator.vibrate(patterns[type]);
-  }
-};
+import { useHaptics } from '@/hooks/useHaptics';
 
 interface PullToRefreshProps {
   onRefresh: () => Promise<void>;
@@ -27,6 +16,7 @@ export function PullToRefresh({ onRefresh, children, className }: PullToRefreshP
   const containerRef = useRef<HTMLDivElement>(null);
   const startY = useRef(0);
   const currentY = useRef(0);
+  const { trigger } = useHaptics();
 
   const threshold = 80;
   const maxPull = 120;
@@ -54,7 +44,7 @@ export function PullToRefresh({ onRefresh, children, className }: PullToRefreshP
       // Trigger haptic when crossing threshold
       if (distance >= threshold && !hasTriggeredHaptic.current) {
         hasTriggeredHaptic.current = true;
-        triggerHaptic('medium');
+        trigger('medium');
       } else if (distance < threshold && hasTriggeredHaptic.current) {
         hasTriggeredHaptic.current = false;
       }
@@ -70,14 +60,14 @@ export function PullToRefresh({ onRefresh, children, className }: PullToRefreshP
     if (pullDistance >= threshold && !isRefreshing) {
       setIsRefreshing(true);
       setPullDistance(60); // Keep indicator visible during refresh
-      triggerHaptic('heavy'); // Strong haptic on refresh start
+      trigger('heavy'); // Strong haptic on refresh start
       
       try {
         await onRefresh();
       } finally {
         setIsRefreshing(false);
         setPullDistance(0);
-        triggerHaptic('light'); // Light haptic on refresh complete
+        trigger('success'); // Success haptic on refresh complete
       }
     } else {
       setPullDistance(0);

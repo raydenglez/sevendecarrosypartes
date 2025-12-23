@@ -3,11 +3,16 @@ import { Home, Heart, Plus, MessageSquare, User } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { cn } from '@/lib/utils';
 import { useUnreadMessages } from '@/hooks/useUnreadMessages';
-
+import { useHaptics } from '@/hooks/useHaptics';
 export function BottomNav() {
   const location = useLocation();
   const { unreadCount } = useUnreadMessages();
   const { t } = useTranslation();
+  const { trigger } = useHaptics();
+
+  const handleNavClick = () => {
+    trigger('selection');
+  };
 
   const navItems = [
     { path: '/', icon: Home, label: t('nav.home') },
@@ -30,6 +35,7 @@ export function BottomNav() {
                 key={item.path}
                 to={item.path}
                 className="flex items-center justify-center -mt-6 touch-manipulation"
+                onClick={() => trigger('medium')}
               >
                 <div className="w-16 h-16 rounded-full bg-gradient-orange shadow-orange flex items-center justify-center transition-transform hover:scale-105 active:scale-95">
                   <Icon className="w-7 h-7 text-primary-foreground" />
@@ -42,6 +48,7 @@ export function BottomNav() {
             <NavLink
               key={item.path}
               to={item.path}
+              onClick={handleNavClick}
               className="flex flex-col items-center justify-center min-w-[56px] min-h-[56px] py-2 px-3 relative group touch-manipulation"
             >
               <div
