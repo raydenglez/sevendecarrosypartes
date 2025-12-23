@@ -26,3 +26,6 @@ verify_jwt = false
 
 [functions.broadcast-notification]
 verify_jwt = true
+
+[functions.process-scheduled-notifications]
+verify_jwt = false
