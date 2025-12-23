@@ -1,73 +1,153 @@
-# Welcome to your Lovable project
+# CarNetworx
 
-## Project info
+A modern automotive marketplace PWA for buying and selling vehicles, parts, and services.
 
-**URL**: https://lovable.dev/projects/REPLACE_WITH_PROJECT_ID
+![CarNetworx](public/og-image.png)
 
-## How can I edit this code?
+## Features
 
-There are several ways of editing your application.
+### Marketplace
+- **Vehicle Listings** - Buy and sell cars with detailed specs (make, model, year, mileage, VIN)
+- **Auto Parts** - List and find compatible parts with brand and condition info
+- **Services** - Connect with mechanics, car washes, body shops, and more
+- **Location-Based Search** - Find listings near you with distance calculations
+- **Interactive Map View** - Browse listings on an interactive Mapbox-powered map
 
-**Use Lovable**
+### User Experience
+- **Progressive Web App (PWA)** - Install on mobile for native-like experience
+- **Real-time Messaging** - Chat with buyers/sellers with typing indicators
+- **Voice Messages** - Send and receive voice recordings
+- **Push Notifications** - Get notified of new messages and listing updates
+- **Multi-language Support** - English, Spanish, and Portuguese
 
-Simply visit the [Lovable Project](https://lovable.dev/projects/REPLACE_WITH_PROJECT_ID) and start prompting.
+### Seller Tools
+- **VIN Scanner** - Auto-fill vehicle details by scanning VIN barcodes
+- **Image Cropping** - Crop and optimize listing photos
+- **Draft Listings** - Save listings as drafts before publishing
+- **Listing Management** - Edit, mark as sold, or delete listings
 
-Changes made via Lovable will be committed automatically to this repo.
+### Trust & Safety
+- **User Verification** - Verified seller badges
+- **Reviews & Ratings** - Rate sellers on communication, accuracy, and service
+- **Report System** - Flag inappropriate listings
+- **Admin Moderation** - AI-assisted content moderation queue
 
-**Use your preferred IDE**
+## Tech Stack
 
-If you want to work locally using your own IDE, you can clone this repo and push changes. Pushed changes will also be reflected in Lovable.
+- **Frontend**: React 18, TypeScript, Vite
+- **Styling**: Tailwind CSS, shadcn/ui components
+- **State Management**: TanStack Query, React Context
+- **Backend**: Supabase (PostgreSQL, Auth, Storage, Edge Functions)
+- **Maps**: Mapbox GL JS
+- **Animations**: Framer Motion
+- **i18n**: react-i18next
+- **Mobile**: Capacitor (iOS/Android builds)
 
-The only requirement is having Node.js & npm installed - [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating)
+## Getting Started
 
-Follow these steps:
+### Prerequisites
+- Node.js 18+ (recommended: use [nvm](https://github.com/nvm-sh/nvm))
+- npm or bun
 
-```sh
-# Step 1: Clone the repository using the project's Git URL.
+### Installation
+
+```bash
+# Clone the repository
 git clone <YOUR_GIT_URL>
+cd carnetworx
 
-# Step 2: Navigate to the project directory.
-cd <YOUR_PROJECT_NAME>
+# Install dependencies
+npm install
 
-# Step 3: Install the necessary dependencies.
-npm i
-
-# Step 4: Start the development server with auto-reloading and an instant preview.
+# Start development server
 npm run dev
 ```
 
-**Edit a file directly in GitHub**
+### Environment Variables
 
-- Navigate to the desired file(s).
-- Click the "Edit" button (pencil icon) at the top right of the file view.
-- Make your changes and commit the changes.
+The app requires these environment variables (automatically configured in Lovable):
 
-**Use GitHub Codespaces**
+```env
+VITE_SUPABASE_URL=your_supabase_url
+VITE_SUPABASE_PUBLISHABLE_KEY=your_supabase_anon_key
+```
 
-- Navigate to the main page of your repository.
-- Click on the "Code" button (green button) near the top right.
-- Select the "Codespaces" tab.
-- Click on "New codespace" to launch a new Codespace environment.
-- Edit files directly within the Codespace and commit and push your changes once you're done.
+For Mapbox functionality, add `MAPBOX_ACCESS_TOKEN` to your secrets.
 
-## What technologies are used for this project?
+## Project Structure
 
-This project is built with:
+```
+src/
+├── components/          # Reusable UI components
+│   ├── ui/             # shadcn/ui base components
+│   └── ...             # Feature-specific components
+├── contexts/           # React context providers
+├── hooks/              # Custom React hooks
+├── pages/              # Route components
+│   └── admin/          # Admin dashboard pages
+├── locales/            # i18n translation files
+├── integrations/       # Third-party integrations
+│   └── supabase/       # Supabase client & types
+├── lib/                # Utility functions
+├── types/              # TypeScript type definitions
+└── assets/             # Static assets
 
-- Vite
-- TypeScript
-- React
-- shadcn-ui
-- Tailwind CSS
+supabase/
+├── functions/          # Edge functions
+└── migrations/         # Database migrations
+```
 
-## How can I deploy this project?
+## Available Scripts
 
-Simply open [Lovable](https://lovable.dev/projects/REPLACE_WITH_PROJECT_ID) and click on Share -> Publish.
+```bash
+npm run dev          # Start development server
+npm run build        # Build for production
+npm run preview      # Preview production build
+npm run lint         # Run ESLint
+```
 
-## Can I connect a custom domain to my Lovable project?
+## Mobile Apps (Capacitor)
 
-Yes, you can!
+```bash
+# Build web assets
+npm run build
 
-To connect a domain, navigate to Project > Settings > Domains and click Connect Domain.
+# Sync with native projects
+npx cap sync
 
-Read more here: [Setting up a custom domain](https://docs.lovable.dev/features/custom-domain#custom-domain)
+# Open in Xcode (iOS)
+npx cap open ios
+
+# Open in Android Studio
+npx cap open android
+```
+
+## Deployment
+
+### Via Lovable
+Click **Publish** in the Lovable editor to deploy instantly.
+
+### Custom Hosting
+The production build (`npm run build`) outputs to `dist/` and can be deployed to any static hosting:
+- Vercel
+- Netlify
+- Cloudflare Pages
+- AWS S3 + CloudFront
+
+## Contributing
+
+1. Fork the repository
+2. Create a feature branch (`git checkout -b feature/amazing-feature`)
+3. Commit your changes (`git commit -m 'Add amazing feature'`)
+4. Push to the branch (`git push origin feature/amazing-feature`)
+5. Open a Pull Request
+
+## License
+
+This project is proprietary software. All rights reserved.
+
+## Links
+
+- [Live App](https://carnetworx.app)
+- [Documentation](https://docs.lovable.dev)
+- [Report Issues](https://github.com/your-org/carnetworx/issues)
