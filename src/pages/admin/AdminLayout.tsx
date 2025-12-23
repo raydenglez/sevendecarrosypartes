@@ -309,7 +309,7 @@ export function AdminLayout({ children }: AdminLayoutProps) {
 
         {/* Main Content */}
         <main className="flex-1 lg:ml-64 min-h-screen">
-          <div className="p-4 md:p-6">
+          <div className="p-4 md:p-6 pb-24 lg:pb-6">
             {children}
           </div>
         </main>

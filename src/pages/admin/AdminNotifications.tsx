@@ -58,9 +58,9 @@ const targetLabels: Record<BroadcastTarget, string> = {
 
 const statusConfig: Record<BroadcastStatus, { label: string; icon: typeof CheckCircle2; className: string }> = {
   pending: { label: 'Pending', icon: Clock, className: 'bg-muted text-muted-foreground' },
-  scheduled: { label: 'Scheduled', icon: Timer, className: 'bg-blue-500/20 text-blue-600' },
+  scheduled: { label: 'Scheduled', icon: Timer, className: 'bg-accent text-accent-foreground' },
   sending: { label: 'Sending', icon: Radio, className: 'bg-primary/20 text-primary' },
-  completed: { label: 'Completed', icon: CheckCircle2, className: 'bg-green-500/20 text-green-600' },
+  completed: { label: 'Completed', icon: CheckCircle2, className: 'bg-primary/15 text-primary' },
   failed: { label: 'Failed', icon: XCircle, className: 'bg-destructive/20 text-destructive' },
 };
 
@@ -322,21 +322,21 @@ export default function AdminNotifications() {
         </div>
 
         <Tabs defaultValue="compose" className="space-y-4">
-          <TabsList className="w-full sm:w-auto grid grid-cols-3 sm:flex">
-            <TabsTrigger value="compose" className="flex items-center gap-1 sm:gap-2 text-xs sm:text-sm">
+          <TabsList className="w-full sm:w-auto grid grid-cols-3 gap-1 sm:gap-0 sm:flex">
+            <TabsTrigger value="compose" className="flex items-center justify-center gap-2 text-xs sm:text-sm min-w-0">
               <Bell className="h-4 w-4" />
-              <span className="hidden xs:inline">Compose</span>
+              <span className="truncate">Compose</span>
             </TabsTrigger>
-            <TabsTrigger value="templates" className="flex items-center gap-1 sm:gap-2 text-xs sm:text-sm">
+            <TabsTrigger value="templates" className="flex items-center justify-center gap-2 text-xs sm:text-sm min-w-0">
               <FileText className="h-4 w-4" />
-              <span className="hidden xs:inline">Templates</span>
+              <span className="truncate">Templates</span>
               {templates && templates.length > 0 && (
                 <Badge variant="secondary" className="ml-1 text-xs">{templates.length}</Badge>
               )}
             </TabsTrigger>
-            <TabsTrigger value="history" className="flex items-center gap-1 sm:gap-2 text-xs sm:text-sm">
+            <TabsTrigger value="history" className="flex items-center justify-center gap-2 text-xs sm:text-sm min-w-0">
               <Clock className="h-4 w-4" />
-              <span className="hidden xs:inline">History</span>
+              <span className="truncate">History</span>
             </TabsTrigger>
           </TabsList>
 
@@ -750,7 +750,7 @@ export default function AdminNotifications() {
                                   {format(new Date(broadcast.created_at), 'MMM d, yyyy HH:mm')}
                                 </p>
                                 {broadcast.scheduled_for && broadcast.status === 'scheduled' && (
-                                  <p className="text-xs text-blue-600 flex items-center gap-1 mt-0.5">
+                                  <p className="text-xs text-primary flex items-center gap-1 mt-0.5">
                                     <Timer className="h-3 w-3" />
                                     {format(new Date(broadcast.scheduled_for), 'MMM d, HH:mm')}
                                   </p>
@@ -766,7 +766,7 @@ export default function AdminNotifications() {
                                 {targetLabels[broadcast.target_audience]}
                               </Badge>
                               <div className="flex items-center gap-3">
-                                <span className="text-green-600 font-medium">{broadcast.sent_count} sent</span>
+                                <span className="text-primary font-medium">{broadcast.sent_count} sent</span>
                                 {broadcast.failed_count > 0 && (
                                   <span className="text-destructive font-medium">{broadcast.failed_count} failed</span>
                                 )}
@@ -813,7 +813,7 @@ export default function AdminNotifications() {
                                   <div>
                                     {format(new Date(broadcast.created_at), 'MMM d, yyyy HH:mm')}
                                     {broadcast.scheduled_for && broadcast.status === 'scheduled' && (
-                                      <div className="text-xs text-blue-600">
+                                      <div className="text-xs text-primary">
                                         <Timer className="inline-block mr-1 h-3 w-3" />
                                         {format(new Date(broadcast.scheduled_for), 'MMM d, HH:mm')}
                                       </div>
@@ -828,7 +828,7 @@ export default function AdminNotifications() {
                                     {targetLabels[broadcast.target_audience]}
                                   </Badge>
                                 </TableCell>
-                                <TableCell className="text-green-600 font-medium">
+                                <TableCell className="text-primary font-medium">
                                   {broadcast.sent_count}
                                 </TableCell>
                                 <TableCell className="text-destructive font-medium">
