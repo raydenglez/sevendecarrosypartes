@@ -292,8 +292,49 @@ export default function ListingDetail() {
     { icon: Car, label: listing.vehicleAttributes.bodyType || 'Sedan', value: t('listing.specs.body') },
   ] : [];
 
+  // Generate SEO data
+  const seoTitle = `${listing.title} - $${listing.price.toLocaleString()} | CarNetworx`;
+  const seoDescription = listing.description 
+    ? `${listing.description.slice(0, 140)}${listing.description.length > 140 ? '...' : ''} - $${listing.price.toLocaleString()} in ${listing.location.city}, ${listing.location.state}`
+    : `${listing.title} for $${listing.price.toLocaleString()} in ${listing.location.city}, ${listing.location.state}. Find this and more on CarNetworx.`;
+  const seoImage = listing.images[0] || '/pwa-192x192.png';
+
+  const productJsonLd = {
+    name: listing.title,
+    description: listing.description || listing.title,
+    image: listing.images,
+    offers: {
+      price: listing.price,
+      priceCurrency: 'USD',
+      availability: listing.status === 'sold' ? 'SoldOut' as const : 'InStock' as const,
+      seller: listing.owner ? { name: listing.owner.name } : undefined,
+    },
+    brand: listing.vehicleAttributes?.make,
+    model: listing.vehicleAttributes?.model,
+    vehicleIdentificationNumber: listing.vehicleAttributes?.vin,
+    mileageFromOdometer: listing.vehicleAttributes?.mileage ? {
+      value: listing.vehicleAttributes.mileage,
+      unitCode: 'KMT',
+    } : undefined,
+  };
+
+  const breadcrumbs = [
+    { name: 'Home', url: '/' },
+    { name: listing.type === 'vehicle' ? 'Vehicles' : listing.type === 'part' ? 'Parts' : 'Services', url: `/?type=${listing.type}` },
+    { name: listing.title, url: `/listing/${listing.id}` },
+  ];
+
   return (
     <div className="min-h-screen bg-background pb-28">
+      <SEO
+        title={seoTitle}
+        description={seoDescription}
+        path={`/listing/${listing.id}`}
+        image={seoImage}
+        type="product"
+        productJsonLd={productJsonLd}
+        breadcrumbs={breadcrumbs}
+      />
       {/* Image Gallery with Embla Carousel */}
       <div className="relative">
         <div className="aspect-[4/3] bg-muted overflow-hidden" ref={emblaRef}>
