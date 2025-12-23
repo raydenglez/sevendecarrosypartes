@@ -2,7 +2,7 @@ import { ReactNode, useState, useRef } from 'react';
 import { motion, useMotionValue, useTransform, PanInfo } from 'framer-motion';
 import { Trash2 } from 'lucide-react';
 import { cn } from '@/lib/utils';
-
+import { useHaptics } from '@/hooks/useHaptics';
 interface SwipeableItemProps {
   children: ReactNode;
   onDelete?: () => void;
@@ -19,6 +19,7 @@ export function SwipeableItem({
   const [isDeleting, setIsDeleting] = useState(false);
   const constraintsRef = useRef(null);
   const x = useMotionValue(0);
+  const { trigger } = useHaptics();
   
   // Transform x position to background opacity and scale
   const deleteOpacity = useTransform(x, [0, deleteThreshold], [0, 1]);
@@ -27,10 +28,7 @@ export function SwipeableItem({
   const handleDragEnd = (_: any, info: PanInfo) => {
     if (info.offset.x < deleteThreshold && onDelete) {
       setIsDeleting(true);
-      // Trigger haptic feedback if available
-      if ('vibrate' in navigator) {
-        navigator.vibrate(50);
-      }
+      trigger('warning');
       setTimeout(() => {
         onDelete();
       }, 200);

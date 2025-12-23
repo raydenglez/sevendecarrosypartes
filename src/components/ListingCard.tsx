@@ -5,7 +5,7 @@ import { cn } from '@/lib/utils';
 import { Link } from 'react-router-dom';
 import { CSSProperties } from 'react';
 import { useFavoritesContext } from '@/contexts/FavoritesContext';
-
+import { useHaptics } from '@/hooks/useHaptics';
 interface ListingCardProps {
   listing: Listing;
   variant?: 'featured' | 'list' | 'grid';
@@ -17,10 +17,12 @@ export function ListingCard({ listing, variant = 'featured', className, style }:
   const { t } = useTranslation();
   const { isFavorite, toggleFavorite } = useFavoritesContext();
   const favorited = isFavorite(listing.id);
+  const { trigger } = useHaptics();
 
   const handleFavoriteClick = (e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
+    trigger(favorited ? 'light' : 'success');
     toggleFavorite(listing.id);
   };
 
