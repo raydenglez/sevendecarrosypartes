@@ -389,6 +389,39 @@ export type Database = {
           },
         ]
       }
+      notification_templates: {
+        Row: {
+          admin_id: string
+          body: string
+          created_at: string
+          id: string
+          name: string
+          target_audience: string
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          admin_id: string
+          body: string
+          created_at?: string
+          id?: string
+          name: string
+          target_audience?: string
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          admin_id?: string
+          body?: string
+          created_at?: string
+          id?: string
+          name?: string
+          target_audience?: string
+          title?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       part_attributes: {
         Row: {
           brand: string | null
