@@ -893,7 +893,12 @@ export type Database = {
     }
     Enums: {
       app_role: "admin" | "moderator" | "user"
-      broadcast_status: "pending" | "sending" | "completed" | "failed"
+      broadcast_status:
+        | "pending"
+        | "sending"
+        | "completed"
+        | "failed"
+        | "scheduled"
       broadcast_target: "all" | "sellers" | "buyers" | "verified_users"
       listing_status:
         | "active"
@@ -1051,7 +1056,13 @@ export const Constants = {
   public: {
     Enums: {
       app_role: ["admin", "moderator", "user"],
-      broadcast_status: ["pending", "sending", "completed", "failed"],
+      broadcast_status: [
+        "pending",
+        "sending",
+        "completed",
+        "failed",
+        "scheduled",
+      ],
       broadcast_target: ["all", "sellers", "buyers", "verified_users"],
       listing_status: [
         "active",
