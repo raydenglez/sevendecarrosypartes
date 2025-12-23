@@ -66,6 +66,7 @@ export type Database = {
           created_at: string
           failed_count: number
           id: string
+          scheduled_for: string | null
           sent_count: number
           status: Database["public"]["Enums"]["broadcast_status"]
           target_audience: Database["public"]["Enums"]["broadcast_target"]
@@ -78,6 +79,7 @@ export type Database = {
           created_at?: string
           failed_count?: number
           id?: string
+          scheduled_for?: string | null
           sent_count?: number
           status?: Database["public"]["Enums"]["broadcast_status"]
           target_audience?: Database["public"]["Enums"]["broadcast_target"]
@@ -90,6 +92,7 @@ export type Database = {
           created_at?: string
           failed_count?: number
           id?: string
+          scheduled_for?: string | null
           sent_count?: number
           status?: Database["public"]["Enums"]["broadcast_status"]
           target_audience?: Database["public"]["Enums"]["broadcast_target"]
