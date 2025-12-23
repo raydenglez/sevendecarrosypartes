@@ -58,6 +58,45 @@ export type Database = {
           },
         ]
       }
+      broadcast_notifications: {
+        Row: {
+          admin_id: string
+          body: string
+          completed_at: string | null
+          created_at: string
+          failed_count: number
+          id: string
+          sent_count: number
+          status: Database["public"]["Enums"]["broadcast_status"]
+          target_audience: Database["public"]["Enums"]["broadcast_target"]
+          title: string
+        }
+        Insert: {
+          admin_id: string
+          body: string
+          completed_at?: string | null
+          created_at?: string
+          failed_count?: number
+          id?: string
+          sent_count?: number
+          status?: Database["public"]["Enums"]["broadcast_status"]
+          target_audience?: Database["public"]["Enums"]["broadcast_target"]
+          title: string
+        }
+        Update: {
+          admin_id?: string
+          body?: string
+          completed_at?: string | null
+          created_at?: string
+          failed_count?: number
+          id?: string
+          sent_count?: number
+          status?: Database["public"]["Enums"]["broadcast_status"]
+          target_audience?: Database["public"]["Enums"]["broadcast_target"]
+          title?: string
+        }
+        Relationships: []
+      }
       conversations: {
         Row: {
           buyer_id: string
@@ -851,6 +890,8 @@ export type Database = {
     }
     Enums: {
       app_role: "admin" | "moderator" | "user"
+      broadcast_status: "pending" | "sending" | "completed" | "failed"
+      broadcast_target: "all" | "sellers" | "buyers" | "verified_users"
       listing_status:
         | "active"
         | "sold"
@@ -1007,6 +1048,8 @@ export const Constants = {
   public: {
     Enums: {
       app_role: ["admin", "moderator", "user"],
+      broadcast_status: ["pending", "sending", "completed", "failed"],
+      broadcast_target: ["all", "sellers", "buyers", "verified_users"],
       listing_status: [
         "active",
         "sold",
