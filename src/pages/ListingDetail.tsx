@@ -17,12 +17,9 @@ import {
   Loader2,
   Star,
   Pencil,
-  Trash2,
   Flag,
   Maximize2,
-  X,
-  ChevronLeft,
-  ChevronRight
+  X
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { SellerCard } from '@/components/SellerCard';
@@ -38,6 +35,7 @@ import { ReviewsList, type Review } from '@/components/ReviewsList';
 import { useReviewEligibility } from '@/hooks/useReviewEligibility';
 import { ReportModal } from '@/components/ReportModal';
 import { Map as MapComponent } from '@/components/Map';
+import { ImageViewer } from '@/components/ImageViewer';
 import useEmblaCarousel from 'embla-carousel-react';
 import type { Listing, User } from '@/types';
 
@@ -60,7 +58,6 @@ export default function ListingDetail() {
   const [galleryIndex, setGalleryIndex] = useState(0);
 
   const [emblaRef, emblaApi] = useEmblaCarousel({ loop: true });
-  const [galleryEmblaRef, galleryEmblaApi] = useEmblaCarousel({ loop: true, startIndex: galleryIndex });
 
   // Sync carousel index with activeImage state
   useEffect(() => {
@@ -69,21 +66,6 @@ export default function ListingDetail() {
     emblaApi.on('select', onSelect);
     return () => { emblaApi.off('select', onSelect); };
   }, [emblaApi]);
-
-  // Sync gallery carousel with galleryIndex
-  useEffect(() => {
-    if (galleryEmblaApi && showGallery) {
-      galleryEmblaApi.scrollTo(galleryIndex, true);
-    }
-  }, [galleryEmblaApi, galleryIndex, showGallery]);
-
-  // Update gallery index on scroll
-  useEffect(() => {
-    if (!galleryEmblaApi) return;
-    const onSelect = () => setGalleryIndex(galleryEmblaApi.selectedScrollSnap());
-    galleryEmblaApi.on('select', onSelect);
-    return () => { galleryEmblaApi.off('select', onSelect); };
-  }, [galleryEmblaApi]);
 
   const eligibility = useReviewEligibility(id || '', listing?.ownerId || '');
 
@@ -610,80 +592,14 @@ export default function ListingDetail() {
         </div>
       </div>
 
-      {/* Fullscreen Gallery Modal */}
-      {showGallery && (
-        <div className="fixed inset-0 z-50 bg-black animate-fade-in">
-          <div className="absolute inset-0 flex items-center justify-center" ref={galleryEmblaRef}>
-            <div className="flex h-full w-full">
-              {listing.images.map((img, idx) => (
-                <div key={idx} className="flex-[0_0_100%] min-w-0 flex items-center justify-center p-4">
-                  <img
-                    src={img}
-                    alt={`${listing.title} - ${idx + 1}`}
-                    className="max-w-full max-h-full object-contain"
-                  />
-                </div>
-              ))}
-            </div>
-          </div>
-
-          {/* Gallery Controls */}
-          <div className="absolute top-4 left-4 right-4 flex items-center justify-between safe-top">
-            <Button
-              variant="ghost"
-              size="icon"
-              className="bg-white/10 backdrop-blur-sm hover:bg-white/20 text-white"
-              onClick={() => setShowGallery(false)}
-            >
-              <X className="w-5 h-5" />
-            </Button>
-            <span className="text-white/80 text-sm font-medium">
-              {galleryIndex + 1} / {listing.images.length}
-            </span>
-            <div className="w-10" /> {/* Spacer for centering */}
-          </div>
-
-          {/* Navigation Arrows */}
-          {listing.images.length > 1 && (
-            <>
-              <Button
-                variant="ghost"
-                size="icon"
-                className="absolute left-4 top-1/2 -translate-y-1/2 bg-white/10 backdrop-blur-sm hover:bg-white/20 text-white"
-                onClick={() => galleryEmblaApi?.scrollPrev()}
-              >
-                <ChevronLeft className="w-6 h-6" />
-              </Button>
-              <Button
-                variant="ghost"
-                size="icon"
-                className="absolute right-4 top-1/2 -translate-y-1/2 bg-white/10 backdrop-blur-sm hover:bg-white/20 text-white"
-                onClick={() => galleryEmblaApi?.scrollNext()}
-              >
-                <ChevronRight className="w-6 h-6" />
-              </Button>
-            </>
-          )}
-
-          {/* Thumbnail indicators */}
-          <div className="absolute bottom-6 left-1/2 -translate-x-1/2 flex gap-2 safe-bottom">
-            {listing.images.map((img, idx) => (
-              <button
-                key={idx}
-                onClick={() => galleryEmblaApi?.scrollTo(idx)}
-                className={cn(
-                  "w-12 h-12 rounded-lg overflow-hidden border-2 transition-all",
-                  idx === galleryIndex 
-                    ? "border-white opacity-100" 
-                    : "border-transparent opacity-50 hover:opacity-75"
-                )}
-              >
-                <img src={img} alt="" className="w-full h-full object-cover" />
-              </button>
-            ))}
-          </div>
-        </div>
-      )}
+      {/* Fullscreen Image Viewer */}
+      <ImageViewer
+        images={listing.images}
+        initialIndex={galleryIndex}
+        isOpen={showGallery}
+        onClose={() => setShowGallery(false)}
+        alt={listing.title}
+      />
 
       {/* Fullscreen Map Modal */}
       {showFullscreenMap && listing.location.lat !== 0 && listing.location.lng !== 0 && (
