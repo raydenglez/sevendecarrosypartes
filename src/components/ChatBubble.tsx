@@ -3,6 +3,7 @@ import { Check, CheckCheck, Mic } from 'lucide-react';
 import { format } from 'date-fns';
 import { useState } from 'react';
 import { VoiceMessagePlayer } from './VoiceMessagePlayer';
+import { ImageViewer } from './ImageViewer';
 
 type MessageType = 'text' | 'image' | 'voice';
 
@@ -35,7 +36,7 @@ export function ChatBubble({
             <img 
               src={mediaUrl || ''} 
               alt="Shared image"
-              className="max-w-full rounded-lg cursor-pointer"
+              className="max-w-full rounded-lg cursor-pointer hover:opacity-90 transition-opacity"
               onClick={() => setImageExpanded(true)}
             />
             {content && <p className="text-sm leading-relaxed break-words mt-2">{content}</p>}
@@ -95,18 +96,14 @@ export function ChatBubble({
         </div>
       </div>
 
-      {/* Full screen image viewer */}
-      {imageExpanded && messageType === 'image' && (
-        <div 
-          className="fixed inset-0 bg-black/90 z-50 flex items-center justify-center p-4"
-          onClick={() => setImageExpanded(false)}
-        >
-          <img 
-            src={mediaUrl || ''} 
-            alt="Expanded image"
-            className="max-w-full max-h-full object-contain"
-          />
-        </div>
+      {/* Full screen image viewer with zoom */}
+      {messageType === 'image' && mediaUrl && (
+        <ImageViewer
+          images={[mediaUrl]}
+          isOpen={imageExpanded}
+          onClose={() => setImageExpanded(false)}
+          alt="Shared image"
+        />
       )}
     </>
   );
