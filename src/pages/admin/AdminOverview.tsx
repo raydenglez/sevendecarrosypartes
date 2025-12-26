@@ -12,7 +12,7 @@ import {
   History as HistoryIcon
 } from 'lucide-react';
 import { AdminLayout } from './AdminLayout';
-
+import { CleanupDashboard } from '@/components/admin/CleanupDashboard';
 interface DashboardStats {
   totalUsers: number;
   totalListings: number;
@@ -223,6 +223,9 @@ export default function AdminOverview() {
             </CardContent>
           </Card>
         </div>
+
+        {/* Cleanup Dashboard */}
+        <CleanupDashboard />
       </div>
     </AdminLayout>
   );

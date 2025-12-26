@@ -210,11 +210,13 @@ export type Database = {
         Row: {
           created_at: string | null
           description: string | null
+          expires_at: string | null
           id: string
           images: string[] | null
           is_negotiable: boolean | null
           is_premium: boolean | null
           is_sponsored: boolean | null
+          last_bumped_at: string | null
           location_city: string | null
           location_lat: number | null
           location_lng: number | null
@@ -232,11 +234,13 @@ export type Database = {
         Insert: {
           created_at?: string | null
           description?: string | null
+          expires_at?: string | null
           id?: string
           images?: string[] | null
           is_negotiable?: boolean | null
           is_premium?: boolean | null
           is_sponsored?: boolean | null
+          last_bumped_at?: string | null
           location_city?: string | null
           location_lat?: number | null
           location_lng?: number | null
@@ -254,11 +258,13 @@ export type Database = {
         Update: {
           created_at?: string | null
           description?: string | null
+          expires_at?: string | null
           id?: string
           images?: string[] | null
           is_negotiable?: boolean | null
           is_premium?: boolean | null
           is_sponsored?: boolean | null
+          last_bumped_at?: string | null
           location_city?: string | null
           location_lat?: number | null
           location_lng?: number | null

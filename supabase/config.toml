@@ -29,3 +29,12 @@ verify_jwt = true
 
 [functions.process-scheduled-notifications]
 verify_jwt = false
+
+[functions.cleanup-stale-listings]
+verify_jwt = true
+
+[functions.cleanup-abandoned-drafts]
+verify_jwt = true
+
+[functions.cleanup-orphaned-images]
+verify_jwt = true
