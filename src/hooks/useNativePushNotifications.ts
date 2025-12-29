@@ -1,6 +1,7 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useRef } from 'react';
 import { Capacitor } from '@capacitor/core';
 import { PushNotifications, Token, PushNotificationSchema, ActionPerformed } from '@capacitor/push-notifications';
+import { LocalNotifications } from '@capacitor/local-notifications';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from './useAuth';
 import { toast } from 'sonner';
@@ -12,6 +13,7 @@ export function useNativePushNotifications() {
   const [isSubscribed, setIsSubscribed] = useState(false);
   const [isSupported, setIsSupported] = useState(false);
   const [permission, setPermission] = useState<'granted' | 'denied' | 'default'>('default');
+  const listenersSetup = useRef(false);
 
   const platform = Capacitor.getPlatform();
   const isNative = platform === 'ios' || platform === 'android';
@@ -19,9 +21,11 @@ export function useNativePushNotifications() {
   useEffect(() => {
     setIsSupported(isNative);
     
-    if (isNative && user) {
+    if (isNative && user && !listenersSetup.current) {
       checkRegistration();
       setupListeners();
+      setupLocalNotifications();
+      listenersSetup.current = true;
     }
   }, [user, isNative]);
 
@@ -29,7 +33,6 @@ export function useNativePushNotifications() {
     if (!user) return;
 
     try {
-      // Check if we have a subscription in the database for this user
       const { data } = await supabase
         .from('push_subscriptions')
         .select('*')
@@ -46,6 +49,84 @@ export function useNativePushNotifications() {
     }
   };
 
+  const setupLocalNotifications = async () => {
+    // Request local notification permissions
+    const permResult = await LocalNotifications.requestPermissions();
+    if (permResult.display !== 'granted') {
+      console.warn('Local notification permission not granted');
+      return;
+    }
+
+    // Create notification channels for Android
+    if (platform === 'android') {
+      await LocalNotifications.createChannel({
+        id: 'messages',
+        name: 'Messages',
+        description: 'Chat message notifications',
+        importance: 5,
+        visibility: 1,
+        vibration: true,
+        sound: 'default',
+      });
+
+      await LocalNotifications.createChannel({
+        id: 'listings',
+        name: 'Listings',
+        description: 'Price drops and new listings',
+        importance: 3,
+        visibility: 1,
+        vibration: true,
+      });
+    }
+
+    // Register action types for interactive notifications
+    await LocalNotifications.registerActionTypes({
+      types: [
+        {
+          id: 'MESSAGE_ACTIONS',
+          actions: [
+            { id: 'open', title: 'Open', foreground: true },
+            { id: 'mark_read', title: 'Mark as Read', foreground: false },
+          ],
+        },
+      ],
+    });
+
+    // Handle local notification actions
+    LocalNotifications.addListener('localNotificationActionPerformed', (action) => {
+      const data = action.notification.extra;
+      const actionId = action.actionId;
+
+      if (actionId === 'tap' || actionId === 'open') {
+        if (data?.conversationId) {
+          navigate(`/chat/${data.conversationId}`);
+        } else if (data?.listingId) {
+          navigate(`/listing/${data.listingId}`);
+        } else if (data?.url) {
+          navigate(data.url);
+        }
+      }
+    });
+  };
+
+  const showLocalNotification = async (notification: PushNotificationSchema) => {
+    const notificationId = Math.floor(Math.random() * 100000);
+    
+    await LocalNotifications.schedule({
+      notifications: [
+        {
+          id: notificationId,
+          title: notification.title || 'New notification',
+          body: notification.body || '',
+          channelId: 'messages',
+          extra: notification.data,
+          actionTypeId: 'MESSAGE_ACTIONS',
+          smallIcon: 'ic_notification',
+        },
+      ],
+    });
+  };
+
   const setupListeners = () => {
     // Handle registration success
     PushNotifications.addListener('registration', async (token: Token) => {
@@ -60,12 +141,10 @@ export function useNativePushNotifications() {
     });
 
     // Handle push notification received while app is in foreground
-    PushNotifications.addListener('pushNotificationReceived', (notification: PushNotificationSchema) => {
+    PushNotifications.addListener('pushNotificationReceived', async (notification: PushNotificationSchema) => {
       console.log('Push notification received:', notification);
-      // Show in-app notification or toast
-      toast(notification.title || 'New notification', {
-        description: notification.body,
-      });
+      // Show native local notification instead of toast
+      await showLocalNotification(notification);
     });
 
     // Handle push notification action (user tapped on notification)
@@ -73,7 +152,6 @@ export function useNativePushNotifications() {
       console.log('Push notification action performed:', action);
       const data = action.notification.data;
       
-      // Navigate to the relevant screen
       if (data?.conversationId) {
         navigate(`/chat/${data.conversationId}`);
       } else if (data?.url) {
