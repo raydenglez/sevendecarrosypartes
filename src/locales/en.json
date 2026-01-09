@@ -24,7 +24,8 @@
     "mi": "mi",
     "miAway": "mi away",
     "copied": "Copied!",
-    "linkCopied": "Link copied to clipboard"
+    "linkCopied": "Link copied to clipboard",
+    "notSet": "Not set"
   },
   "nav": {
     "home": "Explore",
@@ -166,6 +167,9 @@
     "totalItems": "Items",
     "connect": "Connect",
     "verified": "Verified Seller",
+    "socialLinks": "Social & Business Links",
+    "socialLinksDesc": "Add your social media and business links so buyers can easily find and contact you.",
+    "website": "Website",
     "bio": "Bio",
     "bioPlaceholder": "A few words about yourself or your business...",
     "bioDesc": "Max 150 characters"

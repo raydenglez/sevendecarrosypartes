@@ -17,7 +17,10 @@ import {
   Megaphone,
   BadgeCheck,
   Users,
-  ExternalLink
+  ExternalLink,
+  Instagram,
+  Globe,
+  Phone
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { supabase } from '@/integrations/supabase/client';
@@ -40,6 +43,9 @@ interface PublicProfileData {
   user_type: string | null;
   business_category: string | null;
   bio: string | null;
+  instagram_url: string | null;
+  whatsapp_number: string | null;
+  website_url: string | null;
 }
 
 interface Listing {
@@ -372,6 +378,42 @@ export default function PublicProfile() {
                   <p className="text-xs text-muted-foreground mt-1">{t('profile.totalItems')}</p>
                 </div>
               </div>
+
+              {/* Social Links */}
+              {(profile.instagram_url || profile.whatsapp_number || profile.website_url) && (
+                <div className="flex items-center justify-center gap-3 mt-6">
+                  {profile.instagram_url && (
+                    <a
+                      href={profile.instagram_url.startsWith('http') ? profile.instagram_url : `https://instagram.com/${profile.instagram_url.replace('@', '')}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="w-10 h-10 rounded-full bg-gradient-to-br from-purple-500 to-pink-500 flex items-center justify-center text-white hover:opacity-80 transition-opacity"
+                    >
+                      <Instagram className="w-5 h-5" />
+                    </a>
+                  )}
+                  {profile.whatsapp_number && (
+                    <a
+                      href={`https://wa.me/${profile.whatsapp_number.replace(/[^0-9]/g, '')}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="w-10 h-10 rounded-full bg-[#25D366] flex items-center justify-center text-white hover:opacity-80 transition-opacity"
+                    >
+                      <Phone className="w-5 h-5" />
+                    </a>
+                  )}
+                  {profile.website_url && (
+                    <a
+                      href={profile.website_url.startsWith('http') ? profile.website_url : `https://${profile.website_url}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="w-10 h-10 rounded-full bg-primary/20 flex items-center justify-center text-primary hover:bg-primary/30 transition-colors"
+                    >
+                      <Globe className="w-5 h-5" />
+                    </a>
+                  )}
+                </div>
+              )}
 
               {/* Action Buttons */}
               <div className="flex gap-3 mt-6">
