@@ -7,11 +7,12 @@ import {
   MapPin, 
   Instagram, 
   Phone as PhoneIcon,
-  Globe,
-  CheckCircle2,
-  Circle
+  Trophy,
+  Sparkles
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { motion, AnimatePresence } from 'framer-motion';
+import { useState, useEffect } from 'react';
 
 interface ProfileCompletionCardProps {
   profileData: {
@@ -40,6 +41,58 @@ interface CompletionItem {
   action: () => void;
 }
 
+// Confetti particle component
+function ConfettiParticle({ delay, color }: { delay: number; color: string }) {
+  const randomX = Math.random() * 100;
+  const randomRotation = Math.random() * 360;
+  
+  return (
+    <motion.div
+      className="absolute w-2 h-2 rounded-sm"
+      style={{ 
+        left: `${randomX}%`, 
+        top: '-10px',
+        backgroundColor: color,
+      }}
+      initial={{ y: 0, opacity: 1, rotate: 0, scale: 1 }}
+      animate={{ 
+        y: 150, 
+        opacity: 0, 
+        rotate: randomRotation + 360,
+        scale: 0.5,
+        x: (Math.random() - 0.5) * 100
+      }}
+      transition={{ 
+        duration: 2, 
+        delay: delay,
+        ease: "easeOut"
+      }}
+    />
+  );
+}
+
+// Celebration component
+function CelebrationAnimation() {
+  const colors = ['#FF6B35', '#3B82F6', '#10B981', '#F59E0B', '#8B5CF6', '#EC4899'];
+  const particles = Array.from({ length: 30 }, (_, i) => ({
+    id: i,
+    delay: Math.random() * 0.5,
+    color: colors[i % colors.length],
+  }));
+
+  return (
+    <div className="absolute inset-0 overflow-hidden pointer-events-none">
+      {particles.map((particle) => (
+        <ConfettiParticle 
+          key={particle.id} 
+          delay={particle.delay} 
+          color={particle.color} 
+        />
+      ))}
+    </div>
+  );
+}
+
 export function ProfileCompletionCard({
   profileData,
   socialData,
@@ -48,6 +101,8 @@ export function ProfileCompletionCard({
   onEditPersonalInfo,
 }: ProfileCompletionCardProps) {
   const { t } = useTranslation();
+  const [showCelebration, setShowCelebration] = useState(false);
+  const [hasShownCelebration, setHasShownCelebration] = useState(false);
 
   const items: CompletionItem[] = [
     {
@@ -97,10 +152,76 @@ export function ProfileCompletionCard({
   const completedCount = items.filter(item => item.completed).length;
   const percentage = Math.round((completedCount / items.length) * 100);
   const incompleteItems = items.filter(item => !item.completed);
+  const isComplete = percentage === 100;
 
-  // Don't show if 100% complete
-  if (percentage === 100) {
-    return null;
+  // Trigger celebration when reaching 100%
+  useEffect(() => {
+    if (isComplete && !hasShownCelebration) {
+      setShowCelebration(true);
+      setHasShownCelebration(true);
+      // Hide celebration after animation
+      const timer = setTimeout(() => setShowCelebration(false), 3000);
+      return () => clearTimeout(timer);
+    }
+  }, [isComplete, hasShownCelebration]);
+
+  // Show celebration card when complete
+  if (isComplete) {
+    return (
+      <motion.div 
+        className="relative bg-gradient-to-br from-success/20 via-primary/10 to-warning/20 rounded-2xl p-4 border border-success/30 overflow-hidden"
+        initial={{ scale: 0.95, opacity: 0 }}
+        animate={{ scale: 1, opacity: 1 }}
+        transition={{ duration: 0.3 }}
+      >
+        <AnimatePresence>
+          {showCelebration && <CelebrationAnimation />}
+        </AnimatePresence>
+        
+        <div className="flex items-center gap-3">
+          <motion.div 
+            className="w-12 h-12 rounded-full bg-success/20 flex items-center justify-center"
+            animate={{ 
+              scale: showCelebration ? [1, 1.2, 1] : 1,
+              rotate: showCelebration ? [0, -10, 10, 0] : 0
+            }}
+            transition={{ duration: 0.5, repeat: showCelebration ? 2 : 0 }}
+          >
+            <Trophy className="w-6 h-6 text-success" />
+          </motion.div>
+          <div className="flex-1">
+            <div className="flex items-center gap-2">
+              <h3 className="font-bold text-foreground">
+                {t('profile.completion.complete')}
+              </h3>
+              <motion.div
+                animate={{ rotate: showCelebration ? 360 : 0 }}
+                transition={{ duration: 1, repeat: showCelebration ? 2 : 0 }}
+              >
+                <Sparkles className="w-4 h-4 text-warning" />
+              </motion.div>
+            </div>
+            <p className="text-sm text-muted-foreground">
+              {t('profile.completion.completeDesc')}
+            </p>
+          </div>
+          <span className="text-2xl font-bold text-success">100%</span>
+        </div>
+
+        {/* All items completed indicators */}
+        <div className="flex items-center gap-1 mt-4">
+          {items.map((item, index) => (
+            <motion.div
+              key={item.key}
+              className="flex-1 h-1.5 rounded-full bg-success"
+              initial={{ scaleX: 0 }}
+              animate={{ scaleX: 1 }}
+              transition={{ delay: index * 0.1, duration: 0.3 }}
+            />
+          ))}
+        </div>
+      </motion.div>
+    );
   }
 
   return (

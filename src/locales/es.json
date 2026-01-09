@@ -163,7 +163,9 @@
       "bio": "Bio",
       "location": "Ubicación",
       "phone": "Teléfono",
-      "social": "Redes Sociales"
+      "social": "Redes Sociales",
+      "complete": "¡Perfil Completo!",
+      "completeDesc": "Estás listo para destacar"
     }
   },
   "settings": {

@@ -182,7 +182,9 @@
       "bio": "Bio",
       "location": "Location",
       "phone": "Phone",
-      "social": "Social Links"
+      "social": "Social Links",
+      "complete": "Profile Complete!",
+      "completeDesc": "You're all set to stand out"
     }
   },
   "settings": {
