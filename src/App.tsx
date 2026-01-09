@@ -13,6 +13,7 @@ import { FavoritesProvider } from "@/contexts/FavoritesContext";
 import { LocationProvider } from "@/contexts/LocationContext";
 import { PWAUpdatePrompt } from "@/components/PWAUpdatePrompt";
 import { PWAInstallPrompt } from "@/components/PWAInstallPrompt";
+import { BadgeCelebrationProvider } from "@/components/BadgeCelebrationProvider";
 import Home from "./pages/Home";
 import ListingDetail from "./pages/ListingDetail";
 import Profile from "./pages/Profile";
@@ -77,6 +78,7 @@ export default function App() {
                   <Sonner />
                   <PWAUpdatePrompt />
                   <PWAInstallPrompt />
+                  <BadgeCelebrationProvider />
                   <BrowserRouter>
                     <Suspense fallback={<PageLoader />}>
                       <Routes>
