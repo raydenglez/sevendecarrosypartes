@@ -22,7 +22,21 @@ import {
   Settings,
   Handshake,
   Medal,
-  Sparkles
+  Sparkles,
+  Clock,
+  Timer,
+  Wifi,
+  MessageSquare,
+  Users,
+  Network,
+  HeartHandshake,
+  MessagesSquare,
+  Mail,
+  Calendar,
+  CalendarDays,
+  CalendarCheck,
+  CalendarHeart,
+  Cake
 } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { cn } from '@/lib/utils';
@@ -197,6 +211,114 @@ const BADGE_CONFIG: Record<string, {
     icon: Crown,
     gradient: 'from-purple-400 via-violet-500 to-indigo-600',
     shadowColor: 'shadow-purple-500/40',
+    rarity: 'legendary',
+    animation: 'animate-pulse',
+  },
+  
+  // Response time badges
+  'lightning_responder': {
+    icon: Zap,
+    gradient: 'from-yellow-300 via-amber-400 to-orange-500',
+    shadowColor: 'shadow-yellow-500/50',
+    rarity: 'rare',
+    animation: 'animate-pulse',
+  },
+  'quick_responder': {
+    icon: Clock,
+    gradient: 'from-cyan-400 via-blue-500 to-indigo-600',
+    shadowColor: 'shadow-cyan-500/40',
+    rarity: 'rare',
+  },
+  'speed_demon': {
+    icon: Timer,
+    gradient: 'from-orange-400 via-red-500 to-pink-600',
+    shadowColor: 'shadow-orange-500/40',
+    rarity: 'epic',
+  },
+  'always_online': {
+    icon: Wifi,
+    gradient: 'from-green-400 via-emerald-500 to-teal-600',
+    shadowColor: 'shadow-green-500/40',
+    rarity: 'legendary',
+    animation: 'animate-pulse',
+  },
+  
+  // Conversation badges
+  'first_conversation': {
+    icon: MessageSquare,
+    gradient: 'from-sky-400 via-blue-500 to-indigo-600',
+    shadowColor: 'shadow-sky-500/40',
+    rarity: 'common',
+  },
+  'social_butterfly': {
+    icon: Users,
+    gradient: 'from-pink-400 via-rose-500 to-red-600',
+    shadowColor: 'shadow-pink-500/40',
+    rarity: 'rare',
+  },
+  'networking_pro': {
+    icon: Network,
+    gradient: 'from-violet-400 via-purple-500 to-fuchsia-600',
+    shadowColor: 'shadow-violet-500/40',
+    rarity: 'epic',
+  },
+  'community_pillar': {
+    icon: HeartHandshake,
+    gradient: 'from-rose-400 via-pink-500 to-fuchsia-600',
+    shadowColor: 'shadow-rose-500/40',
+    rarity: 'legendary',
+    animation: 'animate-pulse',
+  },
+  
+  // Message count badges
+  'chatty': {
+    icon: MessageCircle,
+    gradient: 'from-teal-400 via-cyan-500 to-blue-600',
+    shadowColor: 'shadow-teal-500/40',
+    rarity: 'common',
+  },
+  'super_communicator': {
+    icon: MessagesSquare,
+    gradient: 'from-blue-400 via-indigo-500 to-violet-600',
+    shadowColor: 'shadow-blue-500/40',
+    rarity: 'rare',
+  },
+  'chat_legend': {
+    icon: Mail,
+    gradient: 'from-fuchsia-400 via-purple-500 to-violet-600',
+    shadowColor: 'shadow-fuchsia-500/40',
+    rarity: 'epic',
+  },
+  
+  // Loyalty / tenure badges
+  'one_week': {
+    icon: Calendar,
+    gradient: 'from-slate-400 via-gray-500 to-zinc-600',
+    shadowColor: 'shadow-slate-500/40',
+    rarity: 'common',
+  },
+  'one_month': {
+    icon: CalendarDays,
+    gradient: 'from-blue-400 via-indigo-500 to-purple-600',
+    shadowColor: 'shadow-blue-500/40',
+    rarity: 'common',
+  },
+  'three_months': {
+    icon: CalendarCheck,
+    gradient: 'from-emerald-400 via-green-500 to-teal-600',
+    shadowColor: 'shadow-emerald-500/40',
+    rarity: 'rare',
+  },
+  'six_months': {
+    icon: CalendarHeart,
+    gradient: 'from-pink-400 via-rose-500 to-red-600',
+    shadowColor: 'shadow-pink-500/40',
+    rarity: 'epic',
+  },
+  'one_year': {
+    icon: Cake,
+    gradient: 'from-yellow-300 via-amber-400 via-orange-500 to-red-600',
+    shadowColor: 'shadow-yellow-500/50',
     rarity: 'legendary',
     animation: 'animate-pulse',
   },
