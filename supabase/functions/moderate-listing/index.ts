@@ -12,6 +12,54 @@ serve(async (req) => {
   }
 
   try {
+    const SUPABASE_URL = Deno.env.get('SUPABASE_URL');
+    const SUPABASE_ANON_KEY = Deno.env.get('SUPABASE_ANON_KEY');
+    const SUPABASE_SERVICE_ROLE_KEY = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY');
+    const LOVABLE_API_KEY = Deno.env.get('LOVABLE_API_KEY');
+
+    // 1. Verify authentication
+    const authHeader = req.headers.get('Authorization');
+    if (!authHeader) {
+      return new Response(
+        JSON.stringify({ error: 'Authorization header required' }),
+        { status: 401, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
+    }
+
+    const token = authHeader.replace('Bearer ', '');
+    const userClient = createClient(SUPABASE_URL!, SUPABASE_ANON_KEY!, {
+      global: { headers: { Authorization: authHeader } }
+    });
+
+    const { data: { user: caller }, error: authError } = await userClient.auth.getUser(token);
+    if (authError || !caller) {
+      return new Response(
+        JSON.stringify({ error: 'Unauthorized' }),
+        { status: 401, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
+    }
+
+    // 2. Create service role client for role checks
+    const supabase = createClient(SUPABASE_URL!, SUPABASE_SERVICE_ROLE_KEY!);
+
+    // 3. Verify admin or moderator role
+    const { data: isAdmin } = await supabase.rpc('has_role', {
+      _user_id: caller.id,
+      _role: 'admin'
+    });
+    
+    const { data: isModerator } = await supabase.rpc('has_role', {
+      _user_id: caller.id,
+      _role: 'moderator'
+    });
+
+    if (!isAdmin && !isModerator) {
+      return new Response(
+        JSON.stringify({ error: 'Admin or moderator access required' }),
+        { status: 403, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
+    }
+
     const { listingId } = await req.json();
     
     if (!listingId) {
@@ -21,10 +69,6 @@ serve(async (req) => {
       );
     }
 
-    const LOVABLE_API_KEY = Deno.env.get('LOVABLE_API_KEY');
-    const SUPABASE_URL = Deno.env.get('SUPABASE_URL');
-    const SUPABASE_SERVICE_ROLE_KEY = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY');
-
     if (!LOVABLE_API_KEY) {
       console.error('LOVABLE_API_KEY is not configured');
       return new Response(
@@ -32,8 +76,6 @@ serve(async (req) => {
         { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
       );
     }
-
-    const supabase = createClient(SUPABASE_URL!, SUPABASE_SERVICE_ROLE_KEY!);
 
     // Fetch the listing with its attributes
     const { data: listing, error: listingError } = await supabase
@@ -56,7 +98,7 @@ serve(async (req) => {
       );
     }
 
-    console.log('Moderating listing:', listing.title);
+    console.log('Moderating listing:', listing.title, 'by user:', caller.id);
 
     // Prepare context for AI analysis
     const vehicleInfo = listing.vehicle_attributes?.[0] 
