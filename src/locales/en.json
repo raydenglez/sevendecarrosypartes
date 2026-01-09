@@ -160,8 +160,12 @@
     "notFound": "Profile not found",
     "notFoundDesc": "This profile doesn't exist or has been removed",
     "noListings": "No listings yet",
+    "noListingsDesc": "This user hasn't published any listings",
     "viewProfile": "View {{name}}'s profile on CarNetworx",
-    "activeListings": "active listings",
+    "activeListings": "Active Listings",
+    "totalItems": "Items",
+    "connect": "Connect",
+    "verified": "Verified Seller",
     "bio": "Bio",
     "bioPlaceholder": "A few words about yourself or your business...",
     "bioDesc": "Max 150 characters"

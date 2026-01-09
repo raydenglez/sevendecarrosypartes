@@ -143,7 +143,14 @@
     "servicesOffered": "Serviços Oferecidos",
     "appointmentManagement": "Gerenciamento de consultas e agendamentos",
     "viewProfile": "Ver o perfil de {{name}} no CarNetworx",
-    "activeListings": "anúncios ativos"
+    "activeListings": "Anúncios Ativos",
+    "noListings": "Sem anúncios ainda",
+    "noListingsDesc": "Este usuário não publicou anúncios",
+    "totalItems": "Itens",
+    "connect": "Conectar",
+    "verified": "Vendedor Verificado",
+    "listings": "Anúncios",
+    "services": "Serviços"
   },
   "settings": {
     "account": "Conta",

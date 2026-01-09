@@ -11,10 +11,13 @@ import {
   Wrench,
   Settings2,
   Loader2,
-  MessageCircle,
+  MessageSquare,
   Share2,
   Heart,
-  Megaphone
+  Megaphone,
+  BadgeCheck,
+  Users,
+  ExternalLink
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { supabase } from '@/integrations/supabase/client';
@@ -172,9 +175,10 @@ export default function PublicProfile() {
 
   const handleShare = async () => {
     const shareUrl = `${window.location.origin}/profile/@${cleanUsername}`;
+    const displayName = profile?.full_name || cleanUsername || 'this seller';
     const shareData = {
-      title: profile?.full_name || cleanUsername || 'Profile',
-      text: `Check out ${profile?.full_name || cleanUsername}'s profile on CarNetworx`,
+      title: `${displayName} on CarNetworx`,
+      text: `🚗 Check out ${displayName}'s profile on CarNetworx! Browse their vehicles, parts & services. Connect with trusted sellers in your area.`,
       url: shareUrl,
     };
 
@@ -182,7 +186,7 @@ export default function PublicProfile() {
       if (navigator.share && navigator.canShare(shareData)) {
         await navigator.share(shareData);
       } else {
-        await navigator.clipboard.writeText(shareUrl);
+        await navigator.clipboard.writeText(`${shareData.text}\n\n${shareUrl}`);
         toast({
           title: t('common.copied'),
           description: t('common.linkCopied'),
@@ -191,7 +195,7 @@ export default function PublicProfile() {
     } catch (error) {
       // User cancelled share or error occurred
       if ((error as Error).name !== 'AbortError') {
-        await navigator.clipboard.writeText(shareUrl);
+        await navigator.clipboard.writeText(`${shareData.text}\n\n${shareUrl}`);
         toast({
           title: t('common.copied'),
           description: t('common.linkCopied'),
@@ -262,109 +266,169 @@ export default function PublicProfile() {
               <Button variant="ghost" size="icon" onClick={() => navigate(-1)}>
                 <ArrowLeft className="w-5 h-5" />
               </Button>
-              <h1 className="text-lg font-semibold text-foreground">@{cleanUsername}</h1>
+              <h1 className="text-lg font-semibold text-foreground">Profile</h1>
             </div>
             <Button variant="ghost" size="icon" onClick={handleShare}>
-              <Share2 className="w-5 h-5" />
+              <ExternalLink className="w-5 h-5" />
             </Button>
           </div>
         </header>
 
-        {/* Profile Info */}
-        <div className="flex flex-col items-center px-4 py-6">
-          {profile.avatar_url ? (
-            <img
-              src={profile.avatar_url}
-              alt={profile.full_name || 'User'}
-              className="w-24 h-24 rounded-full object-cover border-4 border-card"
-            />
-          ) : (
-            <div className="w-24 h-24 rounded-full bg-gradient-orange border-4 border-card flex items-center justify-center">
-              <span className="text-2xl font-bold text-primary-foreground">
-                {profile.full_name?.split(' ').map(n => n[0]).join('').slice(0, 2).toUpperCase() || 'U'}
-              </span>
-            </div>
-          )}
+        {/* Hero Profile Section */}
+        <div className="relative">
+          {/* Gradient Background */}
+          <div className="h-32 bg-gradient-to-br from-primary/20 via-primary/10 to-background" />
           
-          <h2 className="text-xl font-bold text-foreground mt-4">{profile.full_name || 'User'}</h2>
-          
-          {/* Business Category Badge */}
-          {profile.business_category && (
-            <div className="mt-2">
-              <BusinessCategoryBadge category={profile.business_category} />
-            </div>
-          )}
-          
-          {/* Bio */}
-          {profile.bio && (
-            <p className="text-sm text-muted-foreground mt-2 text-center max-w-xs">
-              {profile.bio}
-            </p>
-          )}
-          
-          {profile.location_city && (
-            <div className="flex items-center gap-1 text-sm text-muted-foreground mt-2">
-              <MapPin className="w-4 h-4" />
-              <span>{profile.location_city}{profile.location_state ? `, ${profile.location_state}` : ''}</span>
-            </div>
-          )}
-          
-          <div className="flex items-center gap-4 mt-2">
-            <div className="flex items-center gap-1 text-sm">
-              <Star className="w-4 h-4 text-warning fill-warning" />
-              <span className="font-medium text-foreground">
-                {(profile.rating_avg || 0).toFixed(1)}
-              </span>
-              <span className="text-muted-foreground">
-                ({profile.rating_count || 0})
-              </span>
-            </div>
-            <div className="flex items-center gap-1 text-sm text-muted-foreground">
-              <Calendar className="w-4 h-4" />
-              <span>{memberSince}</span>
+          {/* Profile Card */}
+          <div className="relative px-4 -mt-16">
+            <div className="bg-card rounded-2xl p-6 shadow-lg border border-border">
+              {/* Avatar & Verification */}
+              <div className="flex flex-col items-center -mt-16">
+                <div className="relative">
+                  {profile.avatar_url ? (
+                    <img
+                      src={profile.avatar_url}
+                      alt={profile.full_name || 'User'}
+                      className="w-28 h-28 rounded-full object-cover border-4 border-card shadow-xl"
+                    />
+                  ) : (
+                    <div className="w-28 h-28 rounded-full bg-gradient-orange border-4 border-card shadow-xl flex items-center justify-center">
+                      <span className="text-3xl font-bold text-primary-foreground">
+                        {profile.full_name?.split(' ').map(n => n[0]).join('').slice(0, 2).toUpperCase() || 'U'}
+                      </span>
+                    </div>
+                  )}
+                  {profile.is_verified && (
+                    <div className="absolute -bottom-1 -right-1 bg-primary rounded-full p-1.5 shadow-lg">
+                      <BadgeCheck className="w-5 h-5 text-primary-foreground" />
+                    </div>
+                  )}
+                </div>
+
+                {/* Name & Username */}
+                <h2 className="text-2xl font-bold text-foreground mt-4">{profile.full_name || 'User'}</h2>
+                <p className="text-muted-foreground text-sm">@{cleanUsername}</p>
+                
+                {/* Verified Badge */}
+                {profile.is_verified && (
+                  <div className="flex items-center gap-1.5 mt-2 px-3 py-1 bg-primary/10 rounded-full">
+                    <BadgeCheck className="w-4 h-4 text-primary" />
+                    <span className="text-xs font-medium text-primary">{t('profile.verified')}</span>
+                  </div>
+                )}
+
+                {/* Business Category Badge */}
+                {profile.business_category && (
+                  <div className="mt-3">
+                    <BusinessCategoryBadge category={profile.business_category} />
+                  </div>
+                )}
+              </div>
+
+              {/* Bio */}
+              {profile.bio && (
+                <p className="text-center text-muted-foreground mt-4 text-sm leading-relaxed max-w-sm mx-auto">
+                  {profile.bio}
+                </p>
+              )}
+
+              {/* Location & Member Info */}
+              <div className="flex items-center justify-center gap-4 mt-4 flex-wrap">
+                {profile.location_city && (
+                  <div className="flex items-center gap-1.5 text-sm text-muted-foreground">
+                    <MapPin className="w-4 h-4" />
+                    <span>{profile.location_city}{profile.location_state ? `, ${profile.location_state}` : ''}</span>
+                  </div>
+                )}
+                <div className="flex items-center gap-1.5 text-sm text-muted-foreground">
+                  <Calendar className="w-4 h-4" />
+                  <span>{memberSince}</span>
+                </div>
+              </div>
+
+              {/* Stats Cards */}
+              <div className="grid grid-cols-3 gap-3 mt-6">
+                <div className="bg-background rounded-xl p-3 text-center border border-border">
+                  <div className="flex items-center justify-center gap-1">
+                    <Star className="w-5 h-5 text-warning fill-warning" />
+                    <span className="text-lg font-bold text-foreground">{(profile.rating_avg || 0).toFixed(1)}</span>
+                  </div>
+                  <p className="text-xs text-muted-foreground mt-1">{profile.rating_count || 0} {t('reviews.reviews')}</p>
+                </div>
+                <div className="bg-background rounded-xl p-3 text-center border border-border">
+                  <div className="flex items-center justify-center gap-1">
+                    <Car className="w-5 h-5 text-primary" />
+                    <span className="text-lg font-bold text-foreground">{listings.length}</span>
+                  </div>
+                  <p className="text-xs text-muted-foreground mt-1">{t('profile.listings')}</p>
+                </div>
+                <div className="bg-background rounded-xl p-3 text-center border border-border">
+                  <div className="flex items-center justify-center gap-1">
+                    <Users className="w-5 h-5 text-success" />
+                    <span className="text-lg font-bold text-foreground">
+                      {vehicleCount + partsCount + servicesCount}
+                    </span>
+                  </div>
+                  <p className="text-xs text-muted-foreground mt-1">{t('profile.totalItems')}</p>
+                </div>
+              </div>
+
+              {/* Action Buttons */}
+              <div className="flex gap-3 mt-6">
+                <Button 
+                  variant="carnetworx" 
+                  className="flex-1"
+                  onClick={() => navigate(`/seller/${profile.id}`)}
+                >
+                  <MessageSquare className="w-4 h-4 mr-2" />
+                  {t('profile.connect')}
+                </Button>
+                <Button 
+                  variant="outline" 
+                  size="icon"
+                  onClick={handleShare}
+                  className="shrink-0"
+                >
+                  <Share2 className="w-4 h-4" />
+                </Button>
+              </div>
             </div>
           </div>
-
-          {/* Stats */}
-          <div className="flex gap-6 mt-4">
-            {vehicleCount > 0 && (
-              <div className="flex items-center gap-1.5 text-sm">
-                <Car className="w-4 h-4 text-primary" />
-                <span className="font-medium">{vehicleCount}</span>
-                <span className="text-muted-foreground">{t('profile.vehicles')}</span>
-              </div>
-            )}
-            {partsCount > 0 && (
-              <div className="flex items-center gap-1.5 text-sm">
-                <Wrench className="w-4 h-4 text-secondary" />
-                <span className="font-medium">{partsCount}</span>
-                <span className="text-muted-foreground">{t('profile.parts')}</span>
-              </div>
-            )}
-            {servicesCount > 0 && (
-              <div className="flex items-center gap-1.5 text-sm">
-                <Settings2 className="w-4 h-4 text-success" />
-                <span className="font-medium">{servicesCount}</span>
-                <span className="text-muted-foreground">{t('profile.services')}</span>
-              </div>
-            )}
-          </div>
-
-          {/* Contact Button */}
-          <Button 
-            variant="carnetworx" 
-            className="mt-4"
-            onClick={() => navigate(`/seller/${profile.id}`)}
-          >
-            <MessageCircle className="w-4 h-4 mr-2" />
-            {t('listing.contactSeller')}
-          </Button>
         </div>
+
+        {/* Category Stats */}
+        {(vehicleCount > 0 || partsCount > 0 || servicesCount > 0) && (
+          <div className="px-4 mt-6">
+            <div className="flex gap-2 overflow-x-auto pb-2">
+              {vehicleCount > 0 && (
+                <div className="flex items-center gap-2 px-4 py-2 bg-card rounded-full border border-border shrink-0">
+                  <Car className="w-4 h-4 text-primary" />
+                  <span className="font-medium text-sm">{vehicleCount}</span>
+                  <span className="text-sm text-muted-foreground">{t('profile.vehicles')}</span>
+                </div>
+              )}
+              {partsCount > 0 && (
+                <div className="flex items-center gap-2 px-4 py-2 bg-card rounded-full border border-border shrink-0">
+                  <Wrench className="w-4 h-4 text-secondary" />
+                  <span className="font-medium text-sm">{partsCount}</span>
+                  <span className="text-sm text-muted-foreground">{t('profile.parts')}</span>
+                </div>
+              )}
+              {servicesCount > 0 && (
+                <div className="flex items-center gap-2 px-4 py-2 bg-card rounded-full border border-border shrink-0">
+                  <Settings2 className="w-4 h-4 text-success" />
+                  <span className="font-medium text-sm">{servicesCount}</span>
+                  <span className="text-sm text-muted-foreground">{t('profile.services')}</span>
+                </div>
+              )}
+            </div>
+          </div>
+        )}
 
         {/* Listings */}
         {listings.length > 0 && (
-          <section className="px-4 mt-4">
-            <h3 className="text-lg font-bold text-foreground mb-4">{t('profile.listings')}</h3>
+          <section className="px-4 mt-6">
+            <h3 className="text-lg font-bold text-foreground mb-4">{t('profile.activeListings')}</h3>
             <div className="grid grid-cols-2 gap-3">
               {listings.map((listing) => (
                 <SimpleListingCard key={listing.id} listing={listing} />
@@ -374,8 +438,12 @@ export default function PublicProfile() {
         )}
 
         {listings.length === 0 && (
-          <div className="px-4 py-8 text-center">
-            <p className="text-muted-foreground">{t('profile.noListings')}</p>
+          <div className="px-4 py-12 text-center">
+            <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-muted flex items-center justify-center">
+              <Car className="w-8 h-8 text-muted-foreground" />
+            </div>
+            <p className="text-muted-foreground font-medium">{t('profile.noListings')}</p>
+            <p className="text-sm text-muted-foreground mt-1">{t('profile.noListingsDesc')}</p>
           </div>
         )}
       </div>
