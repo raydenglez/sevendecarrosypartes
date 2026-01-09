@@ -173,7 +173,17 @@
     "website": "Website",
     "bio": "Bio",
     "bioPlaceholder": "A few words about yourself or your business...",
-    "bioDesc": "Max 150 characters"
+    "bioDesc": "Max 150 characters",
+    "completion": {
+      "title": "Complete Your Profile",
+      "missing": "Add these to stand out:",
+      "photo": "Photo",
+      "username": "Username",
+      "bio": "Bio",
+      "location": "Location",
+      "phone": "Phone",
+      "social": "Social Links"
+    }
   },
   "settings": {
     "account": "Account",
