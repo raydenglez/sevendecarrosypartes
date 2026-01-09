@@ -45,6 +45,7 @@ import { NotificationSettingsSheet } from '@/components/NotificationSettingsShee
 import { HelpCenterSheet } from '@/components/HelpCenterSheet';
 import { ThemeSettingsSheet } from '@/components/ThemeSettingsSheet';
 import { SocialLinksSheet } from '@/components/SocialLinksSheet';
+import { ProfileCompletionCard } from '@/components/ProfileCompletionCard';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -520,6 +521,26 @@ export default function Profile() {
           </Button>
         </div>
       </div>
+
+      {/* Profile Completion */}
+      {profileData && (
+        <div className="px-4 mt-4 animate-fade-in">
+          <ProfileCompletionCard
+            profileData={{
+              avatarUrl: profileData.avatarUrl,
+              name: profileData.name,
+              username: profileData.username,
+              bio: profileData.bio,
+              location: profileData.location,
+              phone: profileData.phone,
+            }}
+            socialData={socialData}
+            onEditProfile={() => setEditModalOpen(true)}
+            onEditSocialLinks={() => setSocialLinksOpen(true)}
+            onEditPersonalInfo={() => setPersonalInfoOpen(true)}
+          />
+        </div>
+      )}
 
       {/* Stats */}
       <div className="px-4 grid grid-cols-3 gap-3 animate-fade-in">

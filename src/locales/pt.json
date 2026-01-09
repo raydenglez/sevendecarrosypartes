@@ -154,7 +154,17 @@
     "services": "Serviços",
     "socialLinks": "Redes Sociais e Links",
     "socialLinksDesc": "Adicione suas redes sociais e links comerciais para que compradores possam encontrá-lo facilmente.",
-    "website": "Website"
+    "website": "Website",
+    "completion": {
+      "title": "Complete seu Perfil",
+      "missing": "Adicione estes para se destacar:",
+      "photo": "Foto",
+      "username": "Usuário",
+      "bio": "Bio",
+      "location": "Localização",
+      "phone": "Telefone",
+      "social": "Redes Sociais"
+    }
   },
   "settings": {
     "account": "Conta",

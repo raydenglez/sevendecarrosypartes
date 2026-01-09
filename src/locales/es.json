@@ -154,7 +154,17 @@
     "services": "Servicios",
     "socialLinks": "Redes Sociales y Enlaces",
     "socialLinksDesc": "Agrega tus redes sociales y enlaces comerciales para que los compradores puedan encontrarte fácilmente.",
-    "website": "Sitio Web"
+    "website": "Sitio Web",
+    "completion": {
+      "title": "Completa tu Perfil",
+      "missing": "Añade estos para destacar:",
+      "photo": "Foto",
+      "username": "Usuario",
+      "bio": "Bio",
+      "location": "Ubicación",
+      "phone": "Teléfono",
+      "social": "Redes Sociales"
+    }
   },
   "settings": {
     "account": "Cuenta",
