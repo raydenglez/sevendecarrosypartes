@@ -22,6 +22,7 @@ import {
   Camera,
   Palette,
   LayoutDashboard,
+  Instagram,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { StatCard } from '@/components/StatCard';
@@ -42,6 +43,7 @@ import { LanguageSheet } from '@/components/LanguageSheet';
 import { NotificationSettingsSheet } from '@/components/NotificationSettingsSheet';
 import { HelpCenterSheet } from '@/components/HelpCenterSheet';
 import { ThemeSettingsSheet } from '@/components/ThemeSettingsSheet';
+import { SocialLinksSheet } from '@/components/SocialLinksSheet';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -108,6 +110,8 @@ export default function Profile() {
   const [signOutDialogOpen, setSignOutDialogOpen] = useState(false);
   const [themeOpen, setThemeOpen] = useState(false);
   const [isAdmin, setIsAdmin] = useState(false);
+  const [socialLinksOpen, setSocialLinksOpen] = useState(false);
+  const [socialData, setSocialData] = useState<{ instagram_url: string | null; whatsapp_number: string | null; website_url: string | null }>({ instagram_url: null, whatsapp_number: null, website_url: null });
 
   const handleFileSelect = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
@@ -233,6 +237,12 @@ export default function Profile() {
             ratingAvg: profile.rating_avg || 0,
             businessCategory: profile.business_category || null,
             bio: profile.bio || null,
+          });
+          
+          setSocialData({
+            instagram_url: profile.instagram_url || null,
+            whatsapp_number: profile.whatsapp_number || null,
+            website_url: profile.website_url || null,
           });
         }
 
@@ -603,6 +613,13 @@ export default function Profile() {
             description={t('settings.securityPrivacyDesc')}
             onClick={() => setSecurityOpen(true)}
           />
+          <SettingsItem
+            icon={<Instagram className="w-5 h-5 text-pink-500" />}
+            iconBg="bg-gradient-to-br from-purple-500/20 to-pink-500/20"
+            label={t('profile.socialLinks')}
+            description="Instagram, WhatsApp, Website"
+            onClick={() => setSocialLinksOpen(true)}
+          />
         </div>
       </section>
 
@@ -754,6 +771,13 @@ export default function Profile() {
       <ThemeSettingsSheet
         open={themeOpen}
         onOpenChange={setThemeOpen}
+      />
+
+      <SocialLinksSheet
+        open={socialLinksOpen}
+        onClose={() => setSocialLinksOpen(false)}
+        socialData={socialData}
+        onUpdate={(data) => setSocialData(data)}
       />
 
       <AlertDialog open={signOutDialogOpen} onOpenChange={setSignOutDialogOpen}>

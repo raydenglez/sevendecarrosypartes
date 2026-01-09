@@ -150,7 +150,10 @@
     "connect": "Conectar",
     "verified": "Vendedor Verificado",
     "listings": "Anúncios",
-    "services": "Serviços"
+    "services": "Serviços",
+    "socialLinks": "Redes Sociais e Links",
+    "socialLinksDesc": "Adicione suas redes sociais e links comerciais para que compradores possam encontrá-lo facilmente.",
+    "website": "Website"
   },
   "settings": {
     "account": "Conta",

@@ -481,6 +481,7 @@ export type Database = {
           email: string | null
           full_name: string | null
           id: string
+          instagram_url: string | null
           is_banned: boolean | null
           is_verified: boolean | null
           language: string | null
@@ -496,6 +497,8 @@ export type Database = {
           updated_at: string | null
           user_type: Database["public"]["Enums"]["user_type"] | null
           username: string | null
+          website_url: string | null
+          whatsapp_number: string | null
         }
         Insert: {
           allow_messages_from_anyone?: boolean | null
@@ -508,6 +511,7 @@ export type Database = {
           email?: string | null
           full_name?: string | null
           id: string
+          instagram_url?: string | null
           is_banned?: boolean | null
           is_verified?: boolean | null
           language?: string | null
@@ -523,6 +527,8 @@ export type Database = {
           updated_at?: string | null
           user_type?: Database["public"]["Enums"]["user_type"] | null
           username?: string | null
+          website_url?: string | null
+          whatsapp_number?: string | null
         }
         Update: {
           allow_messages_from_anyone?: boolean | null
@@ -535,6 +541,7 @@ export type Database = {
           email?: string | null
           full_name?: string | null
           id?: string
+          instagram_url?: string | null
           is_banned?: boolean | null
           is_verified?: boolean | null
           language?: string | null
@@ -550,6 +557,8 @@ export type Database = {
           updated_at?: string | null
           user_type?: Database["public"]["Enums"]["user_type"] | null
           username?: string | null
+          website_url?: string | null
+          whatsapp_number?: string | null
         }
         Relationships: []
       }
@@ -828,6 +837,7 @@ export type Database = {
           created_at: string | null
           full_name: string | null
           id: string | null
+          instagram_url: string | null
           is_verified: boolean | null
           location_city: string | null
           location_state: string | null
@@ -835,6 +845,8 @@ export type Database = {
           rating_count: number | null
           user_type: Database["public"]["Enums"]["user_type"] | null
           username: string | null
+          website_url: string | null
+          whatsapp_number: string | null
         }
         Insert: {
           avatar_url?: string | null
@@ -843,6 +855,7 @@ export type Database = {
           created_at?: string | null
           full_name?: string | null
           id?: string | null
+          instagram_url?: string | null
           is_verified?: boolean | null
           location_city?: string | null
           location_state?: string | null
@@ -850,6 +863,8 @@ export type Database = {
           rating_count?: number | null
           user_type?: Database["public"]["Enums"]["user_type"] | null
           username?: string | null
+          website_url?: string | null
+          whatsapp_number?: string | null
         }
         Update: {
           avatar_url?: string | null
@@ -858,6 +873,7 @@ export type Database = {
           created_at?: string | null
           full_name?: string | null
           id?: string | null
+          instagram_url?: string | null
           is_verified?: boolean | null
           location_city?: string | null
           location_state?: string | null
@@ -865,6 +881,8 @@ export type Database = {
           rating_count?: number | null
           user_type?: Database["public"]["Enums"]["user_type"] | null
           username?: string | null
+          website_url?: string | null
+          whatsapp_number?: string | null
         }
         Relationships: []
       }

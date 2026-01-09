@@ -15,7 +15,10 @@ import {
   Settings,
   Share2,
   Check,
-  User as UserIcon
+  User as UserIcon,
+  Instagram,
+  Globe,
+  Phone
 } from 'lucide-react';
 import { toast } from 'sonner';
 import { Button } from '@/components/ui/button';
@@ -50,6 +53,11 @@ export default function SellerProfile() {
   const navigate = useNavigate();
   const { user } = useAuth();
   const [seller, setSeller] = useState<User | null>(null);
+  const [socialLinks, setSocialLinks] = useState<{
+    instagram_url: string | null;
+    whatsapp_number: string | null;
+    website_url: string | null;
+  } | null>(null);
   const [listings, setListings] = useState<Listing[]>([]);
   const [reviews, setReviews] = useState<Review[]>([]);
   const [loading, setLoading] = useState(true);
@@ -116,6 +124,13 @@ export default function SellerProfile() {
         }
 
         setSeller(transformedSeller);
+        
+        // Set social links
+        setSocialLinks({
+          instagram_url: profileData.instagram_url || null,
+          whatsapp_number: profileData.whatsapp_number || null,
+          website_url: profileData.website_url || null,
+        });
       }
 
       // Fetch seller's listings with public vehicle attributes (excludes VIN)
@@ -331,6 +346,42 @@ export default function SellerProfile() {
                 {badge}
               </span>
             ))}
+          </div>
+        )}
+
+        {/* Social Links */}
+        {socialLinks && (socialLinks.instagram_url || socialLinks.whatsapp_number || socialLinks.website_url) && (
+          <div className="flex items-center gap-3 mt-4">
+            {socialLinks.instagram_url && (
+              <a
+                href={socialLinks.instagram_url.startsWith('http') ? socialLinks.instagram_url : `https://instagram.com/${socialLinks.instagram_url.replace('@', '')}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="w-10 h-10 rounded-full bg-gradient-to-br from-purple-500 to-pink-500 flex items-center justify-center text-white hover:opacity-80 transition-opacity"
+              >
+                <Instagram className="w-5 h-5" />
+              </a>
+            )}
+            {socialLinks.whatsapp_number && (
+              <a
+                href={`https://wa.me/${socialLinks.whatsapp_number.replace(/[^0-9]/g, '')}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="w-10 h-10 rounded-full bg-[#25D366] flex items-center justify-center text-white hover:opacity-80 transition-opacity"
+              >
+                <Phone className="w-5 h-5" />
+              </a>
+            )}
+            {socialLinks.website_url && (
+              <a
+                href={socialLinks.website_url.startsWith('http') ? socialLinks.website_url : `https://${socialLinks.website_url}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="w-10 h-10 rounded-full bg-primary/20 flex items-center justify-center text-primary hover:bg-primary/30 transition-colors"
+              >
+                <Globe className="w-5 h-5" />
+              </a>
+            )}
           </div>
         )}
 
