@@ -490,6 +490,7 @@ export type Database = {
           location_lng: number | null
           location_state: string | null
           phone: string | null
+          pinned_badges: string[] | null
           rating_avg: number | null
           rating_count: number | null
           show_online_status: boolean | null
@@ -520,6 +521,7 @@ export type Database = {
           location_lng?: number | null
           location_state?: string | null
           phone?: string | null
+          pinned_badges?: string[] | null
           rating_avg?: number | null
           rating_count?: number | null
           show_online_status?: boolean | null
@@ -550,6 +552,7 @@ export type Database = {
           location_lng?: number | null
           location_state?: string | null
           phone?: string | null
+          pinned_badges?: string[] | null
           rating_avg?: number | null
           rating_count?: number | null
           show_online_status?: boolean | null
