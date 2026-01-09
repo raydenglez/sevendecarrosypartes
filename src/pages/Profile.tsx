@@ -24,6 +24,8 @@ import {
   LayoutDashboard,
   Instagram,
   Eye,
+  BadgeCheck,
+  Award,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { StatCard } from '@/components/StatCard';
@@ -35,8 +37,9 @@ import { supabase } from '@/integrations/supabase/client';
 import { EditProfileModal } from '@/components/EditProfileModal';
 import { BusinessCategoryBadge } from '@/components/BusinessCategorySelect';
 
-// Lazy load heavy modal component
+// Lazy load heavy modal components
 const ImageCropModal = lazy(() => import('@/components/ImageCropModal').then(m => ({ default: m.ImageCropModal })));
+const VerificationRequestSheet = lazy(() => import('@/components/VerificationRequestSheet').then(m => ({ default: m.VerificationRequestSheet })));
 import { NotificationToggle } from '@/components/NotificationToggle';
 import { PersonalInfoSheet } from '@/components/PersonalInfoSheet';
 import { SecurityPrivacySheet } from '@/components/SecurityPrivacySheet';
@@ -46,6 +49,8 @@ import { HelpCenterSheet } from '@/components/HelpCenterSheet';
 import { ThemeSettingsSheet } from '@/components/ThemeSettingsSheet';
 import { SocialLinksSheet } from '@/components/SocialLinksSheet';
 import { ProfileCompletionCard } from '@/components/ProfileCompletionCard';
+import { UserBadgesDisplay } from '@/components/UserBadgesDisplay';
+import { useVerificationStatus } from '@/hooks/useVerificationStatus';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -114,6 +119,8 @@ export default function Profile() {
   const [isAdmin, setIsAdmin] = useState(false);
   const [socialLinksOpen, setSocialLinksOpen] = useState(false);
   const [socialData, setSocialData] = useState<{ instagram_url: string | null; whatsapp_number: string | null; website_url: string | null }>({ instagram_url: null, whatsapp_number: null, website_url: null });
+  const [verificationOpen, setVerificationOpen] = useState(false);
+  const { request: verificationRequest, isVerified, canRequestVerification, hasPendingRequest, refetch: refetchVerification } = useVerificationStatus();
 
   const handleFileSelect = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
@@ -451,6 +458,24 @@ export default function Profile() {
           {t('profile.memberSince', { date: profileData?.memberSince || 'Unknown' })}
         </p>
 
+        {/* Verification Badge / Button */}
+        {isVerified ? (
+          <div className="flex items-center gap-1.5 mt-3 px-3 py-1.5 bg-primary/10 rounded-full">
+            <BadgeCheck className="w-4 h-4 text-primary" />
+            <span className="text-xs font-medium text-primary">{t('profile.verified')}</span>
+          </div>
+        ) : (
+          <Button
+            variant="outline"
+            size="sm"
+            className="mt-3 gap-2"
+            onClick={() => setVerificationOpen(true)}
+          >
+            <BadgeCheck className="w-4 h-4" />
+            {hasPendingRequest ? t('verification.pendingTitle') : t('verification.applyNow')}
+          </Button>
+        )}
+
         {/* Action Buttons */}
         <div className="flex flex-wrap gap-2 mt-4 justify-center">
           <Button variant="carnetworxSecondary" size="sm" className="px-4" onClick={() => setEditModalOpen(true)}>
@@ -521,6 +546,13 @@ export default function Profile() {
           </Button>
         </div>
       </div>
+
+      {/* User Badges / Awards */}
+      {user && (
+        <div className="px-4 mt-4 animate-fade-in">
+          <UserBadgesDisplay userId={user.id} />
+        </div>
+      )}
 
       {/* Profile Completion */}
       {profileData && (
@@ -820,6 +852,17 @@ export default function Profile() {
         socialData={socialData}
         onUpdate={(data) => setSocialData(data)}
       />
+
+      {user && (
+        <Suspense fallback={null}>
+          <VerificationRequestSheet
+            open={verificationOpen}
+            onOpenChange={setVerificationOpen}
+            existingRequest={verificationRequest}
+            onSuccess={refetchVerification}
+          />
+        </Suspense>
+      )}
 
       <AlertDialog open={signOutDialogOpen} onOpenChange={setSignOutDialogOpen}>
         <AlertDialogContent>

@@ -20,7 +20,8 @@ import {
   ExternalLink,
   Instagram,
   Globe,
-  Phone
+  Phone,
+  Award
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { supabase } from '@/integrations/supabase/client';
@@ -28,6 +29,7 @@ import { useToast } from '@/hooks/use-toast';
 import { cn } from '@/lib/utils';
 import { useFavoritesContext } from '@/contexts/FavoritesContext';
 import { BusinessCategoryBadge } from '@/components/BusinessCategorySelect';
+import { UserBadgesDisplay } from '@/components/UserBadgesDisplay';
 
 interface PublicProfileData {
   id: string;
@@ -370,14 +372,21 @@ export default function PublicProfile() {
                 </div>
                 <div className="bg-background rounded-xl p-3 text-center border border-border">
                   <div className="flex items-center justify-center gap-1">
-                    <Users className="w-5 h-5 text-success" />
+                    <Award className="w-5 h-5 text-warning" />
                     <span className="text-lg font-bold text-foreground">
                       {vehicleCount + partsCount + servicesCount}
                     </span>
                   </div>
-                  <p className="text-xs text-muted-foreground mt-1">{t('profile.totalItems')}</p>
+                  <p className="text-xs text-muted-foreground mt-1">{t('profile.awards')}</p>
                 </div>
               </div>
+
+              {/* User Badges */}
+              {profile.id && (
+                <div className="mt-6">
+                  <UserBadgesDisplay userId={profile.id} compact />
+                </div>
+              )}
 
               {/* Social Links */}
               {(profile.instagram_url || profile.whatsapp_number || profile.website_url) && (
