@@ -23,6 +23,7 @@ import {
   Palette,
   LayoutDashboard,
   Instagram,
+  Eye,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { StatCard } from '@/components/StatCard';
@@ -450,15 +451,34 @@ export default function Profile() {
         </p>
 
         {/* Action Buttons */}
-        <div className="flex gap-3 mt-4">
-          <Button variant="carnetworxSecondary" size="sm" className="px-6" onClick={() => setEditModalOpen(true)}>
+        <div className="flex flex-wrap gap-2 mt-4 justify-center">
+          <Button variant="carnetworxSecondary" size="sm" className="px-4" onClick={() => setEditModalOpen(true)}>
             <Edit className="w-4 h-4 mr-2" />
             {t('profile.editProfile')}
           </Button>
           <Button 
             variant="carnetworxOutline" 
             size="sm" 
-            className="px-6"
+            className="px-4"
+            onClick={() => {
+              if (!profileData?.username) {
+                toast({
+                  title: t('profile.setUsernameFirst'),
+                  description: t('profile.setUsernameDesc'),
+                });
+                setEditModalOpen(true);
+                return;
+              }
+              navigate(`/profile/@${profileData.username}`);
+            }}
+          >
+            <Eye className="w-4 h-4 mr-2" />
+            {t('profile.previewProfile')}
+          </Button>
+          <Button 
+            variant="ghost" 
+            size="sm" 
+            className="px-4"
             onClick={async () => {
               if (!profileData?.username) {
                 toast({

@@ -137,6 +137,7 @@
   "profile": {
     "myProfile": "My Profile",
     "editProfile": "Edit Profile",
+    "previewProfile": "Preview",
     "memberSince": "Member since {{date}}",
     "signInPrompt": "Sign in to view your profile",
     "signInPromptDesc": "Create an account to save favorites, publish listings, and message sellers",
