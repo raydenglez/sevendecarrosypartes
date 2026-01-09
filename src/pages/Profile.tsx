@@ -50,6 +50,7 @@ import { ThemeSettingsSheet } from '@/components/ThemeSettingsSheet';
 import { SocialLinksSheet } from '@/components/SocialLinksSheet';
 import { ProfileCompletionCard } from '@/components/ProfileCompletionCard';
 import { UserBadgesDisplay } from '@/components/UserBadgesDisplay';
+import { BadgeShowcase } from '@/components/BadgeShowcase';
 import { useVerificationStatus } from '@/hooks/useVerificationStatus';
 import {
   DropdownMenu,
@@ -547,7 +548,14 @@ export default function Profile() {
         </div>
       </div>
 
-      {/* User Badges / Awards */}
+      {/* Badge Showcase - Pinned badges */}
+      {user && (
+        <div className="px-4 mt-4 animate-fade-in">
+          <BadgeShowcase userId={user.id} isOwnProfile={true} />
+        </div>
+      )}
+
+      {/* All User Badges */}
       {user && (
         <div className="px-4 mt-4 animate-fade-in">
           <UserBadgesDisplay userId={user.id} />

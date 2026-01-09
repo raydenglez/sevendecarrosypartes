@@ -30,6 +30,7 @@ import { cn } from '@/lib/utils';
 import { useFavoritesContext } from '@/contexts/FavoritesContext';
 import { BusinessCategoryBadge } from '@/components/BusinessCategorySelect';
 import { UserBadgesDisplay } from '@/components/UserBadgesDisplay';
+import { BadgeShowcase } from '@/components/BadgeShowcase';
 
 interface PublicProfileData {
   id: string;
@@ -377,13 +378,20 @@ export default function PublicProfile() {
                       {vehicleCount + partsCount + servicesCount}
                     </span>
                   </div>
-                  <p className="text-xs text-muted-foreground mt-1">{t('profile.awards')}</p>
+                  <p className="text-xs text-muted-foreground mt-1">{t('profile.badges', 'Badges')}</p>
                 </div>
               </div>
 
-              {/* User Badges */}
+              {/* Badge Showcase */}
               {profile.id && (
                 <div className="mt-6">
+                  <BadgeShowcase userId={profile.id} isOwnProfile={false} />
+                </div>
+              )}
+
+              {/* User Badges */}
+              {profile.id && (
+                <div className="mt-4">
                   <UserBadgesDisplay userId={profile.id} compact />
                 </div>
               )}

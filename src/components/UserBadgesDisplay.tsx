@@ -526,14 +526,14 @@ export function UserBadgesDisplay({ userId, compact = false, className }: UserBa
         <Sheet open={sheetOpen} onOpenChange={setSheetOpen}>
           <SheetContent side="bottom" className="h-[70vh] rounded-t-3xl">
             <SheetHeader className="text-left pb-4">
-              <SheetTitle className="flex items-center gap-2">
-                <Award className="w-5 h-5 text-warning" />
-                {t('profile.awards')} ({badges.length})
-              </SheetTitle>
-              <SheetDescription>
-                Achievements earned through activity on CarNetworx
-              </SheetDescription>
-            </SheetHeader>
+            <SheetTitle className="flex items-center gap-2">
+              <Award className="w-5 h-5 text-warning" />
+              {t('profile.badges', 'Badges')} ({badges.length})
+            </SheetTitle>
+            <SheetDescription>
+              Achievements earned through activity on CarNetworx
+            </SheetDescription>
+          </SheetHeader>
             <div className="space-y-3 overflow-y-auto max-h-[calc(70vh-120px)] pb-8">
               {badges.map((badge) => (
                 <BadgeCard key={badge.id} badge={badge} />
@@ -550,7 +550,7 @@ export function UserBadgesDisplay({ userId, compact = false, className }: UserBa
       <div className="flex items-center justify-between">
         <h4 className="text-sm font-bold text-foreground flex items-center gap-2">
           <Award className="w-4 h-4 text-warning" />
-          {t('profile.awards')}
+          {t('profile.badges', 'Badges')}
         </h4>
         {badges.length > 4 && (
           <button
@@ -589,7 +589,7 @@ export function UserBadgesDisplay({ userId, compact = false, className }: UserBa
           <SheetHeader className="text-left pb-4">
             <SheetTitle className="flex items-center gap-2">
               <Award className="w-5 h-5 text-warning" />
-              {t('profile.awards')} ({badges.length})
+              {t('profile.badges', 'Badges')} ({badges.length})
             </SheetTitle>
             <SheetDescription>
               Achievements earned through activity on CarNetworx
