@@ -479,14 +479,14 @@ export default function Profile() {
 
         {/* Action Buttons */}
         <div className="flex flex-wrap gap-2 mt-4 justify-center">
-          <Button variant="carnetworxSecondary" size="sm" className="px-4" onClick={() => setEditModalOpen(true)}>
-            <Edit className="w-4 h-4 mr-2" />
+          <Button variant="secondary" size="sm" className="gap-2" onClick={() => setEditModalOpen(true)}>
+            <Edit className="w-4 h-4" />
             {t('profile.editProfile')}
           </Button>
           <Button 
-            variant="carnetworxOutline" 
+            variant="outline" 
             size="sm" 
-            className="px-4"
+            className="gap-2"
             onClick={() => {
               if (!profileData?.username) {
                 toast({
@@ -499,13 +499,13 @@ export default function Profile() {
               navigate(`/profile/@${profileData.username}`);
             }}
           >
-            <Eye className="w-4 h-4 mr-2" />
+            <Eye className="w-4 h-4" />
             {t('profile.previewProfile')}
           </Button>
           <Button 
             variant="ghost" 
             size="sm" 
-            className="px-4"
+            className="gap-2"
             onClick={async () => {
               if (!profileData?.username) {
                 toast({
@@ -542,7 +542,7 @@ export default function Profile() {
               }
             }}
           >
-            <Share2 className="w-4 h-4 mr-2" />
+            <Share2 className="w-4 h-4" />
             {t('common.share')}
           </Button>
         </div>
