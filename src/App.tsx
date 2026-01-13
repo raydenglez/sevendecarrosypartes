@@ -41,6 +41,7 @@ const UsersManagement = lazy(() => import("./pages/admin/UsersManagement"));
 const ModerationHistory = lazy(() => import("./pages/admin/ModerationHistory"));
 const SponsoredManagement = lazy(() => import("./pages/admin/SponsoredManagement"));
 const AdminNotifications = lazy(() => import("./pages/admin/AdminNotifications"));
+const DeveloperTools = lazy(() => import("./pages/admin/DeveloperTools"));
 
 // Loading fallback component
 const PageLoader = () => (
@@ -107,6 +108,7 @@ export default function App() {
                         <Route path="/admin/notifications" element={<AdminNotifications />} />
                         <Route path="/admin/users" element={<UsersManagement />} />
                         <Route path="/admin/history" element={<ModerationHistory />} />
+                        <Route path="/admin/developer" element={<DeveloperTools />} />
                         {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
                         <Route path="*" element={<NotFound />} />
                       </Routes>
