@@ -13,7 +13,8 @@ import {
   Menu,
   Megaphone,
   Bell,
-  MoreHorizontal
+  MoreHorizontal,
+  Code
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
@@ -36,6 +37,7 @@ const navItems = [
   { path: '/admin/notifications', icon: Bell, label: 'Notifications' },
   { path: '/admin/users', icon: Users, label: 'Users' },
   { path: '/admin/history', icon: History, label: 'History' },
+  { path: '/admin/developer', icon: Code, label: 'Developer' },
 ];
 
 // Primary nav items for bottom bar (limited to 4 for mobile)
@@ -51,6 +53,7 @@ const secondaryNavItems = [
   { path: '/admin/sponsored', icon: Megaphone, label: 'Sponsored' },
   { path: '/admin/users', icon: Users, label: 'Users' },
   { path: '/admin/history', icon: History, label: 'History' },
+  { path: '/admin/developer', icon: Code, label: 'Developer' },
 ];
 
 function MobileBottomNav() {
