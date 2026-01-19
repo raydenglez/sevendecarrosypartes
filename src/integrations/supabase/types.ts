@@ -1007,6 +1007,27 @@ export type Database = {
       }
     }
     Functions: {
+      get_public_profile_by_username: {
+        Args: { p_username: string }
+        Returns: {
+          avatar_url: string
+          bio: string
+          business_category: string
+          created_at: string
+          full_name: string
+          id: string
+          instagram_url: string
+          is_verified: boolean
+          location_city: string
+          location_state: string
+          rating_avg: number
+          rating_count: number
+          user_type: Database["public"]["Enums"]["user_type"]
+          username: string
+          website_url: string
+          whatsapp_number: string
+        }[]
+      }
       get_user_roles: {
         Args: { _user_id: string }
         Returns: Database["public"]["Enums"]["app_role"][]
