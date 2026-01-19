@@ -24,6 +24,7 @@ interface UserProfile {
   id: string;
   full_name: string | null;
   email: string | null;
+  username: string | null;
   avatar_url: string | null;
   user_type: string;
   is_verified: boolean;
@@ -275,7 +276,8 @@ export default function UsersManagement() {
     const query = searchQuery.toLowerCase();
     return (
       u.full_name?.toLowerCase().includes(query) ||
-      u.email?.toLowerCase().includes(query)
+      u.email?.toLowerCase().includes(query) ||
+      u.username?.toLowerCase().includes(query)
     );
   });
 
@@ -303,7 +305,7 @@ export default function UsersManagement() {
         <div className="relative">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
           <Input
-            placeholder="Search by name or email..."
+            placeholder="Search by name, email, or username..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             className="pl-9"
@@ -365,7 +367,7 @@ export default function UsersManagement() {
                           )}
                         </div>
                         <p className="text-xs md:text-sm text-muted-foreground truncate">
-                          {profile.email}
+                          {profile.username ? `@${profile.username}` : profile.email}
                         </p>
                         <div className="flex items-center gap-2 md:gap-4 mt-1 text-[10px] md:text-xs text-muted-foreground flex-wrap">
                           <span className="flex items-center gap-1">
