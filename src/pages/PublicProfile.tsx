@@ -146,11 +146,9 @@ export default function PublicProfile() {
       }
 
       try {
-        // Fetch profile by username
+        // Fetch profile by username using SECURITY DEFINER function (works for anonymous users)
         const { data: profileData, error: profileError } = await supabase
-          .from('public_profiles')
-          .select('*')
-          .eq('username', cleanUsername)
+          .rpc('get_public_profile_by_username', { p_username: cleanUsername })
           .maybeSingle();
 
         if (profileError || !profileData) {
